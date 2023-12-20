@@ -1,6 +1,7 @@
 <template>
   <div>
     <RouterLink to="/about">About</RouterLink>
+    <RouterLink to="/books">Books</RouterLink>
     <button @click="logout">Logout</button>
   </div>
 </template>

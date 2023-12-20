@@ -7,7 +7,7 @@
   <div class="flex items-center justify-center h-screen">
     <div class="p-12 border-8 border-black shadow-2xl rounded">
       <form @submit.prevent="login">
-        <h1 class="flex items-center justify-center ">login</h1>
+        <h1 class="flex items-center justify-center">login</h1>
         <label for="username" class="">Username:</label>
         <input
           v-model="loginUsername"
@@ -35,7 +35,7 @@
 import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
-import { setAuthenticated, saveUserToLocalStorage } from "@/store/authStore";
+import { setAuthenticated, saveUserToLocalStorage,loggedInUser } from "@/store/authStore";
 const router = useRouter();
 const url = "http://localhost:5000/";
 const loginUsername = ref<string>("");
@@ -50,6 +50,8 @@ const login = () => {
     .then((response) => {
       saveUserToLocalStorage(response.data);
       setAuthenticated(true);
+      loggedInUser.value = response.data;
+      console.log(loggedInUser.value.id);
       router.push("/");
     })
     .catch((error) => {

@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 
 export const isAuthenticated = ref<boolean>(false);
+export const  loggedInUser = ref<any>();
 
 export const setAuthenticated = (value : boolean) => {
   isAuthenticated.value = value;
