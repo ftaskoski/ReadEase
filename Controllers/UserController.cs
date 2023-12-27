@@ -62,7 +62,7 @@ namespace userController.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<FormModel>> LoginUser([FromBody] FormModel model)
+        public async Task<ActionResult> LoginUser([FromBody] FormModel model)
         {
 
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
