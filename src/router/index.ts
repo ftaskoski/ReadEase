@@ -1,56 +1,60 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import AboutVue from '@/views/About.vue'
-import HomeVue from '@/views/Home.vue'
-import { isAuthenticated } from '@/store/authStore'
-import LoginVue from '@/views/Login.vue'
-import BooksVue from '@/views/Books.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import AboutVue from "@/views/About.vue";
+import HomeVue from "@/views/Home.vue";
+import { isAuthenticated } from "@/store/authStore";
+import LoginVue from "@/views/Login.vue";
+import BooksVue from "@/views/Books.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
+      path: "/",
+      name: "home",
       component: HomeVue,
       meta: {
-        requiresAuth: true
-      }
+        requiresAuth: true,
+      },
     },
     {
-      path: '/about',
-      name: 'about',
+      path: "/about",
+      name: "about",
       component: AboutVue,
       meta: {
-        requiresAuth: true
-      }
+        requiresAuth: true,
+      },
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => LoginVue
+      path: "/login",
+      name: "login",
+      component: () => LoginVue,
     },
     {
-      path:"/books",
-      name:"books",
+      path: "/books",
+      name: "books",
       component: () => BooksVue,
       meta: {
-        requiresAuth: true
-      }
+        requiresAuth: true,
+      },
     },
     {
-      path:"/register",
-      name:"register",
-      component: () => import("@/views/Register.vue")
-
-    }
-  ]
-})
+      path: "/register",
+      name: "register",
+      component: () => import("@/views/Register.vue"),
+    },
+  ],
+});
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated.value) {
-    next('/login');
+  if (
+    to.matched.some((record) => record.meta.requiresAuth) &&
+    !isAuthenticated.value
+  ) {
+    next("/login");
+  } else if ((to.name === "login" || to.name === "register") && isAuthenticated.value) {
+    next("/");
   } else {
     next();
   }
 });
-export default router
+export default router;
