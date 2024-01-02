@@ -1,3 +1,4 @@
-﻿[build]
-command = "gulp build-dotnet"
-publish = "path/to/publish/directory"
+﻿[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
