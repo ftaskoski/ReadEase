@@ -1,0 +1,3 @@
+﻿[build]
+  command = "gulp build-dotnet"
+  publish = "path/to/publish/directory"
