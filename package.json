@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "dotnet bin\\Debug\\net6.0\\ReadEase-C#.dll"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }
