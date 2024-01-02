@@ -2,6 +2,6 @@
   "name": "readease",
   "version": "1.0.0",
   "scripts": {
-    "start": "dotnet readease.dll"
+    "start": "dotnet bin\\Debug\\net6.0\\ReadEase-C#.dll"
   }
 }
