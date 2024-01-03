@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref,onMounted } from "vue";
 import axios from "axios";
 import { RouterLink, useRouter } from "vue-router";
 import { setAuthenticated, saveUserToLocalStorage, loggedInUser } from "@/store/authStore";
@@ -66,11 +66,9 @@ const login = () => {
       loggedInUser.value = response.data;
       console.log(loggedInUser.value.id);
       
-      setTimeout(() => {
         
         Success.value = true;
         router.push("/");
-      }, 2000);
       console.log(Success.value);
     })
     .catch((error) => {

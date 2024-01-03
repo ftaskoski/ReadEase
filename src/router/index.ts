@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AboutVue from "@/views/About.vue";
 import HomeVue from "@/views/Home.vue";
-import { isAuthenticated } from "@/store/authStore";
+import { isAuthenticated, loadUserFromLocalStorage } from "@/store/authStore";
 import LoginVue from "@/views/Login.vue";
 import BooksVue from "@/views/Books.vue";
 
@@ -46,10 +46,8 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (
-    to.matched.some((record) => record.meta.requiresAuth) &&
-    !isAuthenticated.value
-  ) {
+  loadUserFromLocalStorage();
+  if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated.value) {
     next("/login");
   } else if ((to.name === "login" || to.name === "register") && isAuthenticated.value) {
     next("/");
@@ -57,4 +55,5 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
+
 export default router;
