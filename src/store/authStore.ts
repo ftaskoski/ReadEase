@@ -18,6 +18,7 @@ export const loadUserFromLocalStorage = (): any => {
 };
 
 export const saveUserToLocalStorage = (user: any): void => {
+
   localStorage.setItem("loggedInUser", JSON.stringify(user));
   loggedInUser.value = user;
   setAuthenticated(true);
