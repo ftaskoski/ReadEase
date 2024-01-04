@@ -74,7 +74,7 @@ namespace userController.Controllers
 
                 if (user != null)
                 {
-                    return Ok();
+                    return Ok(user);
                 }
                 else
                 {
