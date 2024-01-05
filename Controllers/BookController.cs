@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
 using WebApplication1.Models;
+using System.Text;
 
 namespace WebApplication1.Controllers
 {
@@ -20,36 +21,39 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("getbooks/{id}")]
-        public IActionResult GetBooks(int id)
+        public IActionResult DownloadBooks(int id)
         {
-            try
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            using (var connection = new SqlConnection(connectionString))
             {
-                string connectionString = _configuration.GetConnectionString("DefaultConnection");
+                string selectQuery = "SELECT Title, Author FROM Books WHERE UserId=@Id;";
 
-                using (var connection = new SqlConnection(connectionString))
+                // Use Query to retrieve multiple rows
+                var books = connection.Query<BookModel>(selectQuery, new { Id = id });
+
+                // Check if any books were found
+                if (books != null && books.AsList().Count > 0)
                 {
-                    string selectQuery = "SELECT * FROM Books WHERE UserId=@Id;";
+                    // Create a StringBuilder to build the plain text content
+                    StringBuilder content = new StringBuilder();
 
-                    // Use Query to retrieve multiple rows
-                    var books = connection.Query<BookModel>(selectQuery, new { Id = id });
+                    // Append book titles and authors to the StringBuilder
+                    foreach (var book in books)
+                    {
+                        content.AppendLine($"Title: {book.Title}, Author: {book.Author}");
+                    }
 
-                    // Check if any books were found
-                    if (books != null && books.AsList().Count > 0)
-                    {
-                        return Ok(books); // 200 OK with the list of books
-                    }
-                    else
-                    {
-                        return NotFound(); // 404 Not Found if no books were found
-                    }
+                    // Return the plain text content as a FileResult
+                    byte[] fileContents = Encoding.UTF8.GetBytes(content.ToString());
+                    return File(fileContents, "text/plain", "books.txt");
+                }
+                else
+                {
+                    return NotFound(); // 404 Not Found if no books were found
                 }
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal Server Error: {ex.Message}");
-            }
         }
-
 
 
         [HttpPost("insertbook/{id}")]
