@@ -91,6 +91,20 @@ namespace WebApplication1.Controllers
             }
         }
 
+
+        [HttpGet("getallbooks/{id}")]
+        public IEnumerable<BookModel> getAllBooks(int id)
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+           using(var connection = new SqlConnection(connectionString))
+            {
+                string getQuery = "SELECT * FROM BOOKS WHERE UserId=@Id";
+               return connection.Query<BookModel>(getQuery, new { Id = id });
+            }
+
+    }
+
+
         [HttpDelete("deletebook/{id}")]
         public ActionResult deleteBook(int id)
         {
