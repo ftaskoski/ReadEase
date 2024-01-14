@@ -19,7 +19,7 @@ const id = user ? user.id : null;
 const password = user.password;
 
 async function changeUsername() {
-        const response = await axios.put(`${url}api/update/${id}`, {
+         await axios.put(`${url}api/update/${id}`, {
             username: newUsername.value,
             password: password
         }).then((response) => {
