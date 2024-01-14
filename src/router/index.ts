@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import AboutVue from "@/views/About.vue";
+import SettingsVue from "@/views/Settings.vue";
 import HomeVue from "@/views/Home.vue";
 import { isAuthenticated, loadUserFromLocalStorage } from "@/store/authStore";
 import LoginVue from "@/views/Login.vue";
@@ -17,9 +17,9 @@ const router = createRouter({
       },
     },
     {
-      path: "/about",
-      name: "about",
-      component: AboutVue,
+      path: "/settings",
+      name: "settings",
+      component: SettingsVue,
       meta: {
         requiresAuth: true,
       },
