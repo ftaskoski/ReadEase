@@ -20,7 +20,7 @@ namespace WebApplication1.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet("getbooks/{id}")]
+        [HttpGet("downloadbooks/{id}")]
         public IActionResult DownloadBooks(int id)
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
@@ -56,6 +56,27 @@ namespace WebApplication1.Controllers
         }
 
 
+
+        [HttpGet("getbooks/{id}")]
+        public IActionResult GetBooks(int id, int pageNumber = 1, int pageSize = 10)
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                // Calculate the starting row index based on the page number and page size
+                int startIndex = (pageNumber - 1) * pageSize;
+
+                // Use OFFSET-FETCH to implement pagination in SQL Server
+                string getQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id ORDER BY BookId OFFSET {startIndex} ROWS FETCH NEXT {pageSize} ROWS ONLY;";
+
+                var books = connection.Query<BookModel>(getQuery, new { id = id });
+                return Ok(books);
+            }
+        }
+
+
+
         [HttpPost("insertbook/{id}")]
         public async Task<IActionResult> InsertBook([FromBody] BookModel model,int id)
         {
@@ -63,7 +84,6 @@ namespace WebApplication1.Controllers
 
             using (var connection = new SqlConnection(connectionString))
             {
-                Console.WriteLine(model.UserId);
                 string insertQuery = "INSERT INTO Books (Title, Author, UserId) VALUES (@Title, @Author, @UserId);";
                 await connection.ExecuteAsync(insertQuery, new { model.Title, Author = model.Author, UserId = id });
 
@@ -71,22 +91,20 @@ namespace WebApplication1.Controllers
             }
         }
 
-
         [HttpDelete("deletebook/{id}")]
-        public async Task<IActionResult> DeleteBook(int id)
+        public ActionResult deleteBook(int id)
         {
-
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            using (var connection = new SqlConnection(connectionString))
+
+            using (var connection = new SqlConnection(connectionString)) 
             {
-                string deleteQuery = "DELETE FROM Books WHERE bookId=@Id;";
-                await connection.ExecuteAsync(deleteQuery, new { id });
+                string deleteQuery = "DELETE FROM Books WHERE bookId=@id";
+                connection.Execute(deleteQuery, new { id = id });
                 return Ok();
 
             }
 
-        }
-
+        }   
     }
 
 

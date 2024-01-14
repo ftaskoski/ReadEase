@@ -17,16 +17,17 @@ namespace userController.Controllers
         }
 
         [HttpGet("users")]
-        public IEnumerable<FormModel> GetUsers()
+        public ActionResult getUsers()
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
-            using (var connection = new SqlConnection(connectionString))
+            using(var connection = new SqlConnection(connectionString))
             {
                 string selectQuery = "SELECT * FROM Users";
-
-                return connection.Query<FormModel>(selectQuery);
+                var users = connection.Query(selectQuery);
+                return Ok(users);
             }
+
         }
 
 
