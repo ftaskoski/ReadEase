@@ -38,6 +38,7 @@
     </button>
   </div>
 
+
   <div class="flex justify-center items-center h-screen">
     <table class="table-auto w-full">
       <thead>
@@ -47,19 +48,29 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="book in bookCollection" :key="book.id">
+        <tr v-for="book in paginatedBooks" :key="book.id">
           <td class="border px-4 py-2">{{ book.author }}</td>
           <td class="border px-4 py-2">{{ book.title }}</td>
-          <td class="border px-4 py-2"><button @click="deleteBook(book.bookId)">Delete book</button></td>
+          <td class="border px-4 py-2"><button  @click="deleteBook(book.bookId)">Delete book</button></td>
         </tr>
       </tbody>
     </table>
+  
   </div>
+  
+  <div class="flex justify-center items-center">
+  <button class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="changePage(currPage - 1)" :disabled="currPage === 1">Previous</button>
+  <span>Page {{ currPage }} of {{ totalPages }}</span>
+  <button class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="changePage(currPage + 1)" :disabled="currPage * booksPerPage >= (bookCollection?.length || 0)">Next</button>
+</div>
+
+
+
 </template>
 
 <script setup lang="ts">
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted,computed } from "vue";
 import { loadUserFromLocalStorage } from "@/store/authStore";
 
 const url = "http://localhost:5000/";
@@ -68,6 +79,7 @@ const title = ref<string>("");
 const user = loadUserFromLocalStorage();
 const id = user ? user.id : null;
 const bookCollection = ref<any[]>();
+
 const downloadBooks = () => {
   axios
     .get(`${url}api/downloadbooks/${id}`, { responseType: "arraybuffer" })
@@ -101,6 +113,17 @@ const addBook = () => {
     });
 };
 
+const booksPerPage = ref(2);
+const currPage = ref(1);
+const totalPages = computed(() => Math.ceil((bookCollection.value?.length || 0) / booksPerPage.value));
+const paginatedBooks= computed(()=>{
+  const startIndex=(currPage.value-1) * booksPerPage.value;
+  const endIndex = startIndex + booksPerPage.value;
+  return bookCollection.value?.slice(startIndex, endIndex);
+})
+const changePage = (page: number) => {
+  currPage.value = page;
+}
 const getBooks = () => {
   axios
     .get(`${url}api/getbooks/${id}`)
@@ -126,4 +149,16 @@ const deleteBook = (id: number) => {
 onMounted(() => {
   getBooks();
 });
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
