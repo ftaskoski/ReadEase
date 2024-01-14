@@ -28,44 +28,45 @@
           Submit
         </button>
       </form>
+      <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2" @click="downloadBooks">Download books</button>
     </div>
 
-    <button
-      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
-      @click="downloadBooks"
-    >
-      Download Books
-    </button>
+    <div class="flex justify-center items-center h-screen">
+      <table class="table-auto w-full">
+        <thead>
+          <tr>
+            <th class="px-4 py-2">Author</th>
+            <th class="px-4 py-2">Title</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="book in bookPaginated" :key="book.id">
+            <td class="border px-4 py-2">{{ book.author }}</td>
+            <td class="border px-4 py-2">{{ book.title }}</td>
+            <td class="border px-4 py-2"><button @click="deleteBook(book.bookId)">Delete book</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex justify-center items-center">
+      <button
+        class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        @click="changePage(currPage - 1)"
+        :disabled="currPage === 1"
+      >
+        Previous
+      </button>
+      <span>Page {{ currPage }} of {{ totalPages }}</span>
+      <button
+        class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        @click="changePage(currPage + 1)"
+        :disabled="currPage >= totalPages"
+      >
+        Next
+      </button>
+    </div>
   </div>
-
-
-  <div class="flex justify-center items-center h-screen">
-    <table class="table-auto w-full">
-      <thead>
-        <tr>
-          <th class="px-4 py-2">Author</th>
-          <th class="px-4 py-2">Title</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="book in paginatedBooks" :key="book.id">
-          <td class="border px-4 py-2">{{ book.author }}</td>
-          <td class="border px-4 py-2">{{ book.title }}</td>
-          <td class="border px-4 py-2"><button  @click="deleteBook(book.bookId)">Delete book</button></td>
-        </tr>
-      </tbody>
-    </table>
-  
-  </div>
-  
-  <div class="flex justify-center items-center">
-  <button class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="changePage(currPage - 1)" :disabled="currPage === 1">Previous</button>
-  <span>Page {{ currPage }} of {{ totalPages }}</span>
-  <button class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="changePage(currPage + 1)" :disabled="currPage * booksPerPage >= (bookCollection?.length || 0)">Next</button>
-</div>
-
-
-
 </template>
 
 <script setup lang="ts">
@@ -79,7 +80,7 @@ const title = ref<string>("");
 const user = loadUserFromLocalStorage();
 const id = user ? user.id : null;
 const bookCollection = ref<any[]>();
-
+const bookPaginated = ref<any[]>();
 const downloadBooks = () => {
   axios
     .get(`${url}api/downloadbooks/${id}`, { responseType: "arraybuffer" })
@@ -113,20 +114,34 @@ const addBook = () => {
     });
 };
 
-const booksPerPage = ref(2);
+const booksPerPage = ref(10);
 const currPage = ref(1);
-const totalPages = computed(() => Math.ceil((bookCollection.value?.length || 0) / booksPerPage.value));
-const paginatedBooks= computed(()=>{
-  const startIndex=(currPage.value-1) * booksPerPage.value;
-  const endIndex = startIndex + booksPerPage.value;
-  return bookCollection.value?.slice(startIndex, endIndex);
-})
+const totalPages = computed(() => {
+  return Math.ceil((bookCollection.value?.length ?? 0) / booksPerPage.value);
+});
+
+
 const changePage = (page: number) => {
-  currPage.value = page;
-}
+  if (page >= 1 && page <= totalPages.value) {
+    currPage.value = page;
+    getBooks();
+  }
+};
+
 const getBooks = () => {
   axios
-    .get(`${url}api/getbooks/${id}`)
+  .get(`${url}api/getbooks/${id}?pageNumber=${currPage.value}&pageSize=${booksPerPage.value}`)
+    .then((response) => {
+      bookPaginated.value = response.data;
+      console.log(bookCollection.value);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+const getAllBooks = () => {
+  axios
+    .get(`${url}api/getallbooks/${id}`)
     .then((response) => {
       bookCollection.value = response.data;
       console.log(bookCollection.value);
@@ -147,6 +162,7 @@ const deleteBook = (id: number) => {
     });
 }
 onMounted(() => {
+  getAllBooks();
   getBooks();
 });
 
