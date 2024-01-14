@@ -7,6 +7,7 @@ using WebApplication1.Models;
 using System.IO;
 
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors();
@@ -24,13 +25,6 @@ IApplicationBuilder applicationBuilder = app.UseRouting().UseEndpoints(endpoints
 
 
 app.Urls.Add("http://localhost:5000");
-
-string downloadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-string filePathInDownloads = Path.Combine(downloadsPath, "output.txt");
-
-string content = "Hello, World!";
-
-File.WriteAllText(filePathInDownloads, content);
 
 app.Run();
 
