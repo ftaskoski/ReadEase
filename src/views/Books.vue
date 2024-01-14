@@ -130,7 +130,11 @@ const changePage = (page: number) => {
 
 const getBooks = () => {
   axios
-  .get(`${url}api/getbooks/${id}?pageNumber=${currPage.value}&pageSize=${booksPerPage.value}`)
+  .get(`${url}api/getbooks/${id}`, {
+    params: {
+      pageNumber: currPage.value,
+    }
+  })
     .then((response) => {
       bookPaginated.value = response.data;
       console.log(bookCollection.value);
