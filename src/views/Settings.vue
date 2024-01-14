@@ -11,21 +11,25 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import axios from "axios";
-import { loadUserFromLocalStorage } from "@/store/authStore";
+import { loadUserFromLocalStorage, saveUserToLocalStorage } from "@/store/authStore";
 const newUsername = ref<string>("");
     const url = "http://localhost:5000/";
     const user = loadUserFromLocalStorage();
 const id = user ? user.id : null;
 const password = user.password;
-function changeUsername(){
-    axios.put(`${url}api/update/${id}`, {
-        username: newUsername.value,
-        id: id,
-        password: password
 
-    }).then((response) => {
-        console.log(response);
-    })
+async function changeUsername() {
+        const response = await axios.put(`${url}api/update/${id}`, {
+            username: newUsername.value,
+            password: password
+        }).then((response) => {
+            const updatedUser = { ...user, username: newUsername.value };
+            saveUserToLocalStorage(updatedUser);
+            newUsername.value = "";
+        })
+
+
+  
 }
 </script>
 
