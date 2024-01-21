@@ -109,7 +109,7 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { loadUserFromLocalStorage } from "@/store/authStore";
 
 const url = "http://localhost:5000/";
@@ -155,25 +155,21 @@ const addBook = () => {
 const booksPerPage = ref(10);
 const currPage = ref(1);
 const totalPages = computed(() => {
- 
-  if(searchedBooks.value && searchQuery.value){
-    return Math.ceil(searchedBooksAll.value.length / booksPerPage.value)
-  }else{
-    return Math.ceil((bookCollection.value?.length ?? 0) / booksPerPage.value);  }
+  if (searchedBooks.value && searchQuery.value) {
+    return Math.ceil(searchedBooksAll.value.length / booksPerPage.value);
+  } else {
+    return Math.ceil((bookCollection.value?.length ?? 0) / booksPerPage.value);
+  }
 });
-
-
 
 const changePage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
-    if(searchQuery.value){
-      currPage.value = page;
-      searchedBooksFull()
-    }else{
-      getBooks();
-      
-    }
     currPage.value = page;
+    if (!searchQuery.value) {
+      getBooks();
+    } else {
+      searchedBooksFull();
+    }
   }
 };
 
@@ -186,7 +182,6 @@ const getBooks = () => {
     })
     .then((response) => {
       bookPaginated.value = response.data;
-      console.log(bookCollection.value);
     })
     .catch((error) => {
       console.error(error);
@@ -197,7 +192,6 @@ const getAllBooks = () => {
     .get(`${url}api/getallbooks/${id}`)
     .then((response) => {
       bookCollection.value = response.data;
-      console.log(bookCollection.value);
     })
     .catch((error) => {
       console.error(error);
@@ -213,26 +207,25 @@ const deleteBook = (id: number) => {
       console.error(`Error deleting book with ID ${id}:`, error);
     });
 };
-onMounted(() => {
-  getAllBooks();
-  getBooks();
-});
 
 const searchQuery = ref<string>("");
 const searchedBooks = ref<any[]>([]);
 const searchedBooksAll = ref<any[]>([]);
-
-const searchedBooksFull = () =>{
-  axios.get(`${url}api/searchbooksall/${id}`, {
-    params: {
-      search: searchQuery.value
-    }
-  }).then((response) => {
-    searchedBooksAll.value = response.data
-    searchBook();
-    
-  })
-}
+watch(searchQuery, () => {
+  currPage.value = 1;
+});
+const searchedBooksFull = () => {
+  axios
+    .get(`${url}api/searchbooksall/${id}`, {
+      params: {
+        search: searchQuery.value,
+      },
+    })
+    .then((response) => {
+      searchedBooksAll.value = response.data;
+      searchBook();
+    });
+};
 const searchBook = () => {
   axios
     .get(`${url}api/searchbooks/${id}`, {
@@ -254,7 +247,11 @@ const handleInput = () => {
 
   debounceTimer = setTimeout(() => {
     searchedBooksFull();
-    currPage.value = 1
   }, 1000);
 };
+
+onMounted(() => {
+  getAllBooks();
+  getBooks();
+});
 </script>
