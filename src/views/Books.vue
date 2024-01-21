@@ -157,7 +157,7 @@ const currPage = ref(1);
 const totalPages = computed(() => {
  
   if(searchedBooks.value && searchQuery.value){
-    return Math.ceil(searchedBooks.value.length / booksPerPage.value)
+    return Math.ceil(searchedBooksAll.value.length / booksPerPage.value)
   }else{
     return Math.ceil((bookCollection.value?.length ?? 0) / booksPerPage.value);  }
 });
@@ -166,8 +166,14 @@ const totalPages = computed(() => {
 
 const changePage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
+    if(searchQuery.value){
+      currPage.value = page;
+      searchedBooksFull()
+    }else{
+      getBooks();
+      
+    }
     currPage.value = page;
-    getBooks();
   }
 };
 
@@ -214,16 +220,29 @@ onMounted(() => {
 
 const searchQuery = ref<string>("");
 const searchedBooks = ref<any[]>([]);
+const searchedBooksAll = ref<any[]>([]);
+
+const searchedBooksFull = () =>{
+  axios.get(`${url}api/searchbooksall/${id}`, {
+    params: {
+      search: searchQuery.value
+    }
+  }).then((response) => {
+    searchedBooksAll.value = response.data
+    searchBook();
+    
+  })
+}
 const searchBook = () => {
   axios
     .get(`${url}api/searchbooks/${id}`, {
       params: {
         search: searchQuery.value,
+        pageNumber: currPage.value,
       },
     })
     .then((response) => {
       searchedBooks.value = response.data;
-      currPage.value = 1;
     });
 };
 
@@ -234,7 +253,8 @@ const handleInput = () => {
   searchedBooks.value = [];
 
   debounceTimer = setTimeout(() => {
-    searchBook();
+    searchedBooksFull();
+    currPage.value = 1
   }, 1000);
 };
 </script>
