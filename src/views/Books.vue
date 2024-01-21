@@ -28,7 +28,26 @@
           Submit
         </button>
       </form>
-      <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2" @click="downloadBooks">Download books</button>
+      <button
+        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
+        @click="downloadBooks"
+      >
+        Download books
+      </button>
+    </div>
+
+    <div class="mb-4">
+      <label for="search" class="block text-sm font-medium text-gray-600"
+        >Search by Author</label
+      >
+      <input
+        v-model="searchQuery"
+        @input="handleInput"
+        type="text"
+        id="search"
+        placeholder="Enter author's name..."
+        class="w-80 px-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300"
+      />
     </div>
 
     <div class="flex justify-center items-center h-screen">
@@ -40,10 +59,29 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="book in bookPaginated" :key="book.id">
+          <tr v-if="searchedBooks && searchQuery" v-for="book in searchedBooks">
             <td class="border px-4 py-2">{{ book.author }}</td>
             <td class="border px-4 py-2">{{ book.title }}</td>
-            <td class="border px-4 py-2"><button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2" @click="deleteBook(book.bookId)">Delete book</button></td>
+            <td class="border px-4 py-2">
+              <button
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
+                @click="deleteBook(book.bookId)"
+              >
+                Delete book
+              </button>
+            </td>
+          </tr>
+          <tr v-else v-for="book in bookPaginated" :key="book.id">
+            <td class="border px-4 py-2">{{ book.author }}</td>
+            <td class="border px-4 py-2">{{ book.title }}</td>
+            <td class="border px-4 py-2">
+              <button
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
+                @click="deleteBook(book.bookId)"
+              >
+                Delete book
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -61,7 +99,7 @@
       <button
         class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         @click="changePage(currPage + 1)"
-        :disabled="currPage >= totalPages"
+        :disabled="currPage === totalPages"
       >
         Next
       </button>
@@ -71,7 +109,7 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { ref, onMounted,computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { loadUserFromLocalStorage } from "@/store/authStore";
 
 const url = "http://localhost:5000/";
@@ -120,7 +158,6 @@ const totalPages = computed(() => {
   return Math.ceil((bookCollection.value?.length ?? 0) / booksPerPage.value);
 });
 
-
 const changePage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
     currPage.value = page;
@@ -130,11 +167,11 @@ const changePage = (page: number) => {
 
 const getBooks = () => {
   axios
-  .get(`${url}api/getbooks/${id}`, {
-    params: {
-      pageNumber: currPage.value,
-    }
-  })
+    .get(`${url}api/getbooks/${id}`, {
+      params: {
+        pageNumber: currPage.value,
+      },
+    })
     .then((response) => {
       bookPaginated.value = response.data;
       console.log(bookCollection.value);
@@ -155,7 +192,6 @@ const getAllBooks = () => {
     });
 };
 const deleteBook = (id: number) => {
-  
   axios
     .delete(`${url}api/deletebook/${id}`)
     .then(() => {
@@ -164,21 +200,34 @@ const deleteBook = (id: number) => {
     .catch((error) => {
       console.error(`Error deleting book with ID ${id}:`, error);
     });
-}
+};
 onMounted(() => {
   getAllBooks();
   getBooks();
 });
 
+const searchQuery = ref<string>("");
+const searchedBooks = ref<any[]>([]);
+const searchBook = () => {
+  axios
+    .get(`${url}api/searchbooks/${id}`, {
+      params: {
+        search: searchQuery.value,
+      },
+    })
+    .then((response) => {
+      searchedBooks.value = response.data;
+    });
+};
 
+let debounceTimer = 0;
 
+const handleInput = () => {
+  clearTimeout(debounceTimer);
+  searchedBooks.value = [];
 
-
-
-
-
-
-
-
-
+  debounceTimer = setTimeout(() => {
+    searchBook();
+  }, 1000);
+};
 </script>
