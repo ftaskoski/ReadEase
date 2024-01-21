@@ -155,8 +155,14 @@ const addBook = () => {
 const booksPerPage = ref(10);
 const currPage = ref(1);
 const totalPages = computed(() => {
-  return Math.ceil((bookCollection.value?.length ?? 0) / booksPerPage.value);
+ 
+  if(searchedBooks.value && searchQuery.value){
+    return Math.ceil(searchedBooks.value.length / booksPerPage.value)
+  }else{
+    return Math.ceil((bookCollection.value?.length ?? 0) / booksPerPage.value);  }
 });
+
+
 
 const changePage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
@@ -217,6 +223,7 @@ const searchBook = () => {
     })
     .then((response) => {
       searchedBooks.value = response.data;
+      currPage.value = 1;
     });
 };
 
