@@ -243,7 +243,6 @@ let debounceTimer = 0;
 
 const handleInput = () => {
   clearTimeout(debounceTimer);
-  searchedBooks.value = [];
 
   debounceTimer = setTimeout(() => {
     searchedBooksFull();
