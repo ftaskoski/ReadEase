@@ -75,10 +75,24 @@ namespace WebApplication1.Controllers
             }
         }
 
+        [HttpGet("searchbooks/{id}")]
+        public IActionResult searchBooks(int id, string search)
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (var connection = new SqlConnection(connectionString))
+            {
+                string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id And Author LIKE '{search}%' ";
+
+                var book = connection.Query<BookModel>(searchQuery, new { id = id });
+
+                return Ok(book);
+            }
+
+        }
 
 
         [HttpPost("insertbook/{id}")]
-        public async Task<IActionResult> InsertBook([FromBody] BookModel model,int id)
+        public async Task<IActionResult> InsertBook([FromBody] BookModel model, int id)
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
@@ -96,13 +110,13 @@ namespace WebApplication1.Controllers
         public IEnumerable<BookModel> getAllBooks(int id)
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
-           using(var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
                 string getQuery = "SELECT * FROM BOOKS WHERE UserId=@Id";
-               return connection.Query<BookModel>(getQuery, new { Id = id });
+                return connection.Query<BookModel>(getQuery, new { Id = id });
             }
 
-    }
+        }
 
 
         [HttpDelete("deletebook/{id}")]
@@ -110,7 +124,7 @@ namespace WebApplication1.Controllers
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
-            using (var connection = new SqlConnection(connectionString)) 
+            using (var connection = new SqlConnection(connectionString))
             {
                 string deleteQuery = "DELETE FROM Books WHERE bookId=@id";
                 connection.Execute(deleteQuery, new { id = id });
@@ -118,7 +132,7 @@ namespace WebApplication1.Controllers
 
             }
 
-        }   
+        }
     }
 
 
