@@ -75,13 +75,32 @@ namespace WebApplication1.Controllers
             }
         }
 
-        [HttpGet("searchbooks/{id}")]
-        public IActionResult searchBooks(int id, string search)
+
+        [HttpGet("searchbooksall/{id}")]
+        public IActionResult searchBooksAll(int id, string search )
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using (var connection = new SqlConnection(connectionString))
             {
-                string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id And Author LIKE '{search}%' ";
+
+                string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE '{search}%'";
+
+                var book = connection.Query<BookModel>(searchQuery, new { id = id });
+
+                return Ok(book);
+            }
+
+        }
+
+        [HttpGet("searchbooks/{id}")]
+        public IActionResult searchBooks(int id, string search, int pageNumber = 1, int pageSize = 10)
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (var connection = new SqlConnection(connectionString))
+            {
+                int startIndex = (pageNumber - 1) * pageSize;
+
+                string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE '{search}%' ORDER BY BookId OFFSET {startIndex} ROWS FETCH NEXT {pageSize} ROWS ONLY;";
 
                 var book = connection.Query<BookModel>(searchQuery, new { id = id });
 
