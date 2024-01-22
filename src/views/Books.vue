@@ -202,19 +202,19 @@ const deleteBook = (id: number) => {
   axios
     .delete(`${url}api/deletebook/${id}`)
     .then(() => {
-      getBooks();
-      getAllBooks();
-      if(bookPaginated.value?.length === 1 && currPage.value > 1) {
-        currPage.value = currPage.value - 1
-
-        getBooks();
-
+      if (searchQuery.value) {
+        searchedBooksFull();
+      } else {
         getAllBooks();
+        getBooks();
       }
-      
-        
 
- 
+
+      if ((bookPaginated.value?.length === 1 || searchedBooks.value?.length === 1) && currPage.value > 1) {
+        currPage.value = currPage.value - 1;
+        getBooks();
+      }
+
     })
     .catch((error) => {
       console.error(`Error deleting book with ID ${id}:`, error);
