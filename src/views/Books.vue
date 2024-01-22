@@ -204,12 +204,17 @@ const deleteBook = (id: number) => {
     .then(() => {
       getBooks();
       getAllBooks();
-      if (currPage.value > 1 && bookPaginated.value?.length === 1) {
-        currPage.value--;
-        getBooks();
-        
-      }
+      if(bookPaginated.value?.length === 1 && currPage.value > 1) {
+        currPage.value = currPage.value - 1
 
+        getBooks();
+
+        getAllBooks();
+      }
+      
+        
+
+ 
     })
     .catch((error) => {
       console.error(`Error deleting book with ID ${id}:`, error);
