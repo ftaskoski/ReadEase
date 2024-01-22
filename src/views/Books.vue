@@ -147,6 +147,9 @@ const addBook = () => {
       title.value = "";
       getAllBooks();
       getBooks();
+      if (searchQuery.value) {
+        searchedBooksFull();
+      }
     })
     .catch((error) => {
       console.error(error);
