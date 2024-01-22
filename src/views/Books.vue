@@ -213,6 +213,11 @@ const searchedBooks = ref<any[]>([]);
 const searchedBooksAll = ref<any[]>([]);
 watch(searchQuery, () => {
   currPage.value = 1;
+  if (searchQuery.value) {
+    searchedBooksFull();
+  } else {
+    getBooks();
+  }
 });
 const searchedBooksFull = () => {
   axios
@@ -245,12 +250,7 @@ const handleInput = () => {
   clearTimeout(debounceTimer);
 
   debounceTimer = setTimeout(() => {
-    if (searchQuery.value) {
-      searchedBooksFull();
-    } else {
-      currPage.value = 1; 
-      getBooks(); 
-    } 
+    searchedBooksFull();
   }, 1000);
 };
 
