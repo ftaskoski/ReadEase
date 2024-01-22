@@ -145,6 +145,7 @@ const addBook = () => {
     .then((response) => {
       author.value = "";
       title.value = "";
+      getAllBooks();
       getBooks();
     })
     .catch((error) => {
@@ -202,6 +203,13 @@ const deleteBook = (id: number) => {
     .delete(`${url}api/deletebook/${id}`)
     .then(() => {
       getBooks();
+      getAllBooks();
+      if (currPage.value > 1 && bookPaginated.value?.length === 1) {
+        currPage.value--;
+        getBooks();
+        
+      }
+
     })
     .catch((error) => {
       console.error(`Error deleting book with ID ${id}:`, error);
