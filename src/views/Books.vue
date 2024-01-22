@@ -214,7 +214,7 @@ const searchedBooksAll = ref<any[]>([]);
 watch(searchQuery, () => {
   currPage.value = 1;
   if (searchQuery.value) {
-    searchedBooksFull();
+    handleInput();
   } else {
     getBooks();
   }
@@ -248,7 +248,7 @@ let debounceTimer = 0;
 
 const handleInput = () => {
   clearTimeout(debounceTimer);
-
+  searchedBooks.value = [];
   debounceTimer = setTimeout(() => {
     searchedBooksFull();
   }, 1000);
