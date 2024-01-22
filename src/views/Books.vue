@@ -245,7 +245,12 @@ const handleInput = () => {
   clearTimeout(debounceTimer);
 
   debounceTimer = setTimeout(() => {
-    searchedBooksFull();
+    if (searchQuery.value) {
+      searchedBooksFull();
+    } else {
+      currPage.value = 1; 
+      getBooks(); 
+    } 
   }, 1000);
 };
 
