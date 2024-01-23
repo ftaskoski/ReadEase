@@ -227,14 +227,17 @@ const deleteBook = (id: number) => {
 const searchQuery = ref<string>("");
 const searchedBooks = ref<any[]>([]);
 const searchedBooksAll = ref<any[]>([]);
+
 watch(searchQuery, () => {
   currPage.value = 1;
   if (searchQuery.value) {
     handleInput();
   } else {
+    getAllBooks();
     getBooks();
   }
 });
+
 const searchedBooksFull = () => {
   axios
     .get(`${url}api/searchbooksall/${id}`, {
