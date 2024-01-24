@@ -100,9 +100,9 @@ namespace WebApplication1.Controllers
             {
                 int startIndex = (pageNumber - 1) * pageSize;
 
-                string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE '{search}%' ORDER BY BookId OFFSET {startIndex} ROWS FETCH NEXT {pageSize} ROWS ONLY;";
+                string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE @Search ORDER BY BookId OFFSET {startIndex} ROWS FETCH NEXT {pageSize} ROWS ONLY;";
 
-                var book = connection.Query<BookModel>(searchQuery, new { id = id });
+                var book = connection.Query<BookModel>(searchQuery, new { id = id, Search = $"{search}%" });
 
                 return Ok(book);
             }
