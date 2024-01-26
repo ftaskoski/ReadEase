@@ -41,7 +41,7 @@ import { RouterLink, useRouter } from "vue-router";
 import { setAuthenticated, saveUserToLocalStorage, loggedInUser } from "@/store/authStore";
 import Card from "@/components/Card.vue";
 const router = useRouter();
-const url = "http://localhost:5000/";
+const url = "https://readease-c20240125180045.azurewebsites.net/";
 const loginUsername = ref<string>("");
 const loginPassword = ref<string>("");
 const Incorrect = ref<boolean>(false);

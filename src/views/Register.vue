@@ -17,7 +17,7 @@ import axios from 'axios';
 
 const username = ref<string>('');
 const password = ref<string>('');
-const url = "http://localhost:5000/";
+    const url = "https://readease-c20240125180045.azurewebsites.net/";
 
 const register = () => {
     axios.post(`${url}api/register`, {
