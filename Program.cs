@@ -1,13 +1,3 @@
-using Dapper;
-using Microsoft.AspNetCore.Mvc;
-using System.Data.SqlClient;
-using userController.Controllers;
-using WebApplication1.Controllers;
-using WebApplication1.Models;
-using System.IO;
-
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors();
@@ -24,7 +14,7 @@ IApplicationBuilder applicationBuilder = app.UseRouting().UseEndpoints(endpoints
 });
 
 
-app.Urls.Add("http://localhost:5000");
+//app.Urls.Add("http://localhost:5000");
 
 app.Run();
 
