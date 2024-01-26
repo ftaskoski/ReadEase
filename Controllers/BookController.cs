@@ -68,9 +68,9 @@ namespace WebApplication1.Controllers
                 int startIndex = (pageNumber - 1) * pageSize;
 
                 // Use OFFSET-FETCH to implement pagination in SQL Server
-                string getQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id ORDER BY BookId OFFSET {startIndex} ROWS FETCH NEXT {pageSize} ROWS ONLY;";
+                string getQuery = "SELECT * FROM BOOKS WHERE UserId=@Id ORDER BY BookId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
-                var books = connection.Query<BookModel>(getQuery, new { id = id });
+                var books = connection.Query<BookModel>(getQuery, new { id = id,startIndex=startIndex,pageSize=pageSize });
                 return Ok(books);
             }
         }
@@ -83,9 +83,9 @@ namespace WebApplication1.Controllers
             using (var connection = new SqlConnection(connectionString))
             {
 
-                string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE '{search}%'";
+                string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE @Search";
 
-                var book = connection.Query<BookModel>(searchQuery, new { id = id });
+                var book = connection.Query<BookModel>(searchQuery, new { id = id,Search=$"{search}%" });
 
                 return Ok(book);
             }
@@ -100,9 +100,9 @@ namespace WebApplication1.Controllers
             {
                 int startIndex = (pageNumber - 1) * pageSize;
 
-                string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE @Search ORDER BY BookId OFFSET {startIndex} ROWS FETCH NEXT {pageSize} ROWS ONLY;";
+                string searchQuery = "SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE @Search ORDER BY BookId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
-                var book = connection.Query<BookModel>(searchQuery, new { id = id, Search = $"{search}%" });
+                var book = connection.Query<BookModel>(searchQuery, new { id = id, Search = $"{search}%", startIndex = startIndex, pageSize =pageSize });
 
                 return Ok(book);
             }
