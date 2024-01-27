@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div>
+  <div class="absolute  top-0 left-1/2  ">
+    <div >
       <p>Insert books</p>
       <form @submit.prevent="addBook">
         <label for="author">Author</label>
@@ -50,7 +50,7 @@
       />
     </div>
 
-    <div class="flex justify-center items-center h-screen">
+    <div class="overflow-x-auto ">
       <table class="table-auto w-full">
         <thead>
           <tr>
@@ -112,7 +112,7 @@ import axios from "axios";
 import { ref, onMounted, computed, watch } from "vue";
 import { loadUserFromLocalStorage } from "@/store/authStore";
 
-const url = "http://localhost:5000/";
+const url="https://localhost:7284/"
 const author = ref<string>("");
 const title = ref<string>("");
 const user = loadUserFromLocalStorage();

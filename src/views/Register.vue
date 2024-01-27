@@ -20,7 +20,8 @@ import Card from "@/components/Card.vue";
 
 const username = ref<string>('');
 const password = ref<string>('');
-    const url = "https://readease-c20240125180045.azurewebsites.net/";
+    // const url = "https://readease-c20240125180045.azurewebsites.net/";
+    const url="https://localhost:7284/"
 
 const register = () => {
     axios.post(`${url}api/register`, {

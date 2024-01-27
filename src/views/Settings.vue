@@ -13,7 +13,7 @@ import { ref } from "vue";
 import axios from "axios";
 import { loadUserFromLocalStorage, saveUserToLocalStorage } from "@/store/authStore";
 const newUsername = ref<string>("");
-    const url = "http://localhost:5000/";
+    const url="https://localhost:7284/"
     const user = loadUserFromLocalStorage();
 const id = user ? user.id : null;
 const password = user.password;
