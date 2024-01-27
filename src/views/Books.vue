@@ -264,7 +264,12 @@ const searchBook = () => {
 };
 
 let debounceTimer = 0;
-
+const API_KEY='egM8BbGFHGODa7lpiV0SFCAKhJlzG72G';
+const getnybooks = async () => {
+  const url = `https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=egM8BbGFHGODa7lpiV0SFCAKhJlzG72G`;
+  const response = await axios.get(url);
+  console.log(response.data);
+}
 const handleInput = () => {
   clearTimeout(debounceTimer);
   searchedBooks.value = [];
@@ -276,5 +281,6 @@ const handleInput = () => {
 onMounted(() => {
   getAllBooks();
   getBooks();
+  getnybooks();
 });
 </script>
