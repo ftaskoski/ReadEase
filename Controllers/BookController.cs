@@ -5,11 +5,14 @@ using WebApplication1.Models;
 using System.Data.SqlClient;
 using System.Text;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication1.Controllers
 {
     [ApiController]
     [Route("api")]
+    [Authorize]
+
     public class BooksController : ControllerBase
     {
         private readonly IConfiguration _configuration;

@@ -1,6 +1,11 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Data.SqlClient;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using WebApplication1.Models;
 
 namespace userController.Controllers
@@ -17,6 +22,7 @@ namespace userController.Controllers
         }
 
         [HttpGet("users")]
+        [Authorize]
         public ActionResult getUsers()
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
@@ -56,7 +62,8 @@ namespace userController.Controllers
 
                 // Set the generated Id in the FormModel
                 model.Id = userId;
-                return Ok(model);
+                var token = GenerateJwtToken(model);
+                return Ok(new { Token = token, User = model });
             }
 
 
@@ -75,7 +82,9 @@ namespace userController.Controllers
 
                 if (user != null)
                 {
-                    return Ok(user);
+                    var token = GenerateJwtToken(user);
+
+                    return Ok(new { Token = token, User = user });
                 }
                 else
                 {
@@ -87,6 +96,7 @@ namespace userController.Controllers
         }
 
         [HttpPut("update/{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateUser([FromBody] FormModel model, int id)
         {
 
@@ -114,6 +124,7 @@ namespace userController.Controllers
 
 
         [HttpDelete("delete/{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteUser(int id)
         {
 
@@ -126,6 +137,29 @@ namespace userController.Controllers
 
                 return Ok($"User with ID {id} has been deleted");
             }
+        }
+
+        private string GenerateJwtToken(FormModel user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            // Use a byte array for the key
+            var key = Encoding.UTF8.GetBytes("this is my custom Secret key for authentication");
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username)
+                    // Add additional claims as needed
+                }),
+                Expires = DateTime.UtcNow.AddHours(1), // Adjust the expiration time as needed
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }
