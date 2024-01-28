@@ -1,6 +1,12 @@
 <template>
-  <div class="absolute  top-0 left-1/2  ">
-    <div >
+  <div class="flex flex-col sm:flex-row">
+    <div class="order-2 sm:order-1 w-full sm:w-64">
+      <sideBar />
+    </div>
+
+    <div class="order-1 sm:order-2 sm:ml-64 p-4 w-full">
+      <div>
+    <div>
       <p>Insert books</p>
       <form @submit.prevent="addBook">
         <label for="author">Author</label>
@@ -50,7 +56,7 @@
       />
     </div>
 
-    <div class="overflow-x-auto ">
+    <div class="flex justify-center items-center ">
       <table class="table-auto w-full">
         <thead>
           <tr>
@@ -87,7 +93,7 @@
       </table>
     </div>
 
-    <div class="flex justify-center items-center">
+    <div class="flex justify-center items-center mt-4">
       <button
         class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         @click="changePage(currPage - 1)"
@@ -105,23 +111,31 @@
       </button>
     </div>
   </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import axios from "axios";
 import { ref, onMounted, computed, watch } from "vue";
 import { loadUserFromLocalStorage } from "@/store/authStore";
+import sideBar from "@/components/sideBar.vue";
 
 const url="https://localhost:7284/"
 const author = ref<string>("");
 const title = ref<string>("");
 const user = loadUserFromLocalStorage();
-const id = user ? user.id : null;
+const id = user ? user.user.id : null;
+const token = user ? user.token : null;
 const bookCollection = ref<any[]>();
 const bookPaginated = ref<any[]>();
+
+
+const authorization = `Bearer ${token}`;
+
 const downloadBooks = () => {
   axios
-    .get(`${url}api/downloadbooks/${id}`, { responseType: "arraybuffer" })
+    .get(`${url}api/downloadbooks/${id}`, { responseType: "arraybuffer", headers: { Authorization: authorization } })
     .then((response) => {
       const blob = new Blob([response.data], {
         type: response.headers["content-type"],
@@ -141,6 +155,10 @@ const addBook = () => {
     .post(`${url}api/insertbook/${id}`, {
       author: author.value,
       title: title.value,
+    }, {
+      headers: {
+        Authorization: authorization
+      }
     })
     .then((response) => {
       author.value = "";
@@ -183,6 +201,10 @@ const getBooks = () => {
       params: {
         pageNumber: currPage.value,
       },
+      headers: {
+        Authorization: authorization,
+      }
+
     })
     .then((response) => {
       bookPaginated.value = response.data;
@@ -193,7 +215,11 @@ const getBooks = () => {
 };
 const getAllBooks = () => {
   axios
-    .get(`${url}api/getallbooks/${id}`)
+    .get(`${url}api/getallbooks/${id}`, {
+      headers: {
+        Authorization: authorization,
+      }
+    })
     .then((response) => {
       bookCollection.value = response.data;
     })
@@ -203,7 +229,11 @@ const getAllBooks = () => {
 };
 const deleteBook = (id: number) => {
   axios
-    .delete(`${url}api/deletebook/${id}`)
+    .delete(`${url}api/deletebook/${id}`, {
+      headers: {
+        Authorization: authorization
+      }
+    })
     .then(() => {
       if (searchQuery.value) {
         searchedBooksFull();
@@ -244,6 +274,9 @@ const searchedBooksFull = () => {
       params: {
         search: searchQuery.value,
       },
+      headers: {
+        Authorization: authorization
+      }
     })
     .then((response) => {
       searchedBooksAll.value = response.data;
@@ -257,6 +290,9 @@ const searchBook = () => {
         search: searchQuery.value,
         pageNumber: currPage.value,
       },
+      headers: {
+        Authorization: authorization
+      }
     })
     .then((response) => {
       searchedBooks.value = response.data;

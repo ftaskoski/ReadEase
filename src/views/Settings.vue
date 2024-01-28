@@ -15,14 +15,17 @@ import { loadUserFromLocalStorage, saveUserToLocalStorage } from "@/store/authSt
 const newUsername = ref<string>("");
     const url="https://localhost:7284/"
     const user = loadUserFromLocalStorage();
-const id = user ? user.id : null;
-const password = user.password;
+const id = user ? user.user.id : null;
+const token = user ? user.token : null;
+const password = user.user.password;
+const authorization = `Bearer ${token}`;
 
 async function changeUsername() {
          await axios.put(`${url}api/update/${id}`, {
             username: newUsername.value,
             password: password
-        }).then((response) => {
+            
+        }, { headers: { Authorization: authorization } }).then((response) => {
             const updatedUser = { ...user, username: newUsername.value };
             saveUserToLocalStorage(updatedUser);
             newUsername.value = "";
