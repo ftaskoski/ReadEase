@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -36,16 +38,29 @@ namespace userController.Controllers
 
         }
 
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            if (Request.Cookies[".AspNetCore.Cookies"] != null || Request.Cookies[".AspNetCore.Cookies".ToLower()] != null)
+            {
+                // Cookie found
+                return Ok("Cookie found");
+            }
+            else
+            {
+                // Cookie not found
+                return BadRequest();
+            }
+        }
+
 
         [HttpPost("register")]
         public async Task<IActionResult> PostUser([FromBody] FormModel model)
         {
-
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
             using (var connection = new SqlConnection(connectionString))
             {
-
                 // Check if the user with the same username already exists
                 string checkUserQuery = "SELECT COUNT(*) FROM Users WHERE Username = @Username";
                 int existingUser = await connection.QueryFirstOrDefaultAsync<int>(checkUserQuery, new { Username = model.Username });
@@ -62,17 +77,30 @@ namespace userController.Controllers
 
                 // Set the generated Id in the FormModel
                 model.Id = userId;
-                var token = GenerateJwtToken(model);
-                return Ok(new { Token = token, User = model });
+
+                // Create claims for the registered user
+                var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, model.Id.ToString()),
+            new Claim(ClaimTypes.Name, model.Username),
+            // Add additional claims as needed
+        };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var principal = new ClaimsPrincipal(identity);
+
+                // Sign in the user after registration
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+                return Ok(model);
             }
-
-
         }
+
 
         [HttpPost("login")]
         public async Task<ActionResult> LoginUser([FromBody] FormModel model)
         {
-
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
             using (var connection = new SqlConnection(connectionString))
@@ -82,9 +110,22 @@ namespace userController.Controllers
 
                 if (user != null)
                 {
-                    var token = GenerateJwtToken(user);
+                    // Create claims for the authenticated user
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                        new Claim(ClaimTypes.Name, user.Username),
+                        // Add additional claims as needed
+                    };
 
-                    return Ok(new { Token = token, User = user });
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    var principal = new ClaimsPrincipal(identity);
+
+                    // Sign in the user
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+                    return Ok(user);
                 }
                 else
                 {
@@ -92,7 +133,6 @@ namespace userController.Controllers
                     return Unauthorized();
                 }
             }
-
         }
 
         [HttpPut("update/{id}")]
@@ -139,27 +179,6 @@ namespace userController.Controllers
             }
         }
 
-        private string GenerateJwtToken(FormModel user)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
 
-            // Use a byte array for the key
-            var key = Encoding.UTF8.GetBytes("this is my custom Secret key for authentication");
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username)
-                    // Add additional claims as needed
-                }),
-                Expires = DateTime.UtcNow.AddHours(1), // Adjust the expiration time as needed
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
     }
 }
