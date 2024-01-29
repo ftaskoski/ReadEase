@@ -125,17 +125,15 @@ const url="https://localhost:7284/"
 const author = ref<string>("");
 const title = ref<string>("");
 const user = loadUserFromLocalStorage();
-const id = user ? user.user.id : null;
-const token = user ? user.token : null;
+const id = user ? user.id : null;
 const bookCollection = ref<any[]>();
 const bookPaginated = ref<any[]>();
 
 
-const authorization = `Bearer ${token}`;
 
 const downloadBooks = () => {
   axios
-    .get(`${url}api/downloadbooks/${id}`, { responseType: "arraybuffer", headers: { Authorization: authorization } })
+    .get(`${url}api/downloadbooks/${id}`, { responseType: "arraybuffer", withCredentials: true })
     .then((response) => {
       const blob = new Blob([response.data], {
         type: response.headers["content-type"],
@@ -155,11 +153,8 @@ const addBook = () => {
     .post(`${url}api/insertbook/${id}`, {
       author: author.value,
       title: title.value,
-    }, {
-      headers: {
-        Authorization: authorization
-      }
-    })
+    },{withCredentials: true,})
+    
     .then((response) => {
       author.value = "";
       title.value = "";
@@ -200,11 +195,9 @@ const getBooks = () => {
     .get(`${url}api/getbooks/${id}`, {
       params: {
         pageNumber: currPage.value,
+        
       },
-      headers: {
-        Authorization: authorization,
-      }
-
+      withCredentials: true,
     })
     .then((response) => {
       bookPaginated.value = response.data;
@@ -216,9 +209,7 @@ const getBooks = () => {
 const getAllBooks = () => {
   axios
     .get(`${url}api/getallbooks/${id}`, {
-      headers: {
-        Authorization: authorization,
-      }
+      withCredentials: true,
     })
     .then((response) => {
       bookCollection.value = response.data;
@@ -230,10 +221,9 @@ const getAllBooks = () => {
 const deleteBook = (id: number) => {
   axios
     .delete(`${url}api/deletebook/${id}`, {
-      headers: {
-        Authorization: authorization
-      }
+      withCredentials: true,
     })
+    
     .then(() => {
       if (searchQuery.value) {
         searchedBooksFull();
@@ -270,13 +260,14 @@ watch(searchQuery, () => {
 
 const searchedBooksFull = () => {
   axios
-    .get(`${url}api/searchbooksall/${id}`, {
+    .get(`${url}api/searchbooksall/${id}`, 
+    
+    {
       params: {
         search: searchQuery.value,
       },
-      headers: {
-        Authorization: authorization
-      }
+      withCredentials: true,
+     
     })
     .then((response) => {
       searchedBooksAll.value = response.data;
@@ -290,9 +281,7 @@ const searchBook = () => {
         search: searchQuery.value,
         pageNumber: currPage.value,
       },
-      headers: {
-        Authorization: authorization
-      }
+      withCredentials: true,
     })
     .then((response) => {
       searchedBooks.value = response.data;

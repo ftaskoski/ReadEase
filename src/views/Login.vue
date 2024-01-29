@@ -54,6 +54,8 @@ const login = () : void => {
     .post(`${url}api/login`, {
       username: loginUsername.value,
       password: loginPassword.value,
+    },{
+      withCredentials:true
     })
     .then((response) => {
       console.log('Login successful:', response);

@@ -47,7 +47,7 @@ const register = () => {
     axios.post(`${url}api/register`, {
         username: username.value,
         password: password.value
-    }).then((response) => {
+    },{withCredentials:true}).then((response) => {
         console.log(response.data)
         saveUserToLocalStorage(response.data);
       setAuthenticated(true);
