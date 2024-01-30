@@ -104,7 +104,7 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const url = "https://localhost:7284/";
-const isSidebarOpen = ref(window.innerWidth >= 1024);
+const isSidebarOpen = ref(false); // Set initial value to false
 const overflow = ref<boolean>(false);
 
 function toggleOverflow(): void {
