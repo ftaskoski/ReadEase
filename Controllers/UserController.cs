@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebApplication1.Models;
+using RestSharp;
 
 namespace userController.Controllers
 {
@@ -41,16 +42,16 @@ namespace userController.Controllers
         [HttpPost("logout")]
         public IActionResult Logout()
         {
-            if (Request.Cookies[".AspNetCore.Cookies"] != null || Request.Cookies[".AspNetCore.Cookies".ToLower()] != null)
+            Response.Cookies.Delete(".AspNetCore.Cookies", new CookieOptions
             {
-                // Cookie found
-                return Ok("Cookie found");
-            }
-            else
-            {
-                // Cookie not found
-                return BadRequest();
-            }
+                Path = "/",
+                Secure = true, 
+                HttpOnly = true,
+               SameSite = SameSiteMode.None
+            });
+
+
+            return Ok( "Logout successful" );
         }
 
 
@@ -144,7 +145,6 @@ namespace userController.Controllers
 
             using (var connection = new SqlConnection(connectionString))
             {
-                await connection.OpenAsync();
 
                 string checkUserQuery = "SELECT COUNT(*) FROM Users WHERE Id = @Id";
                 var userCount = await connection.QueryFirstOrDefaultAsync<int>(checkUserQuery, new { Id = id });
