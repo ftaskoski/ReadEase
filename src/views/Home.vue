@@ -27,12 +27,20 @@ const router = useRouter();
 const url = "https://localhost:7284/";
 
 const logout = (): void => {
-  axios.post(`${url}api/logout`).then((response) => {
-    console.log(response.data);
-  });
+  axios.post(`${url}api/logout`, {}, {
+    withCredentials: true
+  })
+  .then(response => {
 
   clearUserFromLocalStorage();
+
   router.push("/login");
+  
   setAuthenticated(false);
+  })
+  .catch(error => {
+    console.error('Error during logout:', error);
+  });
 };
+
 </script>
