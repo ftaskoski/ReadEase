@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-col sm:flex-row">
+  <div >
     <div class="order-2 sm:order-1 w-full sm:w-64">
       <sideBar />
     </div>
 
-    <div class="order-1 sm:order-2 sm:ml-64 p-4 w-full">
+    <div class="order-1 sm:order-2 sm:ml-64 p-4 ">
       <div>
     <div>
       <p>Insert books</p>
@@ -56,7 +56,7 @@
       />
     </div>
 
-    <div class="flex justify-center items-center ">
+    <div class="flex justify-center items-center">
       <table class="table-auto w-full">
         <thead>
           <tr>
