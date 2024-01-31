@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { setAuthenticated, clearUserFromLocalStorage } from "@/store/authStore";
+import { setAuthenticated, clearUserFromCookie } from "@/store/authStore";
 import axios from "axios";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -32,7 +32,7 @@ const logout = (): void => {
   })
   .then(response => {
 
-  clearUserFromLocalStorage();
+  clearUserFromCookie();
 
   router.push("/login");
   

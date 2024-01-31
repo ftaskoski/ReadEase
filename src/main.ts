@@ -3,11 +3,11 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import { isAuthenticated, loadUserFromLocalStorage } from '@/store/authStore';
+import { isAuthenticated, loadUserFromCookie } from '@/store/authStore';
 
 const app = createApp(App)
 
-const user = loadUserFromLocalStorage();
+const user = loadUserFromCookie();
 if (user) {
   isAuthenticated.value = true;
 }

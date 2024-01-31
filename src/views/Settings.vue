@@ -17,12 +17,12 @@
 import { ref } from "vue";
 import axios from "axios";
 import {
-  loadUserFromLocalStorage,
-  saveUserToLocalStorage,
+  loadUserFromCookie,
+  saveUserToCookie,
 } from "@/store/authStore";
 const newUsername = ref<string>("");
 const url = "https://localhost:7284/";
-const user = loadUserFromLocalStorage();
+const user = loadUserFromCookie();
 const id = user ? user.id : null;
 const token = user ? user.token : null;
 const password = user.password;
@@ -40,7 +40,7 @@ async function changeUsername() {
     )
     .then((response) => {
       const updatedUser = { ...user, username: newUsername.value };
-      saveUserToLocalStorage(updatedUser);
+      saveUserToCookie(updatedUser);
       newUsername.value = "";
     });
 }

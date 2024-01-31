@@ -38,7 +38,7 @@
 import { ref,onMounted } from "vue";
 import axios from "axios";
 import { RouterLink, useRouter } from "vue-router";
-import { setAuthenticated, saveUserToLocalStorage, loggedInUser } from "@/store/authStore";
+import { setAuthenticated, saveUserToCookie, loggedInUser } from "@/store/authStore";
 import Card from "@/components/Card.vue";
 const router = useRouter();
 //work const url = "https://readease-c20240125180045.azurewebsites.net/";
@@ -58,9 +58,9 @@ const login = () : void => {
       withCredentials:true
     })
     .then((response) => {
-      console.log('Login successful:', response);
+      //console.log('Login successful:', response);
 
-    saveUserToLocalStorage(response.data);
+    saveUserToCookie(response.data);
       setAuthenticated(true);
       loggedInUser.value = response.data;
       console.log(loggedInUser.value.id);
@@ -68,7 +68,7 @@ const login = () : void => {
         
         Success.value = true;
         router.push("/");
-      console.log(Success.value);
+      //console.log(Success.value);
     })
     .catch((error) => {
       if (error.response && error.response.status === 401) {

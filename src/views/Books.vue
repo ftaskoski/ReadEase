@@ -118,13 +118,13 @@
 <script setup lang="ts">
 import axios from "axios";
 import { ref, onMounted, computed, watch } from "vue";
-import { loadUserFromLocalStorage } from "@/store/authStore";
+import { loadUserFromCookie } from "@/store/authStore";
 import sideBar from "@/components/sideBar.vue";
 
 const url="https://localhost:7284/"
 const author = ref<string>("");
 const title = ref<string>("");
-const user = loadUserFromLocalStorage();
+const user = loadUserFromCookie();
 const id = user ? user.id : null;
 const bookCollection = ref<any[]>();
 const bookPaginated = ref<any[]>();
@@ -293,7 +293,7 @@ const API_KEY='egM8BbGFHGODa7lpiV0SFCAKhJlzG72G';
 const getnybooks = async () => {
   const url = `https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=egM8BbGFHGODa7lpiV0SFCAKhJlzG72G`;
   const response = await axios.get(url);
-  console.log(response.data);
+  //console.log(response.data);
 }
 const handleInput = () => {
   clearTimeout(debounceTimer);
@@ -308,4 +308,7 @@ onMounted(() => {
   getBooks();
   getnybooks();
 });
+
+
+console.log(document.cookie);
 </script>
