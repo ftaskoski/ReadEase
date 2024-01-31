@@ -309,6 +309,4 @@ onMounted(() => {
   getnybooks();
 });
 
-
-console.log(document.cookie);
 </script>
