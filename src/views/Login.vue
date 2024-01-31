@@ -8,7 +8,7 @@
 <form @submit.prevent="login">
 
   <label class="block mb-2 text-sm font-medium text-gray-900" for="username">Username</label>
-  <input class="rounded-lg border-gray-200 border  w-full focus:border-blue-500  focus:outline-none  " type="text" v-model="loginUsername" name="username" id="username">
+  <input class="rounded-lg border-gray-200 border  w-full focus:border-blue-500  focus:outline-none  " type="text" v-model="loginUsername" name="username" id="username" required>
 
 
 
@@ -21,7 +21,7 @@
 
 
   <label class="block  text-sm font-medium text-gray-900 mt-2" for="password">Password</label>
-  <input class="rounded-lg border-gray-200 border  w-full focus:border-blue-500  focus:outline-none  xcv" type="password" v-model="loginPassword" name="password" id="password">
+  <input class="rounded-lg border-gray-200 border  w-full focus:border-blue-500  focus:outline-none  xcv" type="password" v-model="loginPassword" name="password" id="password" required>
 
   <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2" type="submit">Submit</button>
 
@@ -73,7 +73,6 @@ const login = () : void => {
     })
     .catch((error) => {
       if (error.response && error.response.status === 401) {
-        console.log("Incorrect username or password");
         Incorrect.value = true;
         setTimeout(() => {
           Incorrect.value = false;
