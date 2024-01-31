@@ -24,9 +24,7 @@ const newUsername = ref<string>("");
 const url = "https://localhost:7284/";
 const user = loadUserFromCookie();
 const id = user ? user.id : null;
-const token = user ? user.token : null;
 const password = user.password;
-const authorization = `Bearer ${token}`;
 
 async function changeUsername() {
   await axios
