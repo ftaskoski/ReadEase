@@ -81,18 +81,22 @@ namespace userController.Controllers
 
                 // Create claims for the registered user
                 var claims = new List<Claim>
-        {
+                {
             new Claim(ClaimTypes.NameIdentifier, model.Id.ToString()),
             new Claim(ClaimTypes.Name, model.Username),
             // Add additional claims as needed
-        };
-
+                };
+                var authProperties = new AuthenticationProperties
+                {
+                    // Persist the cookie even after the browser is closed
+                    IsPersistent = true
+                };
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
                 var principal = new ClaimsPrincipal(identity);
 
                 // Sign in the user after registration
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,authProperties);
 
                 return Ok(model);
             }
@@ -119,12 +123,17 @@ namespace userController.Controllers
                         // Add additional claims as needed
                     };
 
+                    var authProperties = new AuthenticationProperties
+                    {
+                        // Persist the cookie even after the browser is closed
+                        IsPersistent = true
+                    };
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
                     var principal = new ClaimsPrincipal(identity);
 
                     // Sign in the user
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,authProperties);
 
                     return Ok(user);
                 }
