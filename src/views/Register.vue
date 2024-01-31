@@ -46,7 +46,7 @@
             ></RouterLink
           ></span
         >
-        <span v-if="errorUser" class="text-red-500 mt-2">User already exists</span>
+        <span v-if="errorMsg" class="text-red-500 mt-2">{{ errorMsg }}</span>
       </form>
     </Card>
   </div>
@@ -64,14 +64,22 @@ import {
 import { RouterLink, useRouter } from "vue-router";
 
 const router = useRouter();
-const errorUser = ref<boolean> (false);
 const username = ref<string>("");
 const password = ref<string>("");
 // const url = "https://readease-c20240125180045.azurewebsites.net/";
 const url = "https://localhost:7284/";
+const errorMsg=ref<string>("")
+
 
 const register = () => {
-  axios
+    if (password.value.length < 5) {
+    errorMsg.value="Password too short"
+    setTimeout(() => {
+        errorMsg.value=""
+    }, 2000);
+    return;
+  }
+    axios
     .post(
       `${url}api/register`,
       {
@@ -90,9 +98,9 @@ const register = () => {
 
         console.log(error);
         if(error.response && error.response.status === 409){
-          errorUser.value = true;
+          errorMsg.value="User already exists"
           setTimeout(() => {
-            errorUser.value = false;
+            errorMsg.value=""
           }, 2000);
         }
 
