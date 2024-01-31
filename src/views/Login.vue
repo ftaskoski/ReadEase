@@ -28,6 +28,7 @@
 
 
   <p v-if="Incorrect" class="text-red-500 mt-2">Incorrect Username or Password</p> 
+  <span class="text-sm mt-2 block">Don't have an account? <RouterLink to="/register"><span class="text-blue-500 hover:text-blue-700 hover:underline">Register</span></RouterLink></span>
 </form>
 </Card>
 

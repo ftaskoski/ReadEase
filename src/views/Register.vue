@@ -22,7 +22,7 @@
 
 <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2" type="submit">Submit</button>
 
-
+<span class="text-sm mt-2 block">Alredy have an account? <RouterLink to="/login"><span class="text-blue-500 hover:text-blue-700 hover:underline">Login</span></RouterLink></span>
 
 </form>
         </Card>
@@ -33,7 +33,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import Card from "@/components/Card.vue";
-import { setAuthenticated, saveUserToLocalStorage, loggedInUser } from "@/store/authStore";
+import { setAuthenticated, saveUserToCookie, loggedInUser } from "@/store/authStore";
 import { RouterLink, useRouter } from "vue-router";
 
 const router = useRouter();
@@ -49,7 +49,7 @@ const register = () => {
         password: password.value
     },{withCredentials:true}).then((response) => {
         console.log(response.data)
-        saveUserToLocalStorage(response.data);
+        saveUserToCookie(response.data);
       setAuthenticated(true);
       loggedInUser.value = response.data;
       console.log(loggedInUser.value.id);
