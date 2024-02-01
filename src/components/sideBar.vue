@@ -34,7 +34,7 @@
           class="h-full w-64 px-3 py-16 overflow-y-auto bg-gray-50 dark:bg-gray-800"
         >
           <ul class="space-y-2 font-medium">
-            <li>
+            <li @click="toggleSidebarOnPhone">
               <RouterLink
                 to="/"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -102,8 +102,9 @@
                 >
               </a>
             </li>
-            <li>
+            <li @click="toggleSidebarOnPhone" >
               <RouterLink to="/books"
+              
                 href="#"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
@@ -114,7 +115,7 @@
                 <span class="flex-1 ms-3 whitespace-nowrap">Collection</span>
               </RouterLink>
             </li>
-            <li>
+            <li @click="toggleSidebarOnPhone" >
               <RouterLink
                 to="/settings"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -125,7 +126,7 @@
                 <span class="flex-1 ms-3 whitespace-nowrap">Settings</span>
               </RouterLink>
             </li>
-            <li>
+            <li >
               <RouterLink
                 @click="logout"
                 to="/login"
@@ -195,6 +196,14 @@ const logout = (): void => {
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
+};
+
+const toggleSidebarOnPhone = () => {
+   toggleOverflow();
+
+   if(window.innerWidth < 1024){
+    isSidebarOpen.value = !isSidebarOpen.value;
+   }
 };
 
 const closeSidebarOnClickOutside = (event: MouseEvent) => {

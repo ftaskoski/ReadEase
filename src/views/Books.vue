@@ -1,9 +1,5 @@
 <template>
   <div >
-    <div class="order-2 sm:order-1 w-full sm:w-64">
-      <sideBar />
-    </div>
-
     <div class="order-1 sm:order-2 sm:ml-64 p-4 ">
       <div>
     <div>
@@ -119,7 +115,6 @@
 import axios from "axios";
 import { ref, onMounted, computed, watch } from "vue";
 import { loadUserFromCookie } from "@/store/authStore";
-import sideBar from "@/components/sideBar.vue";
 
 const url="https://localhost:7284/"
 const author = ref<string>("");
