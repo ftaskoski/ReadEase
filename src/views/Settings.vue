@@ -1,7 +1,7 @@
 <template>
-  <div class="order-1 sm:order-3 sm:ml-64 px-44 py-52">
-    <form @submit.prevent="changeUsername">
-      <div class="w-72">
+  <div class="order-1 sm:order-3 sm:ml-64 px-4 sm:px-8 py-8 sm:py-16 md:py-32 lg:py-52">
+    <form @submit.prevent="changeUsername" class="max-w-md lg:mx-10 mx-auto">
+      <div class="w-full">
         <!-- Current Username Input -->
         <div class="relative w-full min-w-[200px] h-10 mb-6">
           <input
