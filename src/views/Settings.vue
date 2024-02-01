@@ -1,4 +1,7 @@
 <template>
+      <div class="order-2 sm:order-1 w-full sm:w-64">
+      <sideBar />
+    </div>
   <div class="flex justify-center items-center h-screen">
     <form @submit.prevent="changeUsername">
       <label for="username">Username</label>
@@ -16,6 +19,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import axios from "axios";
+import sideBar from "@/components/sideBar.vue";
 import {
   loadUserFromCookie,
   saveUserToCookie,
