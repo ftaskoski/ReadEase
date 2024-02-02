@@ -126,7 +126,7 @@
                 <span class="flex-1 ms-3 whitespace-nowrap">Settings</span>
               </RouterLink>
             </li>
-            <li>
+            <li v-if="isAuthenticated">
               <RouterLink
                 @click="logout"
                 to="/login"
@@ -169,14 +169,13 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount } from "vue";
-import { setAuthenticated, clearUserFromCookie, role } from "@/store/authStore";
+import { setAuthenticated, clearUserFromCookie, role,isAuthenticated } from "@/store/authStore";
 import axios from "axios";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const url = "https://localhost:7284/";
 const isSidebarOpen = ref(false); // Set initial value to false
 const overflow = ref<boolean>(false);
-
 function toggleOverflow(): void {
   overflow.value = !overflow.value;
   if (overflow.value) {
@@ -197,7 +196,6 @@ const logout = (): void => {
     )
     .then((response) => {
       clearUserFromCookie();
-
       router.push("/login");
       role.value = "";
       setAuthenticated(false);
