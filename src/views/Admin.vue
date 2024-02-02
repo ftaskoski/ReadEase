@@ -1,20 +1,19 @@
 <template>
-    <div>
-            hi
-    </div>
+  <div>hi</div>
 </template>
 
 <script setup lang="ts">
 import axios from "axios";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 const url = "https://localhost:7284/";
+const users = ref<any[]>([]);
 const getUser = () => {
   axios
     .get(`${url}api/users`, {
       withCredentials: true,
     })
     .then((response) => {
-      console.log(response.data);
+      users.value = response.data;
     })
     .catch((error) => {
       console.error(error);
@@ -22,10 +21,7 @@ const getUser = () => {
 };
 onMounted(() => {
   getUser();
-
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
