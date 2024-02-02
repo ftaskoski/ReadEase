@@ -118,8 +118,8 @@ namespace userController.Controllers
                     // Retrieve the role from the database
                         string role = await CheckIfUserIsAdminAsync(user.Id);
 
-                        // Create claims for the authenticated user
-                        var claims = new List<Claim>
+                    // Create claims for the authenticated user
+                    var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Username),
@@ -140,7 +140,6 @@ namespace userController.Controllers
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
                         user.Role = role ?? "User";
-
                         return Ok(user);
                     }
                     else
@@ -194,7 +193,7 @@ namespace userController.Controllers
 
 
         [HttpDelete("delete/{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
 
