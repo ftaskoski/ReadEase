@@ -17,6 +17,8 @@ export const loadUserFromCookie = (): any => {
   return null;
 };
 
+
+
 export const saveUserToCookie = (user: any): void => {
   const expirationTime = new Date();
   expirationTime.setTime(expirationTime.getTime() + 1 * 24 * 60 * 60 * 1000);
@@ -50,3 +52,5 @@ const setCookie = (name: string, value: string, expirationTime: Date): void => {
 const clearCookie = (name: string): void => {
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 };
+
+export const role = ref<string>('');

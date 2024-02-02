@@ -139,6 +139,11 @@
                 <span class="flex-1 ms-3 whitespace-nowrap mb-1">Sign Out</span>
               </RouterLink>
             </li>
+            <li v-if="role == 'Admin'">
+                <RouterLink to="/admin">
+                    Admin
+                </RouterLink>
+            </li>
           </ul>
         </div>
       </aside>
@@ -156,7 +161,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount } from "vue";
-import { setAuthenticated, clearUserFromCookie } from "@/store/authStore";
+import { setAuthenticated, clearUserFromCookie,role } from "@/store/authStore";
 import axios from "axios";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -186,7 +191,7 @@ const logout = (): void => {
       clearUserFromCookie();
 
       router.push("/login");
-
+      role.value = '';
       setAuthenticated(false);
     })
     .catch((error) => {
