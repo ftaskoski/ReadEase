@@ -25,7 +25,7 @@ namespace userController.Controllers
         }
 
         [HttpGet("users")]
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         public ActionResult getUsers()
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
@@ -73,7 +73,7 @@ namespace userController.Controllers
                 }
 
                 // Insert the data into the Users table and retrieve the generated Id using Dapper
-                string insertQuery = "INSERT INTO Users (Username, Password) OUTPUT INSERTED.Id VALUES (@Username, @Password)";
+                string insertQuery = "INSERT INTO Users (Username, Password, Role) OUTPUT INSERTED.Id VALUES (@Username, @Password, 'User')";
                 int userId = await connection.QueryFirstOrDefaultAsync<int>(insertQuery, new { Username = model.Username, Password = model.Password });
 
                 // Set the generated Id in the FormModel
@@ -112,36 +112,57 @@ namespace userController.Controllers
             {
                 string selectQuery = "SELECT * FROM Users WHERE Username = @Username AND Password = @Password";
                 var user = await connection.QueryFirstOrDefaultAsync<FormModel>(selectQuery, new { Username = model.Username, Password = model.Password });
-
+                
                 if (user != null)
                 {
-                    // Create claims for the authenticated user
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        new Claim(ClaimTypes.Name, user.Username),
-                        // Add additional claims as needed
-                    };
+                    // Retrieve the role from the database
+                        string role = await CheckIfUserIsAdminAsync(user.Id);
 
-                    var authProperties = new AuthenticationProperties
-                    {
-                        // Persist the cookie even after the browser is closed
-                        IsPersistent = true
-                    };
-                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                    var principal = new ClaimsPrincipal(identity);
-
-                    // Sign in the user
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,authProperties);
-
-                    return Ok(user);
-                }
-                else
+                        // Create claims for the authenticated user
+                        var claims = new List<Claim>
                 {
-                    // Return 401 Unauthorized
-                    return Unauthorized();
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, role ?? "User") // Default to "User" if role is null
+                    // Add additional claims as needed
+                };
+
+                        var authProperties = new AuthenticationProperties
+                        {
+                            // Persist the cookie even after the browser is closed
+                            IsPersistent = true
+                        };
+                        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                        var principal = new ClaimsPrincipal(identity);
+
+                        // Sign in the user
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
+
+                        user.Role = role ?? "User";
+
+                        return Ok(user);
+                    }
+                    else
+                    {
+                        // Return 401 Unauthorized
+                        return Unauthorized();
+                    }
                 }
+            }
+
+
+        private async Task<string> CheckIfUserIsAdminAsync(int userId)
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                string checkAdminQuery = "SELECT Role FROM Users WHERE Id = @Id";
+                string role = await connection.QueryFirstOrDefaultAsync<string>(checkAdminQuery, new { Id = userId });
+
+                // Check if the role is 'Admin'
+                return role ?? string.Empty;
             }
         }
 
