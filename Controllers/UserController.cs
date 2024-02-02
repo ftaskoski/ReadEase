@@ -26,15 +26,16 @@ namespace userController.Controllers
 
         [HttpGet("users")]
         [Authorize(Roles ="Admin")]
-        public ActionResult getUsers()
+        public IEnumerable<FormModel> getUsers()
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
             using(var connection = new SqlConnection(connectionString))
             {
                 string selectQuery = "SELECT * FROM Users";
-                var users = connection.Query(selectQuery);
-                return Ok(users);
+                var users = connection.Query<FormModel>(selectQuery);
+                return users;
+                
             }
 
         }
