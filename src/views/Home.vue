@@ -1,28 +1,18 @@
 <template>
-  <div class="flex justify-center items-center">
-    <RouterLink
-      class="mr-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      to="/settings"
-      >Settings</RouterLink
-    >
-    <RouterLink
-      class="mr-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      to="/books"
-      >Books</RouterLink
-    >
-    <button
-      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
-      @click="logout"
-    >
-      Logout
-    </button>
+   <div class="order-1 sm:order-2 sm:ml-64 p-4 ">
+  <div class="relative group flex flex-wrap justify-center items-center">
+    <div v-for="book in books" :key="book.rank" class="w-1/3 p-2">
+      <img :src="book.book_image" :alt="book.title" class="" />
+    </div>
   </div>
+</div>
 </template>
 
 <script setup lang="ts">
 import { setAuthenticated, clearUserFromCookie} from "@/store/authStore";
 import axios from "axios";
-import { useRouter} from "vue-router";
+import { useRouter,} from "vue-router";
+import {ref , onMounted } from 'vue';
 const router = useRouter();
 const url = "https://localhost:7284/";
 
@@ -42,5 +32,17 @@ const logout = (): void => {
     console.error('Error during logout:', error);
   });
 };
+const books = ref<any[]>([]);
+const getnybooks = async () => {
+  const url = `https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=egM8BbGFHGODa7lpiV0SFCAKhJlzG72G`;
+  const response = await axios.get(url).then((response)=>{
+    console.log(response.data.results.books);
+    books.value=response.data.results.books;
+    console.log(books.value);
+  })
+}
+onMounted(()=>{
+  getnybooks();
+})
 
 </script>

@@ -39,8 +39,10 @@
       >
         Submit
       </button>
+      <div class="absolute sm:left-[55%] sm:top-[20%]   sm:w-[1px] sm:h-[60%] bg-gray-600"></div>
     </form>
   </div>
+
 </template>
 
 

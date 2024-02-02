@@ -206,14 +206,16 @@ const logout = (): void => {
 };
 
 const toggleSidebar = () => {
+  toggleOverflow();
   isSidebarOpen.value = !isSidebarOpen.value;
 };
 
 const toggleSidebarOnPhone = () => {
-  toggleOverflow();
-
+  
   if (window.innerWidth < 1024) {
     isSidebarOpen.value = !isSidebarOpen.value;
+    toggleOverflow();
+
   }
 };
 
@@ -230,6 +232,7 @@ const closeSidebarOnClickOutside = (event: MouseEvent) => {
     isSidebarOpen.value
   ) {
     isSidebarOpen.value = false;
+    toggleOverflow();
   }
 };
 
