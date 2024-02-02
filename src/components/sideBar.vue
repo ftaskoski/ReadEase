@@ -102,31 +102,31 @@
                 >
               </a>
             </li>
-            <li @click="toggleSidebarOnPhone" >
-              <RouterLink to="/books"
-              
+            <li @click="toggleSidebarOnPhone">
+              <RouterLink
+                to="/books"
                 href="#"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
-              <i
+                <i
                   class="fa-solid fa-book flex-shrink-0 w-5 pt-0.5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                 ></i>
-              
+
                 <span class="flex-1 ms-3 whitespace-nowrap">Collection</span>
               </RouterLink>
             </li>
-            <li @click="toggleSidebarOnPhone" >
+            <li @click="toggleSidebarOnPhone">
               <RouterLink
                 to="/settings"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <i
-                  class="fa-solid fa-gear flex-shrink-0 w-5 mt-1 h-5  text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                  class="fa-solid fa-gear flex-shrink-0 w-5 mt-1 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                 ></i>
                 <span class="flex-1 ms-3 whitespace-nowrap">Settings</span>
               </RouterLink>
             </li>
-            <li >
+            <li>
               <RouterLink
                 @click="logout"
                 to="/login"
@@ -139,10 +139,18 @@
                 <span class="flex-1 ms-3 whitespace-nowrap mb-1">Sign Out</span>
               </RouterLink>
             </li>
+     
             <li v-if="role == 'Admin'">
-                <RouterLink to="/admin">
-                    Admin
-                </RouterLink>
+              <RouterLink
+                to="/admin"
+                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              >
+                <i
+                  class="fa fa-user-tie flex-shrink-0 w-5 mt-0.5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                  aria-hidden="true"
+                ></i>
+                <span class="flex-1 ms-3 whitespace-nowrap mb-1">Admin</span>
+              </RouterLink>
             </li>
           </ul>
         </div>
@@ -161,7 +169,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount } from "vue";
-import { setAuthenticated, clearUserFromCookie,role } from "@/store/authStore";
+import { setAuthenticated, clearUserFromCookie, role } from "@/store/authStore";
 import axios from "axios";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -191,7 +199,7 @@ const logout = (): void => {
       clearUserFromCookie();
 
       router.push("/login");
-      role.value = '';
+      role.value = "";
       setAuthenticated(false);
     })
     .catch((error) => {
@@ -204,11 +212,11 @@ const toggleSidebar = () => {
 };
 
 const toggleSidebarOnPhone = () => {
-   toggleOverflow();
+  toggleOverflow();
 
-   if(window.innerWidth < 1024){
+  if (window.innerWidth < 1024) {
     isSidebarOpen.value = !isSidebarOpen.value;
-   }
+  }
 };
 
 const closeSidebarOnClickOutside = (event: MouseEvent) => {
