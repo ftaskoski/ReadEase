@@ -10,16 +10,6 @@
   <label class="block mb-2 text-sm font-medium text-gray-900" for="username">Username</label>
   <input class="rounded-lg border-gray-200 border  w-full focus:border-blue-500  focus:outline-none  " type="text" v-model="loginUsername" name="username" id="username" required>
 
-
-
-
-
-
-
-
-
-
-
   <label class="block  text-sm font-medium text-gray-900 mt-2" for="password">Password</label>
   <input class="rounded-lg border-gray-200 border  w-full focus:border-blue-500  focus:outline-none  xcv" type="password" v-model="loginPassword" name="password" id="password" required>
 
