@@ -62,6 +62,7 @@
           <tr>
             <th class="px-4 py-2">Author</th>
             <th class="px-4 py-2">Title</th>
+            <th class="px-4 py-2">Category</th>
           </tr>
         </thead>
         <tbody>
