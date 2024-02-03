@@ -170,6 +170,7 @@ const addBook = () => {
     .then((response) => {
       author.value = "";
       title.value = "";
+      selectedCategory.value = null;
       getAllBooks();
       getBooks();
       if (searchQuery.value) {
