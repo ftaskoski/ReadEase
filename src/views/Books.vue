@@ -29,6 +29,10 @@
         >
           Submit
         </button>
+        Select a Category
+        <select @change="getCategoryIdFromSelectedCategory" v-model="selectedCategory" class="w-full sm:w-auto px-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300">
+          <option v-for="category in categories" :key="category" :value="category">{{ category.categoryName }}</option>
+        </select>
       </form>
       <button
         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
@@ -143,11 +147,19 @@ const downloadBooks = () => {
     });
 };
 
+
+const selectedCategory = ref<{ categoryName: string; categoryId: number } | null>(null);
+const categories = ref<any[]>([]);
+    const getCategoryIdFromSelectedCategory = () => {
+      console.log(selectedCategory.value ? selectedCategory.value.categoryId : null);
+};
 const addBook = () => {
+  const categoryIdToAdd = selectedCategory.value ? selectedCategory.value.categoryId : null;
   axios
     .post(`${url}api/insertbook/${id}`, {
       author: author.value,
       title: title.value,
+      CategoryId: categoryIdToAdd,
     },{withCredentials: true,})
     
     .then((response) => {
@@ -298,7 +310,18 @@ const handleInput = () => {
   }, 1000);
 };
 
+
+
+const getAllCategories = () =>{
+
+  axios.get(`${url}api/categories`,{withCredentials: true}).then((response)=>{
+    categories.value=response.data;
+  })
+
+}
+
 onMounted(() => {
+  getAllCategories();
   getAllBooks();
   getBooks();
   getnybooks();
