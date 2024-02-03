@@ -37,13 +37,6 @@ namespace WebApplication1.Controllers
             }
         }
 
-        private IEnumerable <CategoriesModel> QueryCategories(string query, object parameters = null)
-        {
-            using (var connection = GetSqlConnection())
-            {
-                return connection.Query<CategoriesModel>(query, parameters);
-            }
-        }
 
         private void Execute(string query, object parameters = null)
         {
@@ -120,12 +113,7 @@ namespace WebApplication1.Controllers
             return QueryBooks(getQuery, new { Id = id });
         }
 
-        [HttpGet("categories")]
-        public IEnumerable<CategoriesModel> getCategorie()
-        {
-            string getQuery = "SELECT * FROM CATEGORIES";
-            return QueryCategories(getQuery);
-        }
+  
 
 
         [HttpDelete("deletebook/{id}")]
