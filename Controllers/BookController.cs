@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Text;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using ReadEase_C_.Models;
 
 namespace WebApplication1.Controllers
 {
@@ -33,6 +34,14 @@ namespace WebApplication1.Controllers
             using (var connection = GetSqlConnection())
             {
                 return connection.Query<BookModel>(query, parameters);
+            }
+        }
+
+        private IEnumerable <CategoriesModel> QueryCategories(string query, object parameters = null)
+        {
+            using (var connection = GetSqlConnection())
+            {
+                return connection.Query<CategoriesModel>(query, parameters);
             }
         }
 
@@ -96,8 +105,10 @@ namespace WebApplication1.Controllers
         [HttpPost("insertbook/{id}")]
         public IActionResult InsertBook([FromBody] BookModel model, int id)
         {
-            string insertQuery = "INSERT INTO Books (Title, Author, UserId) VALUES (@Title, @Author, @UserId);";
-            Execute(insertQuery, new { model.Title, Author = model.Author, UserId = id });
+
+
+            string insertQuery = "INSERT INTO Books (Title, Author, UserId, CategoryId) VALUES (@Title, @Author, @UserId, @CategoryId);";
+            Execute(insertQuery, new { model.Title, Author = model.Author, UserId = id, CategoryId = model.CategoryId });
 
             return Ok("Book has been added");
         }
@@ -108,6 +119,14 @@ namespace WebApplication1.Controllers
             string getQuery = "SELECT * FROM BOOKS WHERE UserId=@Id";
             return QueryBooks(getQuery, new { Id = id });
         }
+
+        [HttpGet("categories")]
+        public IEnumerable<CategoriesModel> getCategorie()
+        {
+            string getQuery = "SELECT * FROM CATEGORIES";
+            return QueryCategories(getQuery);
+        }
+
 
         [HttpDelete("deletebook/{id}")]
         public ActionResult DeleteBook(int id)
