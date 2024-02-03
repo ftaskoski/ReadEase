@@ -34,10 +34,22 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("categories")]
-        public IEnumerable<CategoriesModel> getCategorie()
+        public IEnumerable<CategoriesModel> getCategories()
         {
             string getQuery = "SELECT * FROM CATEGORIES";
             return QueryCategories(getQuery);
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("insertcategory")]
+        public void insertCategories(CategoriesModel category)
+        {
+            using(var connection = GetSqlConnection())
+            {
+                string insertQuery = "INSERT INTO Categories (CategoryName) VALUES (@CategoryName)";
+                connection.Execute(insertQuery, new { CategoryName=category.CategoryName });
+            }
         }
     }
 }
