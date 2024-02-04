@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadEase_C_.Models;
 using System.Data.SqlClient;
+using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
@@ -51,5 +52,16 @@ namespace WebApplication1.Controllers
                 connection.Execute(insertQuery, new { CategoryName=category.CategoryName });
             }
         }
+
+
+        [HttpGet("checked/{id}")]
+        public IEnumerable<BookModel> getChecked(int id, [FromQuery] string categories)
+        {
+            var categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
+            var connection = GetSqlConnection();
+            var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND CategoryId IN @categories";
+            return connection.Query<BookModel>(getQuery, new { id, categories = categoriesList });
+        }
+
     }
 }
