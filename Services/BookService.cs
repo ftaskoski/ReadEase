@@ -23,13 +23,18 @@ namespace Books.Services
             return new SqlConnection(connectionString);
         }
 
+        private IEnumerable<BookModel> QueryBooks(string query, object parameters = null)
+        {
+            using (var connection = GetSqlConnection())
+            {
+                return connection.Query<BookModel>(query, parameters);
+            }
+        }
+
         public IEnumerable<BookModel> GetAllBooksForUser(int userId)
         {
             string getQuery = "SELECT * FROM BOOKS WHERE UserId=@UserId";
-            using (var connection = GetSqlConnection())
-            {
-                return connection.Query<BookModel>(getQuery, new { UserId = userId });
-            }
+             return QueryBooks(getQuery, new {UserId=userId});
         }
 
 
