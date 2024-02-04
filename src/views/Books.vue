@@ -218,8 +218,19 @@ const deleteBook = (id: number) => {
     .delete(`${url}api/deletebook/${id}`, {
       withCredentials: true,
     })
-    
     .then(() => {
+
+      if (checkedCategories.value.length > 0) {
+        getAllCheckedBooks();
+        check();
+      }
+
+      if ((checkedbooksAll.value?.length === 1 || checkedBooks.value?.length === 1) && currPage.value > 1) {
+        currPage.value = currPage.value - 1;
+        getAllCheckedBooks();
+        check();
+      }
+
       if (searchQuery.value) {
         searchedBooksFull();
       } else {
@@ -227,18 +238,15 @@ const deleteBook = (id: number) => {
         getBooks();
       }
 
-
       if ((bookPaginated.value?.length === 1 || searchedBooks.value?.length === 1) && currPage.value > 1) {
         currPage.value = currPage.value - 1;
         getBooks();
       }
-
     })
     .catch((error) => {
       console.error(`Error deleting book with ID ${id}:`, error);
     });
 };
-
 const searchQuery = ref<string>("");
 const searchedBooks = ref<any[]>([]);
 const searchedBooksAll = ref<any[]>([]);
