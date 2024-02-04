@@ -159,7 +159,11 @@ const currPage = ref(1);
 const totalPages = computed(() => {
   if (searchedBooks.value && searchQuery.value) {
     return Math.ceil(searchedBooksAll.value.length / booksPerPage.value);
-  } else {
+  } 
+  if(checkedBooks.value && checkedBooks.value.length > 0) {
+    return Math.ceil(checkedBooks.value.length / booksPerPage.value);
+  }
+  else {
     return Math.ceil((bookCollection.value?.length ?? 0) / booksPerPage.value);
   }
 });
@@ -311,16 +315,18 @@ onMounted(() => {
 const checkedCategories = ref<number[]>([]);
 const checkedBooks = ref<any[]>([]);
   function check() {
-  axios.get(`${url}api/checked/${id}`, {
+
+    axios
+      .get(`${url}api/checked/${id}`, {
     params: {
-      categories: checkedCategories.value.join(',')
+          categories: checkedCategories.value.join(","),
     },
-    withCredentials: true
+        withCredentials: true,
   })
   .then((response) => {
-    console.log(response.data);
     checkedBooks.value = response.data;
-
+    bookPaginated.value = [];
+       bookCollection.value = [];
   })
   .catch((error) => {
     console.error(error);
