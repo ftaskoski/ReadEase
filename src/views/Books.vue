@@ -315,22 +315,28 @@ onMounted(() => {
 const checkedCategories = ref<number[]>([]);
 const checkedBooks = ref<any[]>([]);
   function check() {
-
+  if (checkedCategories.value.length > 0) {
     axios
       .get(`${url}api/checked/${id}`, {
-    params: {
+        params: {
           categories: checkedCategories.value.join(","),
-    },
+        },
         withCredentials: true,
-  })
-  .then((response) => {
-    checkedBooks.value = response.data;
-    bookPaginated.value = [];
-       bookCollection.value = [];
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+      })
+      .then((response) => {
+        bookPaginated.value = [];
+        bookCollection.value = [];
+        checkedBooks.value = response.data;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  } else {
+    getBooks();
+    getAllBooks();
+    checkedBooks.value = [];
+  }
 }
+
 
 </script>
