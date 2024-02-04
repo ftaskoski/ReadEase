@@ -7,6 +7,7 @@ using System.Text;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using ReadEase_C_.Models;
+using Books.Services;
 
 namespace WebApplication1.Controllers
 {
@@ -17,10 +18,12 @@ namespace WebApplication1.Controllers
     public class BooksController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly BookService _bookService;
 
-        public BooksController(IConfiguration configuration)
+        public BooksController(IConfiguration configuration, BookService bookService)
         {
             _configuration = configuration;
+            _bookService = bookService;
         }
 
         private SqlConnection GetSqlConnection()
@@ -109,11 +112,11 @@ namespace WebApplication1.Controllers
         [HttpGet("getallbooks/{id}")]
         public IEnumerable<BookModel> GetAllBooks(int id)
         {
-            string getQuery = "SELECT * FROM BOOKS WHERE UserId=@Id";
-            return QueryBooks(getQuery, new { Id = id });
+            return _bookService.GetAllBooksForUser(id);
+
         }
 
-  
+
 
 
         [HttpDelete("deletebook/{id}")]

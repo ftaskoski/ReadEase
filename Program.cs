@@ -1,3 +1,4 @@
+using Books.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
+builder.Services.AddScoped<BookService>();
 
 builder.Services.AddAuthentication(options =>
 {
