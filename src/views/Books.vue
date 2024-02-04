@@ -364,5 +364,13 @@ function getAllCheckedBooks() {
   }
 }
 
-
+watch(checkedCategories, () => {
+  if (checkedCategories.value.length > 0) {
+    getAllCheckedBooks();
+  } else {
+    currPage.value = 1; 
+    getBooks();
+    getAllBooks();
+  }
+});
 </script>
