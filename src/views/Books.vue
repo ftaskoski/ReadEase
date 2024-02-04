@@ -156,28 +156,34 @@ const addBook = () => {
 
 const booksPerPage = ref(10);
 const currPage = ref(1);
-const totalPages = computed(() => {
-  if (searchedBooks.value && searchQuery.value) {
+const calculatedTotalPages = computed(() => {
+  if (checkedCategories.value.length > 0) {
+    return Math.ceil(checkedbooksAll.value.length / booksPerPage.value);
+  } else if (searchedBooks.value && searchQuery.value) {
     return Math.ceil(searchedBooksAll.value.length / booksPerPage.value);
-  } 
-  if(checkedBooks.value && checkedBooks.value.length > 0) {
-    return Math.ceil(checkedBooks.value.length / booksPerPage.value);
-  }
-  else {
+  } else {
     return Math.ceil((bookCollection.value?.length ?? 0) / booksPerPage.value);
   }
 });
+const totalPages = computed(() => calculatedTotalPages.value);
 
 const changePage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
     currPage.value = page;
-    if (!searchQuery.value) {
-      getBooks();
+
+    if (checkedCategories.value.length > 0) {
+      getAllCheckedBooks();
+      check();
     } else {
-      searchedBooksFull();
+      if (!searchQuery.value) {
+        getBooks();
+      } else {
+        searchedBooksFull();
+      }
     }
   }
 };
+
 
 const getBooks = () => {
   axios
@@ -314,18 +320,38 @@ onMounted(() => {
 
 const checkedCategories = ref<number[]>([]);
 const checkedBooks = ref<any[]>([]);
+  const checkedbooksAll = ref<any[]>([]);
+
+function getAllCheckedBooks() {
+  axios.get(`${url}api/checkedall/${id}`,{
+        params: {
+          categories: checkedCategories.value.join(","),
+          
+        },
+        withCredentials: true,
+      }).then((response) => {
+    checkedbooksAll.value = response.data;
+        bookCollection.value = [];
+        bookPaginated.value = [];
+
+      
+      
+      });
+}
   function check() {
   if (checkedCategories.value.length > 0) {
+    getAllCheckedBooks();
     axios
       .get(`${url}api/checked/${id}`, {
         params: {
           categories: checkedCategories.value.join(","),
+          pageNumber: currPage.value,
         },
         withCredentials: true,
       })
       .then((response) => {
-        bookPaginated.value = [];
-        bookCollection.value = [];
+        //bookPaginated.value = [];
+        //bookCollection.value = [];
         checkedBooks.value = response.data;
       })
       .catch((error) => {
