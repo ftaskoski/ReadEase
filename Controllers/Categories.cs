@@ -60,7 +60,7 @@ namespace WebApplication1.Controllers
             int startIndex = (pageNumber - 1) * pageSize;
             var categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
             var connection = GetSqlConnection();
-            var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND CategoryId IN @categories ORDER BY BookId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY";
+            var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND CategoryId IN @categories ORDER BY CategoryId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY";
             return connection.Query<BookModel>(getQuery, new { id, categories = categoriesList,startIndex,pageSize });
         }
 
