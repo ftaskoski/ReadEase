@@ -379,10 +379,10 @@ function getAllCheckedBooks() {
 }
 
 watch(checkedCategories, () => {
+  currPage.value = 1; 
   if (checkedCategories.value.length > 0) {
     getAllCheckedBooks();
   } else {
-    currPage.value = 1; 
     getBooks();
     getAllBooks();
   }
