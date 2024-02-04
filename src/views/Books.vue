@@ -143,6 +143,12 @@ const addBook = () => {
       author.value = "";
       title.value = "";
       selectedCategory.value = null;
+      
+      if (checkedCategories.value.length > 0) {
+        getAllCheckedBooks();
+        check();
+        
+      }
       getAllBooks();
       getBooks();
       if (searchQuery.value) {
