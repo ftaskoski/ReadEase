@@ -75,9 +75,7 @@ namespace WebApplication1.Controllers
         [HttpGet("getbooks/{id}")]
         public IActionResult GetBooks(int id, int pageNumber = 1, int pageSize = 10)
         {
-            int startIndex = (pageNumber - 1) * pageSize;
-            string getQuery = "SELECT * FROM BOOKS WHERE UserId=@Id ORDER BY BookId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
-            var books = QueryBooks(getQuery, new { id = id, startIndex = startIndex, pageSize = pageSize });
+           var books =_bookService.GetPaginatedBooks(id,pageNumber);
             return Ok(books);
         }
 

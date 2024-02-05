@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using Dapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ReadEase_C_.Models;
 using WebApplication1.Models;
@@ -37,6 +38,14 @@ namespace Books.Services
              return QueryBooks(getQuery, new {UserId=userId});
         }
 
+        public IEnumerable<BookModel> GetPaginatedBooks(int id, int pageNumber = 1, int pageSize = 10)
+        {
+            int startIndex = (pageNumber - 1) * pageSize;
+            string getQuery = "SELECT * FROM BOOKS WHERE UserId=@Id ORDER BY BookId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
+            return QueryBooks(getQuery, new { id = id, startIndex = startIndex, pageSize = pageSize });
+
+
+        }
 
     }
 }
