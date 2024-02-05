@@ -111,7 +111,7 @@ namespace userController.Controllers
                 if (user != null)
                 {
                     // Retrieve the role from the database
-                        string role = await CheckIfUserIsAdminAsync(user.Id);
+                        string role = await _userService.CheckIfUserIsAdminAsync(user.Id);
 
                     // Create claims for the authenticated user
                     var claims = new List<Claim>
@@ -146,19 +146,7 @@ namespace userController.Controllers
             }
 
 
-        private async Task<string> CheckIfUserIsAdminAsync(int userId)
-        {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
-            using (var connection = new SqlConnection(connectionString))
-            {
-                string checkAdminQuery = "SELECT Role FROM Users WHERE Id = @Id";
-                string role = await connection.QueryFirstOrDefaultAsync<string>(checkAdminQuery, new { Id = userId });
-
-                // Check if the role is 'Admin'
-                return role ?? string.Empty;
-            }
-        }
 
         [HttpPut("update/{id}")]
         [Authorize]

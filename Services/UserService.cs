@@ -43,7 +43,16 @@ namespace ReadEase_C_.Services
         public void DeleteUser(int id)
         {
             string deleteQuery = "DELETE FROM Users WHERE Id = @Id;";
-             Execute(deleteQuery, new {Id=id});
+            Execute(deleteQuery, new {Id=id});
+        }
+
+        public async Task<string> CheckIfUserIsAdminAsync(int userId)
+        {
+           var connection = GetSqlConnection();
+           string checkAdminQuery = "SELECT Role FROM Users WHERE Id = @Id";
+           string role = await connection.QueryFirstOrDefaultAsync<string>(checkAdminQuery, new { Id = userId });
+
+           return role ?? string.Empty;
         }
 
     }
