@@ -10,11 +10,11 @@ namespace WebApplication1.Controllers
     [ApiController]
     [Route("api")]
     [Authorize]
-    public class Categories : ControllerBase
+    public class CategoriesController : ControllerBase
     {
         private readonly IConfiguration _configuration;
 
-        public Categories(IConfiguration configuration) 
+        public CategoriesController(IConfiguration configuration) 
         { 
         _configuration = configuration;
         
