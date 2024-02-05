@@ -82,9 +82,8 @@ namespace WebApplication1.Controllers
         [HttpGet("searchbooksall/{id}")]
         public IActionResult SearchBooksAll(int id, string search)
         {
-            string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE @Search";
-            var book = QueryBooks(searchQuery, new { id = id, Search = $"{search}%" });
-            return Ok(book);
+          var searchedBooks = _bookService.GetAllBooksFromSearch(id,search);
+            return Ok(searchedBooks);
         }
 
         [HttpGet("searchbooks/{id}")]

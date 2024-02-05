@@ -47,5 +47,12 @@ namespace Books.Services
 
         }
 
+        public IEnumerable<BookModel> GetAllBooksFromSearch(int id,string search)
+        {
+            string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE @Search";
+            return QueryBooks(searchQuery, new { id = id, Search = $"{search}%" });
+
+        }
+
     }
 }
