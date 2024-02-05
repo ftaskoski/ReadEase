@@ -27,11 +27,23 @@ namespace ReadEase_C_.Services
             }
         }
 
+        private void Execute (string query, object parametars = null)
+        {
+           var connection = GetSqlConnection();
+            connection.Execute(query, parametars);
+        }
+
         public IEnumerable<FormModel> GetAllUsers()
         {
             string selectQuery = "SELECT * FROM Users";
             return QueryUsers(selectQuery);
 
+        }
+
+        public void DeleteUser(int id)
+        {
+            string deleteQuery = "DELETE FROM Users WHERE Id = @Id;";
+             Execute(deleteQuery, new {Id=id});
         }
 
     }

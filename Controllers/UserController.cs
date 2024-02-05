@@ -192,15 +192,8 @@ namespace userController.Controllers
         public async Task<IActionResult> DeleteUser(int id)
         {
 
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-                string deleteQuery = "DELETE FROM Users WHERE Id = @Id;";
-                await connection.ExecuteAsync(deleteQuery, new { Id = id });
-
-                return Ok($"User with ID {id} has been deleted");
-            }
+            _userService.DeleteUser(id);
+            return Ok();    
         }
 
 
