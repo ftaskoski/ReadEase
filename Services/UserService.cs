@@ -19,11 +19,18 @@ namespace ReadEase_C_.Services
             return new SqlConnection(connectionString);
         }
 
+        private IEnumerable<FormModel> QueryUsers(string query, object parameters = null)
+        {
+            using (var connection = GetSqlConnection())
+            {
+                return connection.Query<FormModel>(query, parameters);
+            }
+        }
+
         public IEnumerable<FormModel> GetAllUsers()
         {
-            var connection = GetSqlConnection();
             string selectQuery = "SELECT * FROM Users";
-            return connection.Query<FormModel>(selectQuery);
+            return QueryUsers(selectQuery);
 
         }
 
