@@ -36,6 +36,9 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
       },
+      props:(route)=>{
+        query: route.query
+      }
     },
     {
       path: "/register",

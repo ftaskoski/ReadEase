@@ -96,6 +96,8 @@ import axios from "axios";
 import { ref, onMounted, computed, watch } from "vue";
 import { loadUserFromCookie } from "@/store/authStore";
 import BookTable from "@/components/BookTable.vue";
+import { useRouter } from "vue-router";
+
 
 const url="https://localhost:7284/"
 const author = ref<string>("");
@@ -326,6 +328,12 @@ const getAllCategories = () =>{
 }
 
 onMounted(() => {
+  const categoriesFromURL = router.currentRoute.value.query.categories;
+  if (categoriesFromURL && typeof categoriesFromURL === 'string') {
+    checkedCategories.value = categoriesFromURL.split(',').map(Number);
+    getAllCheckedBooks();
+    check();
+  }
   getAllCategories();
   getAllBooks();
   getBooks();
@@ -378,13 +386,19 @@ function getAllCheckedBooks() {
   }
 }
 
+const router = useRouter();
+
 watch(checkedCategories, () => {
-  currPage.value = 1; 
+  currPage.value = 1;
   if (checkedCategories.value.length > 0) {
     getAllCheckedBooks();
+    // Update the URL with the checkedCategories
+    router.push({ query: { categories: checkedCategories.value.join(',') } });
   } else {
     getBooks();
     getAllBooks();
+    // Remove the categories from the URL
+    router.push({ query: { categories: null } });
   }
 });
 </script>
