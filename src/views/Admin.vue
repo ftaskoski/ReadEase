@@ -21,7 +21,7 @@
 
             <thead>
           <tr>
-            <th class="px-4 py-2">Author</th>
+            <th class="px-4 py-2">Username</th>
             <th class="px-4 py-2">Action</th>
           </tr>
         </thead>
