@@ -178,7 +178,7 @@ const totalPages = computed(() => calculatedTotalPages.value);
 const changePage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
     currPage.value = page;
-
+    router.push({ query: { page: currPage.value, search: searchQuery.value, categories: checkedCategories.value.join(",") } });
     if (checkedCategories.value.length > 0) {
       getAllCheckedBooks();
       check();
@@ -367,33 +367,44 @@ function getAllCheckedBooks() {
 
 
 watch(checkedCategories, () => {
-  currPage.value = 1;
+  if(!router.currentRoute.value.query.categories){
+    currPage.value = 1;
+  }
   if (checkedCategories.value.length > 0) {
     getAllCheckedBooks();
-    router.push({ query: { categories: checkedCategories.value.join(',') } });
+    router.push({ query: { categories: checkedCategories.value.join(','), page: currPage.value } });
   } else {
+    currPage.value = 1;
     getBooks();
     getAllBooks();
-    router.push({ query: { categories: null } });
+    router.push({ query: { categories: null, page: null} });
   }
 });
-
 
 watch(searchQuery, () => {
-  currPage.value = 1;
+  if(!router.currentRoute.value.query.search){
+    currPage.value = 1;
+  }
   if (searchQuery.value) {
+
     handleInput();
-    router.push({ query: { search: searchQuery.value } });
+    router.push({ query: { search: searchQuery.value, page: currPage.value } });
   } else {
+    currPage.value = 1;
+    router.push({ query: { search: null, page: 1} });
     getAllBooks();
     getBooks();
-    router.push({ query: { search: null } });
   }
 });
+
 
 onMounted(() => {
   const categoriesFromURL = router.currentRoute.value.query.categories as string;
   const searchFromURL = router.currentRoute.value.query.search as string;
+  const pageFromURL = Number(router.currentRoute.value.query.page);
+  if (pageFromURL) {
+    currPage.value = pageFromURL;
+  }
   if (categoriesFromURL ) {
     checkedCategories.value = categoriesFromURL.split(',').map(Number);
     getAllCheckedBooks();
@@ -408,5 +419,11 @@ onMounted(() => {
   getAllBooks();
   getBooks();
   getnybooks();
+  
+  // Add this line to set the current page from the URL when the page loads
+  // if (router.currentRoute.value.query.page) {
+  //   currPage.value = Number(router.currentRoute.value.query.page);
+  // }
 });
+
 </script>
