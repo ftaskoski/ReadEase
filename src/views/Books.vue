@@ -370,12 +370,10 @@ watch(checkedCategories, () => {
   currPage.value = 1;
   if (checkedCategories.value.length > 0) {
     getAllCheckedBooks();
-    // Update the URL with the checkedCategories
     router.push({ query: { categories: checkedCategories.value.join(',') } });
   } else {
     getBooks();
     getAllBooks();
-    // Remove the categories from the URL
     router.push({ query: { categories: null } });
   }
 });
@@ -385,25 +383,23 @@ watch(searchQuery, () => {
   currPage.value = 1;
   if (searchQuery.value) {
     handleInput();
-    // Update the URL with the searchQuery
     router.push({ query: { search: searchQuery.value } });
   } else {
     getAllBooks();
     getBooks();
-    // Remove the searchQuery from the URL
     router.push({ query: { search: null } });
   }
 });
 
 onMounted(() => {
-  const categoriesFromURL = router.currentRoute.value.query.categories;
-  const searchFromURL = router.currentRoute.value.query.search;
-  if (categoriesFromURL && typeof categoriesFromURL === 'string') {
+  const categoriesFromURL = router.currentRoute.value.query.categories as string;
+  const searchFromURL = router.currentRoute.value.query.search as string;
+  if (categoriesFromURL ) {
     checkedCategories.value = categoriesFromURL.split(',').map(Number);
     getAllCheckedBooks();
     check();
   }
-  if (searchFromURL && typeof searchFromURL === 'string') {
+  if (searchFromURL) {
     searchQuery.value = searchFromURL;
     searchBook();
   }
