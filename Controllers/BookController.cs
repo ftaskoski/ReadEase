@@ -87,11 +87,10 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("searchbooks/{id}")]
-        public IActionResult SearchBooks(int id, string search, int pageNumber = 1, int pageSize = 10)
+        public IActionResult SearchBooks(int id, string search,int pageNumber)
         {
-            int startIndex = (pageNumber - 1) * pageSize;
-            string searchQuery = "SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE @Search ORDER BY BookId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
-            var book = QueryBooks(searchQuery, new { id = id, Search = $"{search}%", startIndex = startIndex, pageSize = pageSize });
+         
+            var book = _bookService.GetPaginatedBooksFromSearch(id,search,pageNumber);
             return Ok(book);
         }
 

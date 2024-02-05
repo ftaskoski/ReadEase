@@ -54,5 +54,13 @@ namespace Books.Services
 
         }
 
+        public IEnumerable<BookModel> GetPaginatedBooksFromSearch(int id, string search, int pageNumber = 1, int pageSize = 10)
+        {
+            int startIndex = (pageNumber - 1) * pageSize;
+            string searchQuery = "SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE @Search ORDER BY BookId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
+            return QueryBooks(searchQuery, new { id = id, Search = $"{search}%", startIndex = startIndex, pageSize = pageSize });
+         
+        }
+
     }
 }
