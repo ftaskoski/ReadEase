@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using WebApplication1.Models;
 using RestSharp;
+using ReadEase_C_.Services;
 
 namespace userController.Controllers
 {
@@ -18,26 +19,19 @@ namespace userController.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly UserService _userService;
 
-        public UsersController(IConfiguration configuration)
+        public UsersController(IConfiguration configuration,UserService service)
         {
             _configuration = configuration;
+            _userService = service;
         }
 
         [HttpGet("users")]
         [Authorize(Roles ="Admin")]
         public IEnumerable<FormModel> getUsers()
         {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            using(var connection = new SqlConnection(connectionString))
-            {
-                string selectQuery = "SELECT * FROM Users";
-                var users = connection.Query<FormModel>(selectQuery);
-                return users;
-                
-            }
-
+           return _userService.GetAllUsers();
         }
 
         [HttpPost("logout")]
