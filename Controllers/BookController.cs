@@ -4,6 +4,8 @@ using WebApplication1.Models;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Books.Services;
+using System.Security.Claims;
+
 
 namespace WebApplication1.Controllers
 {
@@ -21,7 +23,13 @@ namespace WebApplication1.Controllers
             _configuration = configuration;
             _bookService = bookService;
         }
-
+        private int UserId
+        {
+            get
+            {
+                return Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            }
+        }
         [HttpGet("downloadbooks/{id}")]
         public IActionResult DownloadBooks(int id)
         {
@@ -76,6 +84,7 @@ namespace WebApplication1.Controllers
         [HttpGet("getallbooks/{id}")]
         public IEnumerable<BookModel> GetAllBooks(int id)
         {
+            Console.WriteLine(UserId);
             return _bookService.GetAllBooksForUser(id);
 
         }
