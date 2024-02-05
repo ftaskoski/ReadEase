@@ -153,25 +153,8 @@ namespace userController.Controllers
         public async Task<IActionResult> UpdateUser([FromBody] FormModel model, int id)
         {
 
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-
-                string checkUserQuery = "SELECT COUNT(*) FROM Users WHERE Id = @Id";
-                var userCount = await connection.QueryFirstOrDefaultAsync<int>(checkUserQuery, new { Id = id });
-                if (userCount == 0)
-                {
-                    // User with the given ID does not exist
-                    return NotFound();
-                }
-
-                string updateQuery = "UPDATE Users SET Username = @Username WHERE Id = @Id";
-                await connection.ExecuteAsync(updateQuery, new { Id = id, Username = model.Username });
-
-                return Ok();
-            }
-
+           await _userService.UpdateUserAsync(model, id);
+            return Ok();
         }
 
 

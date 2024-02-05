@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 using WebApplication1.Models;
@@ -53,6 +54,25 @@ namespace ReadEase_C_.Services
            string role = await connection.QueryFirstOrDefaultAsync<string>(checkAdminQuery, new { Id = userId });
 
            return role ?? string.Empty;
+        }
+
+        public async Task<IActionResult> UpdateUserAsync(FormModel model, int id)
+        {
+            var connection = GetSqlConnection();
+            
+                string checkUserQuery = "SELECT COUNT(*) FROM Users WHERE Id = @Id";
+                var userCount = await connection.QueryFirstOrDefaultAsync<int>(checkUserQuery, new { Id = id });
+                if (userCount == 0)
+                {
+                    // User with the given ID does not exist
+                    return new NotFoundResult();
+                }
+
+                string updateQuery = "UPDATE Users SET Username = @Username WHERE Id = @Id";
+                await connection.ExecuteAsync(updateQuery, new { Id = id, Username = model.Username });
+
+                return new OkResult();
+            
         }
 
     }
