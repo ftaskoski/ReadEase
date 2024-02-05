@@ -371,6 +371,11 @@ watch(checkedCategories, () => {
     currPage.value = 1;
   }
   if (checkedCategories.value.length > 0) {
+
+    if (currPage.value > 1 && currPage.value <= totalPages.value) {
+      currPage.value = currPage.value - 1;
+      
+    }
     getAllCheckedBooks();
     router.push({ query: { categories: checkedCategories.value.join(','), page: currPage.value } });
   } else {
