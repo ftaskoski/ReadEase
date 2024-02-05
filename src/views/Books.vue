@@ -98,7 +98,7 @@ import { loadUserFromCookie } from "@/store/authStore";
 import BookTable from "@/components/BookTable.vue";
 import { useRouter } from "vue-router";
 
-
+const router = useRouter();
 const url="https://localhost:7284/"
 const author = ref<string>("");
 const title = ref<string>("");
@@ -259,15 +259,6 @@ const searchQuery = ref<string>("");
 const searchedBooks = ref<any[]>([]);
 const searchedBooksAll = ref<any[]>([]);
 
-watch(searchQuery, () => {
-  currPage.value = 1;
-  if (searchQuery.value) {
-    handleInput();
-  } else {
-    getAllBooks();
-    getBooks();
-  }
-});
 const getCategoryName = (categoryId : number) => {
   const category = categories.value.find((cat) => cat.categoryId === categoryId);
   return category ? category.categoryName : 'Unknown Category';
@@ -327,18 +318,6 @@ const getAllCategories = () =>{
 
 }
 
-onMounted(() => {
-  const categoriesFromURL = router.currentRoute.value.query.categories;
-  if (categoriesFromURL && typeof categoriesFromURL === 'string') {
-    checkedCategories.value = categoriesFromURL.split(',').map(Number);
-    getAllCheckedBooks();
-    check();
-  }
-  getAllCategories();
-  getAllBooks();
-  getBooks();
-  getnybooks();
-});
 
 const checkedCategories = ref<number[]>([]);
 const checkedBooks = ref<any[]>([]);
@@ -386,7 +365,6 @@ function getAllCheckedBooks() {
   }
 }
 
-const router = useRouter();
 
 watch(checkedCategories, () => {
   currPage.value = 1;
@@ -400,5 +378,39 @@ watch(checkedCategories, () => {
     // Remove the categories from the URL
     router.push({ query: { categories: null } });
   }
+});
+
+
+watch(searchQuery, () => {
+  currPage.value = 1;
+  if (searchQuery.value) {
+    handleInput();
+    // Update the URL with the searchQuery
+    router.push({ query: { search: searchQuery.value } });
+  } else {
+    getAllBooks();
+    getBooks();
+    // Remove the searchQuery from the URL
+    router.push({ query: { search: null } });
+  }
+});
+
+onMounted(() => {
+  const categoriesFromURL = router.currentRoute.value.query.categories;
+  const searchFromURL = router.currentRoute.value.query.search;
+  if (categoriesFromURL && typeof categoriesFromURL === 'string') {
+    checkedCategories.value = categoriesFromURL.split(',').map(Number);
+    getAllCheckedBooks();
+    check();
+  }
+  if (searchFromURL && typeof searchFromURL === 'string') {
+    searchQuery.value = searchFromURL;
+    searchBook();
+  }
+  
+  getAllCategories();
+  getAllBooks();
+  getBooks();
+  getnybooks();
 });
 </script>
