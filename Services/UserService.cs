@@ -56,7 +56,7 @@ namespace ReadEase_C_.Services
            return role ?? string.Empty;
         }
 
-        public async Task<IActionResult> UpdateUserAsync(FormModel model, int id)
+        public async Task<IActionResult> UpdateUserAsync(string newUser, int id)
         {
             var connection = GetSqlConnection();
             
@@ -69,7 +69,7 @@ namespace ReadEase_C_.Services
                 }
 
                 string updateQuery = "UPDATE Users SET Username = @Username WHERE Id = @Id";
-                await connection.ExecuteAsync(updateQuery, new { Id = id, Username = model.Username });
+                await connection.ExecuteAsync(updateQuery, new { Id = id, Username = newUser });
 
                 return new OkResult();
             

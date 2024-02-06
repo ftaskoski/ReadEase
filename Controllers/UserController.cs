@@ -147,7 +147,7 @@ namespace userController.Controllers
                     }
                 }
             }
-        private int UserId
+        public int UserId
         {
             get
             {
@@ -166,13 +166,13 @@ namespace userController.Controllers
 
 
 
-        [HttpPut("update/{id}")]
+        [HttpPut("update")]
         [Authorize]
-        public async Task<IActionResult> UpdateUser([FromBody] FormModel model, int id)
+        public async Task<IActionResult> UpdateUser([FromBody]NewUsername user )
         {
 
-           await _userService.UpdateUserAsync(model, id);
-            return Ok();
+           await _userService.UpdateUserAsync(user.UpdatedUsername, UserId);
+            return Ok("Updated Username");
         }
 
 

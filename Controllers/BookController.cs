@@ -30,11 +30,11 @@ namespace WebApplication1.Controllers
                 return Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             }
         }
-        [HttpGet("downloadbooks/{id}")]
-        public IActionResult DownloadBooks(int id)
+        [HttpGet("downloadbooks")]
+        public IActionResult DownloadBooks()
         {
             
-            var books = _bookService.GetAllBooksForUser(id);
+            var books = _bookService.GetAllBooksForUser(UserId);
 
             if (books?.AsList().Count > 0)
             {
@@ -53,39 +53,39 @@ namespace WebApplication1.Controllers
             }
         }
 
-        [HttpGet("getbooks/{id}")]
-        public IActionResult GetBooks(int id, int pageNumber = 1, int pageSize = 10)
+        [HttpGet("getbooks")]
+        public IActionResult GetBooks( int pageNumber = 1, int pageSize = 10)
         {
-           var books =_bookService.GetPaginatedBooks(id,pageNumber);
+           var books =_bookService.GetPaginatedBooks(UserId,pageNumber);
            return Ok(books);
         }
 
-        [HttpGet("searchbooksall/{id}")]
-        public IActionResult SearchBooksAll(int id, string search)
+        [HttpGet("searchbooksall")]
+        public IActionResult SearchBooksAll( string search)
         {
-          var searchedBooks = _bookService.GetAllBooksFromSearch(id,search);
+          var searchedBooks = _bookService.GetAllBooksFromSearch(UserId,search);
           return Ok(searchedBooks);
         }
 
-        [HttpGet("searchbooks/{id}")]
-        public IActionResult SearchBooks(int id, string search,int pageNumber)
+        [HttpGet("searchbooks")]
+        public IActionResult SearchBooks( string search,int pageNumber)
         {
-            var book = _bookService.GetPaginatedBooksFromSearch(id,search,pageNumber);
+            var book = _bookService.GetPaginatedBooksFromSearch(UserId,search,pageNumber);
             return Ok(book);
         }
 
-        [HttpPost("insertbook/{id}")]
-        public IActionResult InsertBook([FromBody] BookModel model, int id)
+        [HttpPost("insertbook")]
+        public IActionResult InsertBook([FromBody] BookModel model)
         {
-            _bookService.InsertBook(model,id);
+            _bookService.InsertBook(model,UserId);
             return Ok("Book has been added");
         }
 
-        [HttpGet("getallbooks/{id}")]
-        public IEnumerable<BookModel> GetAllBooks(int id)
+        [HttpGet("getallbooks")]
+        public IEnumerable<BookModel> GetAllBooks()
         {
             Console.WriteLine(UserId);
-            return _bookService.GetAllBooksForUser(id);
+            return _bookService.GetAllBooksForUser(UserId);
 
         }
 
