@@ -60,6 +60,8 @@ import {
   setAuthenticated,
   saveUserToCookie,
   loggedInUser,
+  role,
+  getRole
 } from "@/store/authStore";
 import { RouterLink, useRouter } from "vue-router";
 
@@ -88,11 +90,12 @@ const register = () => {
       },
       { withCredentials: true }
     )
-    .then((response) => {
-      saveUserToCookie(response.data);
-      setAuthenticated(true);
+    .then(async(response) => {
+      await saveUserToCookie(response.data);
+      await setAuthenticated(true);
       loggedInUser.value = response.data;
 
+      role.value = await getRole(url);
       router.push("/");
     }).catch(error =>{
 

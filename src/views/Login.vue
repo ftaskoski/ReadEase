@@ -29,7 +29,7 @@
 import { ref,onMounted } from "vue";
 import axios from "axios";
 import { RouterLink, useRouter } from "vue-router";
-import { setAuthenticated, saveUserToCookie, loggedInUser,role } from "@/store/authStore";
+import { setAuthenticated, saveUserToCookie, loggedInUser,role,getRole } from "@/store/authStore";
 import Card from "@/components/Card.vue";
 const router = useRouter();
 //work const url = "https://readease-c20240125180045.azurewebsites.net/";
@@ -40,25 +40,23 @@ const loginUsername = ref<string>("");
 const loginPassword = ref<string>("");
 const Incorrect = ref<boolean>(false);
 const Success = ref<boolean>(false);
-const login = () : void => {
+  const login = () => {
   axios
     .post(`${url}api/login`, {
       username: loginUsername.value,
       password: loginPassword.value,
     },{
-      withCredentials:true
+      withCredentials: true
     })
-    .then((response) => {
-      //console.log('Login successful:', response);
-      saveUserToCookie(response.data);
-      setAuthenticated(true);
+    .then(async (response) => {
+      await saveUserToCookie(response.data);
+      await setAuthenticated(true);
       loggedInUser.value = response.data;
-
-      role.value = response.data.role;
-        
-        Success.value = true;
-        router.push("/");
-      //console.log(Success.value);
+      role.value = await getRole(url);
+      Success.value = true;
+      router.push("/");
+      
+;
     })
     .catch((error) => {
       if (error.response && error.response.status === 401) {
@@ -74,5 +72,6 @@ const login = () : void => {
   loginUsername.value = "";
   loginPassword.value = "";
 };
+
 </script>
 
