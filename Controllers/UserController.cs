@@ -11,6 +11,7 @@ using System.Text;
 using WebApplication1.Models;
 using RestSharp;
 using ReadEase_C_.Services;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace userController.Controllers
 {
@@ -73,12 +74,14 @@ namespace userController.Controllers
 
                 // Set the generated Id in the FormModel
                 model.Id = userId;
+                string role = await _userService.CheckIfUserIsAdminAsync(model.Id);
 
                 // Create claims for the registered user
                 var claims = new List<Claim>
                 {
             new Claim(ClaimTypes.NameIdentifier, model.Id.ToString()),
             new Claim(ClaimTypes.Name, model.Username),
+            new Claim(ClaimTypes.Role, role ?? "User")
             // Add additional claims as needed
                 };
                 var authProperties = new AuthenticationProperties
@@ -92,8 +95,8 @@ namespace userController.Controllers
 
                 // Sign in the user after registration
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,authProperties);
-
-                return Ok(model);
+                model.Role = role ?? "User";
+                return Ok(model.Role);
             }
         }
 
@@ -135,7 +138,7 @@ namespace userController.Controllers
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
                         user.Role = role ?? "User";
-                        return Ok(user);
+                        return Ok(user.Role);
                     }
                     else
                     {
@@ -144,7 +147,22 @@ namespace userController.Controllers
                     }
                 }
             }
+        private int UserId
+        {
+            get
+            {
+                return Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            }
+        }
 
+        [HttpGet("role")]
+        [Authorize]
+        public async Task<ActionResult> GetRole()
+        {
+            string role = await _userService.CheckIfUserIsAdminAsync(UserId);
+
+            return Ok(role);
+        }
 
 
 
