@@ -57,7 +57,6 @@ const getUser = () => {
 };
 
 const deleteUser = (id: number) => {
-
     axios.delete(`${url}api/delete/${id}`, {
         withCredentials: true
     }).then(() => {

@@ -10,7 +10,7 @@ const app = createApp(App)
 const user = loadUserFromCookie();
 if (user) {
   isAuthenticated.value = true;
-  if (user.role === "Admin") {
+  if (user === "Admin") {
     role.value = "Admin";
   }
 }
