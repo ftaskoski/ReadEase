@@ -1,55 +1,33 @@
 <template>
-  <div>
     <Card>
-      <p class="text-3xl mb-4 flex justify-center items-center">Register</p>
-      <form @submit.prevent="register">
-        <label
-          class="block mb-2 text-sm font-medium text-gray-900"
-          for="username"
-          >Username</label
-        >
-        <input
-          class="rounded-lg border-gray-200 border w-full focus:border-blue-500 focus:outline-none"
-          type="text"
-          v-model="username"
-          name="username"
-          id="username"
-          required
-        />
-
-        <label
-          class="block text-sm font-medium text-gray-900 mt-2"
-          for="password"
-          >Password</label
-        >
-        <input
-          class="rounded-lg border-gray-200 border w-full focus:border-blue-500 focus:outline-none xcv"
-          type="password"
-          v-model="password"
-          name="password"
-          id="password"
-          required
-        />
-
-        <button
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
-          type="submit"
-        >
-          Submit
-        </button>
-
-        <span class="text-sm mt-2 block"
-          >Alredy have an account?
-          <RouterLink to="/login"
-            ><span class="text-blue-500 hover:text-blue-700 hover:underline"
-              >Login</span
-            ></RouterLink
-          ></span
-        >
-        <span v-if="errorMsg" class="text-red-500 mt-2">{{ errorMsg }}</span>
-      </form>
+      <div class="w-full">
+          <div class="text-center">
+              <h1 class="text-3xl font-semibold text-gray-900">Sign Up</h1>
+              <p class="mt-2 text-gray-500">Don&#x27;t have an account yet? Create one below</p>
+          </div>
+          <div class="mt-5">
+              <form @submit.prevent="register" >
+                  <div class="relative mt-6 ">
+                      <input v-model="username" id="email" placeholder="Username"  class="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none" autocomplete="NA" />
+                      <label for="email" class="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-800">Username</label>
+                  </div>
+                  <div class="relative mt-6">
+                      <input v-model="password" type="password" name="password" id="password" placeholder="Password" class="peer peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none" />
+                      <label for="password" class="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-800">Password</label>
+                  </div>
+                  <div class="my-6">
+                      <button type="submit" class="w-full rounded-md bg-black px-3 py-4 text-white focus:bg-gray-600 focus:outline-none">Sign in</button>
+                  </div>
+                  <p class="text-center text-sm text-gray-500">Already have an account?
+                      <RouterLink to="/login"
+                          class="font-semibold text-gray-600 hover:underline focus:text-gray-800 focus:outline-none">Sign
+                          in
+                      </RouterLink>.
+                  </p>
+              </form>
+          </div>
+      </div>
     </Card>
-  </div>
 </template>
 
 <script setup lang="ts">
