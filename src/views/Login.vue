@@ -1,77 +1,84 @@
 <template>
-
-
-
-<Card>
-
-<h1 class="text-3xl  mb-4 flex justify-center items-center ">Login</h1>
-<form @submit.prevent="login">
-
-  <label class="block mb-2 text-sm font-medium text-gray-900" for="username">Username</label>
-  <input class="rounded-lg border-gray-200 border  w-full focus:border-blue-500  focus:outline-none  " type="text" v-model="loginUsername" name="username" id="username" required>
-
-  <label class="block  text-sm font-medium text-gray-900 mt-2" for="password">Password</label>
-  <input class="rounded-lg border-gray-200 border  w-full focus:border-blue-500  focus:outline-none  xcv" type="password" v-model="loginPassword" name="password" id="password" required>
-
-  <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2" type="submit">Submit</button>
-
-
-
-  <p v-if="Incorrect" class="text-red-500 mt-2">Incorrect Username or Password</p> 
-  <span class="text-sm mt-2 block">Don't have an account? <RouterLink to="/register"><span class="text-blue-500 hover:text-blue-700 hover:underline">Register</span></RouterLink></span>
-</form>
-</Card>
-
-
-</template>
-
-<script setup lang="ts">
-import { ref,onMounted } from "vue";
-import axios from "axios";
-import { RouterLink, useRouter } from "vue-router";
-import { setAuthenticated, saveUserToCookie, loggedInUser,role,getRole } from "@/store/authStore";
-import Card from "@/components/Card.vue";
-const router = useRouter();
-//work const url = "https://readease-c20240125180045.azurewebsites.net/";
-//const url = "https://readease-c20240126222545.azurewebsites.net//";
- const url="https://localhost:7284/"
-
-const loginUsername = ref<string>("");
-const loginPassword = ref<string>("");
-const Incorrect = ref<boolean>(false);
-const Success = ref<boolean>(false);
-  const login = () => {
-  axios
-    .post(`${url}api/login`, {
-      username: loginUsername.value,
-      password: loginPassword.value,
-    },{
-      withCredentials: true
-    })
-    .then(async (response) => {
-      await saveUserToCookie(response.data);
-      await setAuthenticated(true);
-      loggedInUser.value = response.data;
-      role.value = await getRole(url);
-      Success.value = true;
-      router.push("/");
-      
-;
-    })
-    .catch((error) => {
-      if (error.response && error.response.status === 401) {
-        Incorrect.value = true;
-        setTimeout(() => {
-          Incorrect.value = false;
-        }, 2000);
-      } else {
-        console.log(`Unexpected error: ${error}`);
-      }
-    });
-
-  loginUsername.value = "";
-  loginPassword.value = "";
-};
-
-</script>
-
+  <Card>
+      <div class="w-full">
+          <div class="text-center">
+              <h1 class="text-3xl font-semibold text-gray-900">Sign in</h1>
+              <p class="mt-2 text-gray-500">Sign in below to access your account</p>
+          </div>
+          <div class="mt-5">
+              <form @submit.prevent="login" >
+                  <div class="relative mt-6 ">
+                      <input v-model="loginUsername" id="email" placeholder="Username"  class="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none" autocomplete="NA" />
+                      <label for="email" class="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-800">Username</label>
+                  </div>
+                  <div class="relative mt-6">
+                      <input v-model="loginPassword" type="password" name="password" id="password" placeholder="Password" class="peer peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none" />
+                      <label for="password" class="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-800">Password</label>
+                  </div>
+                  <div class="my-6">
+                      <button type="submit" class="w-full rounded-md bg-black px-3 py-4 text-white focus:bg-gray-600 focus:outline-none">Sign in</button>
+                  </div>
+                  <p class="text-center text-sm text-gray-500">Don&#x27;t have an account yet?
+                      <RouterLink to="/register"
+                          class="font-semibold text-gray-600 hover:underline focus:text-gray-800 focus:outline-none">Sign
+                          up
+                      </RouterLink>.
+                  </p>
+              </form>
+          </div>
+      </div>
+    </Card>
+    </template>
+  
+  
+  <script setup lang="ts">
+  import { ref,onMounted } from "vue";
+  import axios from "axios";
+  import { RouterLink, useRouter } from "vue-router";
+  import { setAuthenticated, saveUserToCookie, loggedInUser,role,getRole } from "@/store/authStore";
+  import Card from "@/components/Card.vue";
+  const router = useRouter();
+  //work const url = "https://readease-c20240125180045.azurewebsites.net/";
+  //const url = "https://readease-c20240126222545.azurewebsites.net//";
+   const url="https://localhost:7284/"
+  
+  const loginUsername = ref<string>("");
+  const loginPassword = ref<string>("");
+  const Incorrect = ref<boolean>(false);
+  const Success = ref<boolean>(false);
+    const login = () => {
+    axios
+      .post(`${url}api/login`, {
+        username: loginUsername.value,
+        password: loginPassword.value,
+      },{
+        withCredentials: true
+      })
+      .then(async (response) => {
+        await saveUserToCookie(response.data);
+        await setAuthenticated(true);
+        loggedInUser.value = response.data;
+        role.value = await getRole(url);
+        Success.value = true;
+        router.push("/");
+        
+  ;
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          Incorrect.value = true;
+          setTimeout(() => {
+            Incorrect.value = false;
+          }, 2000);
+        } else {
+          console.log(`Unexpected error: ${error}`);
+        }
+      });
+  
+    loginUsername.value = "";
+    loginPassword.value = "";
+  };
+  
+  </script>
+  
+  
