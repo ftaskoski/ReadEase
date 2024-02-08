@@ -391,7 +391,26 @@ watch(searchQuery, () => {
   }
 });
 
-
+watch(totalPages, () => {
+  if (currPage.value > totalPages.value) {
+    currPage.value = Math.max(totalPages.value, 1);
+    sessionStorage.setItem("page", String(currPage.value));
+    if (checkedCategories.value.length > 0) {
+      getAllCheckedBooks();
+      check();
+    } else if(searchQuery.value){
+      searchedBooksFull();
+      handleInput();
+    }
+    router.push({
+      query: {
+        page: currPage.value,
+        search: searchQuery.value,
+        categories: checkedCategories.value.join(","),
+      },
+    });
+  }
+});
 
 // Lifecycle Hook
 onMounted(() => {
