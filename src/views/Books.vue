@@ -254,6 +254,7 @@ const deleteBook = (id: number) => {
       }
       if ((checkedbooksAll.value?.length === 1 || checkedBooks.value?.length === 1) && currPage.value > 1) {
         currPage.value = currPage.value - 1;
+        sessionStorage.setItem("page", String(currPage.value));
         getAllCheckedBooks();
         check();
       }
@@ -265,6 +266,7 @@ const deleteBook = (id: number) => {
       }
       if ((bookPaginated.value?.length === 1 || searchedBooks.value?.length === 1) && currPage.value > 1) {
         currPage.value = currPage.value - 1;
+        sessionStorage.setItem("page", String(currPage.value));
         getBooks();
       }
     })
