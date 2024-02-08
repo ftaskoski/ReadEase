@@ -130,24 +130,30 @@ const totalPages = computed(() => {
   return Math.ceil(totalBooks / booksPerPage.value);
 });
 const changePage = (page: number) => {
-if (page >= 1 && page <= totalPages.value) {
-  currPage.value = page;
-  router.push({ query: { page: currPage.value, search: searchQuery.value, categories: checkedCategories.value.join(",") } });
-
-  if (checkedCategories.value.length > 0) {
-    getAllCheckedBooks();
-    check();
-  } else {
-    if (!searchQuery.value) {
-      getBooks();
+  if (page >= 1 && page <= totalPages.value) {
+    currPage.value = page;
+    sessionStorage.setItem("page", String(currPage.value)); // Update session storage with current page
+    if (checkedCategories.value.length > 0) {
+      getAllCheckedBooks();
+      check();
     } else {
-      searchedBooksFull();
+      if (!searchQuery.value) {
+        getBooks();
+      } else {
+        searchedBooksFull();
+      }
     }
+
+    router.push({
+      query: {
+        page: currPage.value,
+        search: searchQuery.value,
+        categories: checkedCategories.value.join(","),
+      },
+    });
   }
-
-}
-
 };
+
 
 // Functions
 // Get Functions
@@ -349,36 +355,36 @@ const getCategoryName = (categoryId : number) => {
 };
 
 watch(checkedCategories, () => {
-  if (!router.currentRoute.value.query.categories) {
-    currPage.value = 1;
+  if(!sessionStorage.getItem("categories")) {
+   currPage.value = 1;
   }
   if (checkedCategories.value.length > 0) {
-    if (currPage.value > 1 && currPage.value <= totalPages.value) {
-      currPage.value = currPage.value - 1;
-    }
     getAllCheckedBooks();
     router.push({ query: { categories: checkedCategories.value.join(','), page: currPage.value } });
     sessionStorage.setItem("categories", checkedCategories.value.join(","));
   } else {
-    currPage.value = 1;
     getBooks();
     getAllBooks();
-    router.push({ query: { categories: null, page: null } });
+    currPage.value = 1;
+    router.push({ query: { categories: null, page: currPage.value } });
+    sessionStorage.setItem("page", String(currPage.value));
     sessionStorage.removeItem("categories");
   }
 });
 
 watch(searchQuery, () => {
-  if (!router.currentRoute.value.query.search) {
-    currPage.value = 1;
+  if(!sessionStorage.getItem("search")) {
+   currPage.value = 1;
   }
   if (searchQuery.value) {
     handleInput();
     router.push({ query: { search: searchQuery.value, page: currPage.value } });
     sessionStorage.setItem("search", searchQuery.value);
+   sessionStorage.setItem("page", String(currPage.value));
   } else {
     currPage.value = 1;
     router.push({ query: { search: null, page: 1 } });
+  sessionStorage.setItem("page", String(currPage.value));
     sessionStorage.removeItem("search");
     getAllBooks();
     getBooks();
@@ -387,25 +393,27 @@ watch(searchQuery, () => {
 
 
 
-
 // Lifecycle Hook
 onMounted(() => {
   const categoriesFromStorage = sessionStorage.getItem("categories");
-  const searchFromStorage= sessionStorage.getItem("search");
-  const pageFromURL = Number(router.currentRoute.value.query.page);
-  if (pageFromURL) {
-    currPage.value = pageFromURL;
+  const searchFromStorage = sessionStorage.getItem("search");
+  const pageFromStorage = sessionStorage.getItem("page");
+
+  if (pageFromStorage) {
+    currPage.value = parseInt(pageFromStorage, 10);
   }
+
   if (categoriesFromStorage) {
-    router.push({ query: { categories: checkedCategories.value.join(','), page: currPage.value } });
-    checkedCategories.value = categoriesFromStorage.split(',').map(Number);
+    checkedCategories.value = categoriesFromStorage.split(",").map(Number);
     getAllCheckedBooks();
     check();
   }
+
   if (searchFromStorage) {
     searchQuery.value = searchFromStorage;
     searchBook();
   }
+
   getAllCategories();
   getAllBooks();
   getBooks();
