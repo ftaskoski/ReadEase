@@ -375,9 +375,11 @@ watch(searchQuery, () => {
   if (searchQuery.value) {
     handleInput();
     router.push({ query: { search: searchQuery.value, page: currPage.value } });
+    sessionStorage.setItem("search", searchQuery.value);
   } else {
     currPage.value = 1;
     router.push({ query: { search: null, page: 1 } });
+    sessionStorage.removeItem("search");
     getAllBooks();
     getBooks();
   }
@@ -389,7 +391,7 @@ watch(searchQuery, () => {
 // Lifecycle Hook
 onMounted(() => {
   const categoriesFromStorage = sessionStorage.getItem("categories");
-  const searchFromURL = router.currentRoute.value.query.search as string;
+  const searchFromStorage= sessionStorage.getItem("search");
   const pageFromURL = Number(router.currentRoute.value.query.page);
   if (pageFromURL) {
     currPage.value = pageFromURL;
@@ -400,8 +402,8 @@ onMounted(() => {
     getAllCheckedBooks();
     check();
   }
-  if (searchFromURL) {
-    searchQuery.value = searchFromURL;
+  if (searchFromStorage) {
+    searchQuery.value = searchFromStorage;
     searchBook();
   }
   getAllCategories();
