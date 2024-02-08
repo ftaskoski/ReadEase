@@ -358,11 +358,13 @@ watch(checkedCategories, () => {
     }
     getAllCheckedBooks();
     router.push({ query: { categories: checkedCategories.value.join(','), page: currPage.value } });
+    localStorage.setItem("categories", checkedCategories.value.join(","));
   } else {
     currPage.value = 1;
     getBooks();
     getAllBooks();
     router.push({ query: { categories: null, page: null } });
+    localStorage.removeItem("categories");
   }
 });
 
@@ -383,14 +385,15 @@ watch(searchQuery, () => {
 
 // Lifecycle Hook
 onMounted(() => {
-  const categoriesFromURL = router.currentRoute.value.query.categories as string;
+  const categoriesFromStorage = localStorage.getItem("categories");
   const searchFromURL = router.currentRoute.value.query.search as string;
   const pageFromURL = Number(router.currentRoute.value.query.page);
   if (pageFromURL) {
     currPage.value = pageFromURL;
   }
-  if (categoriesFromURL) {
-    checkedCategories.value = categoriesFromURL.split(',').map(Number);
+  if (categoriesFromStorage) {
+    router.push({ query: { categories: checkedCategories.value.join(','), page: currPage.value } });
+    checkedCategories.value = categoriesFromStorage.split(',').map(Number);
     getAllCheckedBooks();
     check();
   }
