@@ -500,6 +500,7 @@ watch([checkedCategories, searchQuery],  () => {
   }
 
   else {
+    currPage.value = 1;
     router.push({ query: { categories: null, search: null, page: currPage.value } });
     sessionStorage.setItem("page", String(currPage.value));
     sessionStorage.removeItem("categories");
@@ -509,7 +510,6 @@ watch([checkedCategories, searchQuery],  () => {
     handleInput();
     searchBook();
     searchedBooksFull();
-    currPage.value = 1;
   }
 });
 
