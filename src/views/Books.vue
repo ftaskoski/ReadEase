@@ -60,14 +60,50 @@
       <label>{{ category.categoryName }}</label>
     </div>
 
-    <BookTable
-      :searchedBooks="searchedBooks"
-      :searchQuery="searchQuery"
-      :bookPaginated="bookPaginated"
-      :checkedBooks="checkedBooks"
-      :getCategoryName="getCategoryName"
-      :deleteBook="deleteBook"
-    />
+
+
+    <div v-if="searchandcategorybooks && searchandcategorybooks.length > 0">
+  <div class="flex justify-center items-center">
+    <table class="table-auto w-full">
+      <thead>
+        <tr>
+          <th class="px-4 py-2">Author</th>
+          <th class="px-4 py-2">Title</th>
+          <th class="px-4 py-2">Category</th>
+          <th class="px-4 py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="book in searchandcategorybooks" :key="book.bookId">
+          <td class="border px-4 py-2">{{ book.author }}</td>
+          <td class="border px-4 py-2">{{ book.title }}</td>
+          <td class="border px-4 py-2">{{ getCategoryName(book.categoryId) }}</td>
+          <td class="border px-4 py-2">
+            <button
+              class="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
+              @click="deleteBook(book.bookId)"
+            >
+              Delete book <i class="fa-sharp fa-solid fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div v-else>
+  <BookTable
+    :searchedBooks="searchedBooks"
+    :searchQuery="searchQuery"
+    :bookPaginated="bookPaginated"
+    :checkedBooks="checkedBooks"
+    :getCategoryName="getCategoryName"
+    :deleteBook="deleteBook"
+  />
+</div>
+
+
 
     <div class="flex justify-center items-center mt-4">
       <button
@@ -122,13 +158,19 @@ const searchedBooksAll = ref<any[]>([]);
 const booksPerPage = ref(10);
 const currPage = ref(1);
 const totalPages = computed(() => {
-  const totalBooks = checkedCategories.value.length > 0
-    ? checkedbooksAll.value.length
-    : searchedBooks.value && searchQuery.value
-    ? searchedBooksAll.value.length
-    : (bookCollection.value?.length ?? 0);
+  let totalBooks;
+  if (searchQuery.value && checkedCategories.value.length > 0) {
+    totalBooks = searchandcategoryall.value.length;
+  } else if (checkedCategories.value.length > 0) {
+    totalBooks = checkedbooksAll.value.length;
+  } else if (searchedBooks.value && searchQuery.value) {
+    totalBooks = searchedBooksAll.value.length;
+  } else {
+    totalBooks = bookCollection.value?.length ?? 0;
+  }
   return Math.ceil(totalBooks / booksPerPage.value);
 });
+
 const changePage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
     currPage.value = page;
@@ -142,6 +184,13 @@ const changePage = (page: number) => {
       } else {
         searchedBooksFull();
       }
+    
+    }
+
+    if(checkedCategories.value.length > 0 && searchQuery.value){
+      
+      searchAndCategory();
+      searchAndCategoryPaginated();
     }
 
     router.push({
@@ -219,6 +268,10 @@ const addBook = () => {
       if (searchQuery.value) {
         searchedBooksFull();
       }
+      if (checkedCategories.value.length > 0 && searchQuery.value) {
+        searchAndCategory();
+        searchAndCategoryPaginated();
+      }
     })
     .catch((error) => {
       console.error(error);
@@ -257,6 +310,10 @@ const deleteBook = (id: number) => {
         sessionStorage.setItem("page", String(currPage.value));
         getAllCheckedBooks();
         check();
+      }
+      if (checkedCategories.value.length  && searchQuery.value) {
+        searchAndCategory();
+        searchAndCategoryPaginated();
       }
       if (searchQuery.value) {
         searchedBooksFull();
@@ -356,42 +413,106 @@ const getCategoryName = (categoryId : number) => {
   return category ? category.categoryName : 'Unknown Category';
 };
 
-watch(checkedCategories, () => {
-  if(!sessionStorage.getItem("categories")) {
-   currPage.value = 1;
+const searchandcategoryall = ref<any[]>([]);
+const searchandcategorybooks = ref<any[]>([]);
+const searchAndCategory =  () => {
+  if (searchQuery.value && checkedCategories.value.length > 0) {
+  axios.get(`${url}api/searchandcategoryall`, {
+    withCredentials: true,
+      params: {
+        search: searchQuery.value,
+        categories: checkedCategories.value.join(',')
+      }
+    }).then((response) => {
+      searchandcategoryall.value = response.data;
+      searchAndCategoryPaginated();
+    })
+
+
   }
-  if (checkedCategories.value.length > 0) {
-    getAllCheckedBooks();
+};
+
+const searchAndCategoryPaginated =  () => {
+  if (searchQuery.value && checkedCategories.value.length > 0) {
+  axios.get(`${url}api/searchandcategory`, {
+    withCredentials: true,
+      params: {
+        search: searchQuery.value,
+        categories: checkedCategories.value.join(','),
+        pageNumber: currPage.value
+      }
+  }).then((response) => {
+
+    searchandcategorybooks.value = response.data;
+  })
+  }
+}
+
+
+
+watch([checkedCategories, searchQuery],  () => {
+  if (checkedCategories.value.length > 0 && !searchQuery.value ) {
+    if (!sessionStorage.getItem("categories")) {
+      currPage.value = 1;
+    }
+    searchandcategorybooks.value=[];
+    searchandcategoryall.value = [];
+    check();
     router.push({ query: { categories: checkedCategories.value.join(','), page: currPage.value } });
     sessionStorage.setItem("categories", checkedCategories.value.join(","));
-  } else {
-    getBooks();
-    getAllBooks();
-    currPage.value = 1;
-    router.push({ query: { categories: null, page: currPage.value } });
+    sessionStorage.removeItem("search");
+    searchedBooks.value = [];
+
+  } else if (searchQuery.value && checkedCategories.value.length === 0) {
+    if (!sessionStorage.getItem("search")) {
+      currPage.value = 1;
+    }
+    searchandcategorybooks.value=[];
+    searchandcategoryall.value = [];
+    router.push({ query: { search: searchQuery.value, page: currPage.value } });
+    sessionStorage.setItem("search", searchQuery.value);
     sessionStorage.setItem("page", String(currPage.value));
     sessionStorage.removeItem("categories");
+    searchQuery.value = sessionStorage.getItem("search") || "";
+    handleInput();
+    searchBook();
+    searchedBooksFull();
+
+  } else if(checkedCategories.value.length > 0 && searchQuery.value){
+    searchAndCategory();
+    searchAndCategoryPaginated();
+    checkedBooks.value = [];
+    searchedBooks.value = [];
+    router.push({ query: { categories: checkedCategories.value.join(','), search: searchQuery.value, page: currPage.value } });
+    sessionStorage.setItem("categories", checkedCategories.value.join(","));
+    sessionStorage.setItem("search", searchQuery.value);
+    sessionStorage.setItem("page", String(currPage.value));
+  }
+  
+  else if(searchQuery.value && checkedCategories.value.length === 0){
+    handleInput();
+    sessionStorage.setItem("page", String(currPage.value));
+    searchBook();
+    searchedBooksFull();
+    router.push({ query: { categories: null, search: searchQuery.value, page: currPage.value } });
+    sessionStorage.setItem("search", searchQuery.value);
+    sessionStorage.removeItem("categories");
+  }
+
+  else {
+    router.push({ query: { categories: null, search: null, page: currPage.value } });
+    sessionStorage.setItem("page", String(currPage.value));
+    sessionStorage.removeItem("categories");
+    sessionStorage.removeItem("search");
+    getBooks();
+    getAllBooks();
+    handleInput();
+    searchBook();
+    searchedBooksFull();
+    currPage.value = 1;
   }
 });
 
-watch(searchQuery, () => {
-  if(!sessionStorage.getItem("search")) {
-   currPage.value = 1;
-  }
-  if (searchQuery.value) {
-    handleInput();
-    router.push({ query: { search: searchQuery.value, page: currPage.value } });
-    sessionStorage.setItem("search", searchQuery.value);
-   sessionStorage.setItem("page", String(currPage.value));
-  } else {
-    currPage.value = 1;
-    router.push({ query: { search: null, page: 1 } });
-  sessionStorage.setItem("page", String(currPage.value));
-    sessionStorage.removeItem("search");
-    getAllBooks();
-    getBooks();
-  }
-});
 
 watch(totalPages, () => {
   if (currPage.value > totalPages.value) {
@@ -400,10 +521,16 @@ watch(totalPages, () => {
     if (checkedCategories.value.length > 0) {
       getAllCheckedBooks();
       check();
-    } else if(searchQuery.value){
+    }
+     else if(searchQuery.value){
       searchedBooksFull();
       handleInput();
     }
+    if (checkedCategories.value.length  && searchQuery.value) {
+        searchAndCategory();
+        searchAndCategoryPaginated();
+      }
+
     router.push({
       query: {
         page: currPage.value,
