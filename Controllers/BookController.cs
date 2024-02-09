@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Books.Services;
 using System.Security.Claims;
-
+using System.Data.SqlClient;
 
 namespace WebApplication1.Controllers
 {
@@ -17,7 +17,6 @@ namespace WebApplication1.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly BookService _bookService;
-
         public BooksController(IConfiguration configuration, BookService bookService)
         {
             _configuration = configuration;
@@ -95,5 +94,40 @@ namespace WebApplication1.Controllers
             _bookService.DeleteBook(id);
             return Ok();
         }
+
+        private SqlConnection GetSqlConnection()
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            return new SqlConnection(connectionString);
+        }
+
+        [HttpGet("searchandcategoryall")]
+        public IEnumerable<BookModel> GetSearchAndCategoryAll(string search, [FromQuery] string categories)
+        {
+            using var connection = GetSqlConnection();
+            var categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
+            var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND AUTHOR LIKE @search AND CategoryId IN @categories ORDER BY CategoryId ";
+            var parameters = new { Id = UserId, search = $"{search}%", categories = categoriesList };
+            var books = connection.Query<BookModel>(getQuery, parameters);
+            return books;
+        }
+
+
+        [HttpGet("searchandcategory")]
+        public IEnumerable<BookModel> GetSearchAndCategory(string search, [FromQuery] string categories,int pageNumber=10,int pageSize=10)
+        {
+            int startIndex = (pageNumber - 1) * pageSize;
+            using var connection = GetSqlConnection();
+            var categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
+            var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND AUTHOR LIKE @search AND CategoryId IN @categories ORDER BY CategoryId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY ";
+            var parameters = new { Id = UserId, search = $"{search}%", categories = categoriesList, startindex=startIndex,pageSize=pageSize };
+            var books = connection.Query<BookModel>(getQuery, parameters);
+            return books;
+        }
     }
-}
+
+
+
+
+    }
+
