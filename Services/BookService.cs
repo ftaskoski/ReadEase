@@ -77,10 +77,19 @@ namespace Books.Services
 
         public IEnumerable<BookModel> SearchAndCategoryAll(int UserId,string search,List<int>categories)
         {
-            using var connection = GetSqlConnection();
             var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND AUTHOR LIKE @search AND CategoryId IN @categories ORDER BY CategoryId ";
             var parameters = new { Id = UserId, search = $"{search}%", categories = categories };
             return QueryBooks(getQuery, parameters);
+        }
+
+        public IEnumerable<BookModel> SearchAndCategory(int UserId,string search,List<int>categories, int pageNumber = 1, int pageSize = 10)
+        {
+
+            int startIndex = (pageNumber - 1) * pageSize;
+            var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND AUTHOR LIKE @search AND CategoryId IN @categories ORDER BY CategoryId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY ";
+            var parameters = new { Id = UserId, search = $"{search}%", categories = categories, startindex = startIndex, pageSize = pageSize };
+            return QueryBooks(getQuery, parameters);
+          
         }
 
     }

@@ -111,15 +111,12 @@ namespace WebApplication1.Controllers
 
 
         [HttpGet("searchandcategory")]
-        public IEnumerable<BookModel> GetSearchAndCategory(string search, [FromQuery] string categories,int pageNumber=10,int pageSize=10)
+        public IEnumerable<BookModel> GetSearchAndCategory(string search, [FromQuery] string categories,int pageNumber=1,int pageSize=10)
         {
-            int startIndex = (pageNumber - 1) * pageSize;
-            using var connection = GetSqlConnection();
+  
             var categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
-            var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND AUTHOR LIKE @search AND CategoryId IN @categories ORDER BY CategoryId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY ";
-            var parameters = new { Id = UserId, search = $"{search}%", categories = categoriesList, startindex=startIndex,pageSize=pageSize };
-            var books = connection.Query<BookModel>(getQuery, parameters);
-            return books;
+            return _bookService.SearchAndCategory(UserId, search, categoriesList,pageNumber,pageSize);
+   
         }
     }
 
