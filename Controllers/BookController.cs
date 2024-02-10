@@ -104,12 +104,9 @@ namespace WebApplication1.Controllers
         [HttpGet("searchandcategoryall")]
         public IEnumerable<BookModel> GetSearchAndCategoryAll(string search, [FromQuery] string categories)
         {
-            using var connection = GetSqlConnection();
             var categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
-            var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND AUTHOR LIKE @search AND CategoryId IN @categories ORDER BY CategoryId ";
-            var parameters = new { Id = UserId, search = $"{search}%", categories = categoriesList };
-            var books = connection.Query<BookModel>(getQuery, parameters);
-            return books;
+            return _bookService.SearchAndCategoryAll(UserId, search, categoriesList);
+
         }
 
 
