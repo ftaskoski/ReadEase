@@ -27,9 +27,7 @@
       >
         Submit
       </button>
-      <div
-        class="absolute sm:left-[55%] sm:top-[20%] sm:w-[1px] sm:h-[60%] bg-gray-600"
-      ></div>
+   
     </form>
   </div>
 </template>
@@ -37,7 +35,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import axios from "axios";
-import { loadUserFromCookie, saveUserToCookie } from "@/store/authStore";
 const newUsername = ref<string>("");
 const url = "https://localhost:7284/";
 
