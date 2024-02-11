@@ -130,14 +130,11 @@
 <script setup lang="ts">
 import axios from "axios";
 import { ref, onMounted, computed, watch } from "vue";
-import { loadUserFromCookie } from "@/store/authStore";
 import BookTable from "@/components/BookTable.vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 const url = "https://localhost:7284/";
-const user = loadUserFromCookie();
-const id = user ? user.id : null;
 let debounceTimer = 0;
 
 // Form and Book Data
@@ -153,7 +150,8 @@ const checkedbooksAll = ref<any[]>([]);
 const searchQuery = ref<string>("");
 const searchedBooks = ref<any[]>([]);
 const searchedBooksAll = ref<any[]>([]);
-
+const searchandcategoryall = ref<any[]>([]);
+const searchandcategorybooks = ref<any[]>([]);
 // Pagination
 const booksPerPage = ref(10);
 const currPage = ref(1);
@@ -413,8 +411,7 @@ const getCategoryName = (categoryId : number) => {
   return category ? category.categoryName : 'Unknown Category';
 };
 
-const searchandcategoryall = ref<any[]>([]);
-const searchandcategorybooks = ref<any[]>([]);
+
 const searchAndCategory =  () => {
   if (searchQuery.value && checkedCategories.value.length > 0) {
   axios.get(`${url}api/searchandcategoryall`, {
