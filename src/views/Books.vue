@@ -55,10 +55,12 @@
       />
     </div>
 
-    <div v-for="category in categories">
-      <input v-model="checkedCategories" @change="check" type="checkbox" :value="category.categoryId"  />
-      <label>{{ category.categoryName }}</label>
-    </div>
+    <div class="flex flex-wrap">
+  <div v-for="category in categories" :key="category.categoryId" class="mr-4 mb-2">
+    <input v-model="checkedCategories" @change="check" type="checkbox" :value="category.categoryId" class="form-checkbox h-5 w-5 text-blue-600" />
+    <label class="ml-2">{{ category.categoryName }}</label>
+  </div>
+</div>
 
 
 
