@@ -59,60 +59,54 @@ namespace userController.Controllers
 
             using (var connection = new SqlConnection(connectionString))
             {
-                var rng = new RNGCryptoServiceProvider();
-                byte[] saltBytes = new byte[16];
-                rng.GetBytes(saltBytes);
-                string salt = Convert.ToBase64String(saltBytes);
-                string saltedPassword = model.Password + salt;
+                // Retrieve salt asynchronously
+                string salt = await GenerateSaltAsync();
 
-                // Hash the password with salt
-                using (var sha512 = SHA512.Create())
+                // Hash the password with retrieved salt
+                string hashedPassword = await GenerateSaltedHash(model.Password, salt);
+
+                // Check if the user with the same username already exists
+                string checkUserQuery = "SELECT COUNT(*) FROM Users WHERE Username = @Username";
+                int existingUser = await connection.QueryFirstOrDefaultAsync<int>(checkUserQuery, new { Username = model.Username });
+
+                if (existingUser > 0)
                 {
-                    byte[] hashedBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
-                    string hashedPassword = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
-
-                    // Check if the user with the same username already exists
-                    string checkUserQuery = "SELECT COUNT(*) FROM Users WHERE Username = @Username";
-                    int existingUser = await connection.QueryFirstOrDefaultAsync<int>(checkUserQuery, new { Username = model.Username });
-
-                    if (existingUser > 0)
-                    {
-                        // User with the same username already exists, handle accordingly
-                        return Conflict("Username already exists");
-                    }
-
-                    // Insert the data into the Users table and retrieve the generated Id using Dapper
-                    string insertQuery = "INSERT INTO Users (Username, Password, Salt, Role) OUTPUT INSERTED.Id VALUES (@Username, @Password, @Salt, 'User')";
-                    int userId = await connection.QueryFirstOrDefaultAsync<int>(insertQuery, new { Username = model.Username, Password = hashedPassword, Salt = salt });
-
-                    // Set the generated Id in the FormModel
-                    model.Id = userId;
-                    string role = await _userService.CheckIfUserIsAdminAsync(model.Id);
-
-                    // Create claims for the registered user
-                    var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, model.Id.ToString()),
-                new Claim(ClaimTypes.Name, model.Username),
-                new Claim(ClaimTypes.Role, role ?? "User")
-                // Add additional claims as needed
-            };
-                    var authProperties = new AuthenticationProperties
-                    {
-                        // Persist the cookie even after the browser is closed
-                        IsPersistent = true
-                    };
-                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                    var principal = new ClaimsPrincipal(identity);
-
-                    // Sign in the user after registration
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
-                    model.Role = role ?? "User";
-                    return Ok(model.Role);
+                    // User with the same username already exists, handle accordingly
+                    return Conflict("Username already exists");
                 }
+
+                // Insert the data into the Users table and retrieve the generated Id using Dapper
+                string insertQuery = "INSERT INTO Users (Username, Password, Salt, Role) OUTPUT INSERTED.Id VALUES (@Username, @Password, @Salt, 'User')";
+                int userId = await connection.QueryFirstOrDefaultAsync<int>(insertQuery, new { Username = model.Username, Password = hashedPassword, Salt = salt });
+
+                // Set the generated Id in the FormModel
+                model.Id = userId;
+                string role = await _userService.CheckIfUserIsAdminAsync(model.Id);
+
+                // Create claims for the registered user
+                var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, model.Id.ToString()),
+            new Claim(ClaimTypes.Name, model.Username),
+            new Claim(ClaimTypes.Role, role ?? "User")
+            // Add additional claims as needed
+        };
+                var authProperties = new AuthenticationProperties
+                {
+                    // Persist the cookie even after the browser is closed
+                    IsPersistent = true
+                };
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var principal = new ClaimsPrincipal(identity);
+
+                // Sign in the user after registration
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
+                model.Role = role ?? "User";
+                return Ok(model.Role);
             }
         }
+
 
         [HttpPost("login")]
         public async Task<ActionResult> LoginUser([FromBody] FormModel model)
@@ -122,8 +116,7 @@ namespace userController.Controllers
             using (var connection = new SqlConnection(connectionString))
             {
                 // Retrieve the salt for the user
-                string getSaltQuery = "SELECT Salt FROM Users WHERE Username = @Username";
-                string salt = await connection.QueryFirstOrDefaultAsync<string>(getSaltQuery, new { Username = model.Username });
+                string salt = await GetSalt(model.Username, connection);
 
                 if (salt == null)
                 {
@@ -132,52 +125,75 @@ namespace userController.Controllers
                 }
 
                 // Hash the password with retrieved salt
-                string saltedPassword = model.Password + salt;
-                using (var sha512 = SHA512.Create())
+                string hashedPassword = await GenerateSaltedHash(model.Password, salt);
+
+                string selectQuery = "SELECT * FROM Users WHERE Username = @Username AND Password = @Password";
+                var user = await connection.QueryFirstOrDefaultAsync<FormModel>(selectQuery, new { Username = model.Username, Password = hashedPassword });
+
+                if (user != null)
                 {
-                    byte[] hashedBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
-                    string hashedPassword = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+                    // Retrieve the role from the database
+                    string role = await _userService.CheckIfUserIsAdminAsync(user.Id);
 
-                    string selectQuery = "SELECT * FROM Users WHERE Username = @Username AND Password = @Password";
-                    var user = await connection.QueryFirstOrDefaultAsync<FormModel>(selectQuery, new { Username = model.Username, Password = hashedPassword });
+                    // Create claims for the authenticated user
+                    var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, role ?? "User") // Default to "User" if role is null
+                // Add additional claims as needed
+            };
 
-                    if (user != null)
+                    var authProperties = new AuthenticationProperties
                     {
-                        // Retrieve the role from the database
-                        string role = await _userService.CheckIfUserIsAdminAsync(user.Id);
+                        // Persist the cookie even after the browser is closed
+                        IsPersistent = true
+                    };
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                        // Create claims for the authenticated user
-                        var claims = new List<Claim>
+                    var principal = new ClaimsPrincipal(identity);
+
+                    // Sign in the user
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
+
+                    user.Role = role ?? "User";
+                    return Ok(user.Role);
+                }
+                else
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Role, role ?? "User") // Default to "User" if role is null
-                    // Add additional claims as needed
-                };
-
-                        var authProperties = new AuthenticationProperties
-                        {
-                            // Persist the cookie even after the browser is closed
-                            IsPersistent = true
-                        };
-                        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                        var principal = new ClaimsPrincipal(identity);
-
-                        // Sign in the user
-                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
-
-                        user.Role = role ?? "User";
-                        return Ok(user.Role);
-                    }
-                    else
-                    {
-                        // Return 401 Unauthorized
-                        return Unauthorized();
-                    }
+                    // Return 401 Unauthorized
+                    return Unauthorized();
                 }
             }
         }
+
+        public async Task<string> GetSalt(string username, SqlConnection connection)
+        {
+            string getSaltQuery = "SELECT Salt FROM Users WHERE Username = @Username";
+            string salt = await connection.QueryFirstOrDefaultAsync<string>(getSaltQuery, new { Username = username });
+            return salt;
+        }
+
+        public async Task<string> GenerateSaltedHash(string password, string salt)
+        {
+            string saltedPassword = password + salt;
+            using (var sha512 = SHA512.Create())
+            {
+                byte[] hashedBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
+                string hashedPassword = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+                return hashedPassword;
+            }
+        }
+        public async Task<string> GenerateSaltAsync()
+        {
+            var rng = new RNGCryptoServiceProvider();
+            byte[] saltBytes = new byte[16];
+            rng.GetBytes(saltBytes);
+            string salt = Convert.ToBase64String(saltBytes);
+            return salt;
+        }
+
+
 
         public int UserId
         {
