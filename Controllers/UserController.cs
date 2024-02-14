@@ -66,9 +66,9 @@ namespace userController.Controllers
                 string saltedPassword = model.Password + salt;
 
                 // Hash the password with salt
-                using (var sha256 = SHA256.Create())
+                using (var sha512 = SHA512.Create())
                 {
-                    byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
+                    byte[] hashedBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
                     string hashedPassword = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
 
                     // Check if the user with the same username already exists
@@ -133,9 +133,9 @@ namespace userController.Controllers
 
                 // Hash the password with retrieved salt
                 string saltedPassword = model.Password + salt;
-                using (var sha256 = SHA256.Create())
+                using (var sha512 = SHA512.Create())
                 {
-                    byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
+                    byte[] hashedBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
                     string hashedPassword = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
 
                     string selectQuery = "SELECT * FROM Users WHERE Username = @Username AND Password = @Password";
