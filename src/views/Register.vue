@@ -23,6 +23,7 @@
                           class="font-semibold text-gray-600 hover:underline focus:text-gray-800 focus:outline-none">Sign
                           in
                       </RouterLink>.
+                      <p v-if="errorMsg" class="text-red-500">{{errorMsg}}</p>
                   </p>
               </form>
           </div>
@@ -52,7 +53,7 @@ const errorMsg=ref<string>("")
 
 
 const register = () => {
-    if (password.value.length < 5) {
+    if (password.value.length < 3) {
     errorMsg.value="Password too short"
     setTimeout(() => {
         errorMsg.value=""
