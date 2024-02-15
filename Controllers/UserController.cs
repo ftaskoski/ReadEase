@@ -169,7 +169,49 @@ namespace userController.Controllers
             }
         }
 
+        private SqlConnection GetSqlConnection()
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            return new SqlConnection(connectionString);
+        }
 
+        [HttpPost("photo")]
+        [Authorize]
+        public IActionResult Photo(IFormFile file)
+        {
+            var connection = GetSqlConnection();
+
+            if (file == null || file.Length == 0)
+                return BadRequest("No file is uploaded.");
+
+            using (var memoryStream = new MemoryStream())
+            {
+                file.CopyTo(memoryStream);
+                var imageBytes = memoryStream.ToArray();
+
+                string insertQuery = "UPDATE Users SET photo = @Photo WHERE Id = @UserId";
+
+                connection.Execute(insertQuery, new { Photo = imageBytes, UserId = UserId });
+            }
+
+            return Ok("Photo uploaded successfully.");
+        }
+
+        [HttpGet("getphoto")]
+        [Authorize]
+        public IActionResult GetPhoto()
+        {
+            var connection = GetSqlConnection();
+
+            string selectQuery = "SELECT photo FROM Users WHERE Id = @UserId";
+
+            byte[] photoBytes = connection.QuerySingleOrDefault<byte[]>(selectQuery, new { UserId = UserId });
+
+            if (photoBytes == null)
+                return NotFound("No photo found for this user.");
+
+            return File(photoBytes, "image/jpeg"); // adjust the content type based on your image format
+        }
 
 
 
