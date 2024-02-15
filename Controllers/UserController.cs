@@ -22,11 +22,13 @@ namespace userController.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly UserService _userService;
+        private readonly HashingService _hashingService;
 
-        public UsersController(IConfiguration configuration,UserService service)
+        public UsersController(IConfiguration configuration,UserService service, HashingService hashingService)
         {
             _configuration = configuration;
             _userService = service;
+            _hashingService = hashingService;
         }
 
         [HttpGet("users")]
@@ -60,10 +62,10 @@ namespace userController.Controllers
             using (var connection = new SqlConnection(connectionString))
             {
                 // Retrieve salt asynchronously
-                string salt = await GenerateSaltAsync();
+                string salt = await _hashingService.GenerateSaltAsync();
 
                 // Hash the password with retrieved salt
-                string hashedPassword = await GenerateSaltedHash(model.Password, salt);
+                string hashedPassword = await _hashingService.GenerateSaltedHash(model.Password, salt);
 
                 // Check if the user with the same username already exists
                 string checkUserQuery = "SELECT COUNT(*) FROM Users WHERE Username = @Username";
@@ -116,7 +118,7 @@ namespace userController.Controllers
             using (var connection = new SqlConnection(connectionString))
             {
                 // Retrieve the salt for the user
-                string salt = await GetSalt(model.Username, connection);
+                string salt = await _hashingService.GetSalt(model.Username, connection);
 
                 if (salt == null)
                 {
@@ -125,7 +127,7 @@ namespace userController.Controllers
                 }
 
                 // Hash the password with retrieved salt
-                string hashedPassword = await GenerateSaltedHash(model.Password, salt);
+                string hashedPassword = await _hashingService.GenerateSaltedHash(model.Password, salt);
 
                 string selectQuery = "SELECT * FROM Users WHERE Username = @Username AND Password = @Password";
                 var user = await connection.QueryFirstOrDefaultAsync<FormModel>(selectQuery, new { Username = model.Username, Password = hashedPassword });
@@ -167,31 +169,9 @@ namespace userController.Controllers
             }
         }
 
-        public async Task<string> GetSalt(string username, SqlConnection connection)
-        {
-            string getSaltQuery = "SELECT Salt FROM Users WHERE Username = @Username";
-            string salt = await connection.QueryFirstOrDefaultAsync<string>(getSaltQuery, new { Username = username });
-            return salt;
-        }
 
-        public async Task<string> GenerateSaltedHash(string password, string salt)
-        {
-            string saltedPassword = password + salt;
-            using (var sha512 = SHA512.Create())
-            {
-                byte[] hashedBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
-                string hashedPassword = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
-                return hashedPassword;
-            }
-        }
-        public async Task<string> GenerateSaltAsync()
-        {
-            var rng = new RNGCryptoServiceProvider();
-            byte[] saltBytes = new byte[16];
-            rng.GetBytes(saltBytes);
-            string salt = Convert.ToBase64String(saltBytes);
-            return salt;
-        }
+
+
 
 
 
