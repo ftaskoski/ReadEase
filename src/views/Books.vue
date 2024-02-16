@@ -120,10 +120,10 @@
       <button
         v-for="page in totalPages"
         :key="page"
-        class=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-black"
+        class=" bg-blue-500  hover:bg-blue-700 text-white font-bold py-2 px-4 border border-black"
         @click="changePage(page)"
         :disabled="currPage === page"
-        :class="{ 'cursor-not-allowed': currPage === page, 'opacity-50': currPage === page }"
+        :class="{ 'cursor-not-allowed': currPage === page, 'animate-pulse': currPage === page }"
       >
         {{ page }}
       </button>
