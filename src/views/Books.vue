@@ -107,25 +107,39 @@
 
 
 
-    <div class="flex justify-center items-center mt-4">
+<div class="flex justify-center items-center mt-4">
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l border border-black"
+      @click="changePage(currPage - 1)"
+      :disabled="currPage === 1"
+      :class="{ 'cursor-not-allowed': currPage === 1, 'opacity-50': currPage === 1 }"
+    >
+      Previous
+    </button>
+    <div class="flex">
       <button
-        class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        @click="changePage(currPage - 1)"
-        :disabled="currPage === 1"
-        :class="{ 'cursor-not-allowed': currPage === 1, 'opacity-50': currPage === 1 }"
+        v-for="page in totalPages"
+        :key="page"
+        class=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-black"
+        @click="changePage(page)"
+        :disabled="currPage === page"
+        :class="{ 'cursor-not-allowed': currPage === page, 'opacity-50': currPage === page }"
       >
-        Previous
-      </button>
-      <span>Page {{ currPage }} of {{ totalPages }}</span>
-      <button
-        class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        @click="changePage(currPage + 1)"
-        :disabled="currPage === totalPages"
-        :class="{ 'cursor-not-allowed': currPage === totalPages, 'opacity-50': currPage === totalPages }"
-      >
-        Next
+        {{ page }}
       </button>
     </div>
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r border border-black"
+      @click="changePage(currPage + 1)"
+      :disabled="currPage === totalPages"
+      :class="{ 'cursor-not-allowed': currPage === totalPages, 'opacity-50': currPage === totalPages }"
+    >
+      Next
+    </button>
+  </div>
+
+
+
   </div>
     </div>
   </div>
