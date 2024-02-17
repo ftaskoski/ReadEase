@@ -3,7 +3,8 @@
     <div class="order-1 sm:order-2 sm:ml-64 p-4 ">
       <div>
     <div>
-      <p>Insert books</p>
+      <Card class="">
+      <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2" >Insert books</p>
       <form @submit.prevent="addBook">
         <label for="author">Author</label>
         <input
@@ -33,6 +34,7 @@
           Submit
         </button>
       </form>
+    </Card>
       <button
         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
         @click="downloadBooks"
@@ -150,7 +152,7 @@ import axios from "axios";
 import { ref, onMounted, computed, watch } from "vue";
 import BookTable from "@/components/BookTable.vue";
 import { useRouter } from "vue-router";
-
+import Card from "@/components/Card.vue";
 const router = useRouter();
 const url = "https://localhost:7284/";
 let debounceTimer = 0;
