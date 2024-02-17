@@ -1,5 +1,5 @@
 <template>
-    <Card>
+    <Card class="justify-center items-center h-screen">
       <div class="w-full">
           <div class="text-center">
               <h1 class="text-3xl font-semibold text-gray-900">Sign Up</h1>
