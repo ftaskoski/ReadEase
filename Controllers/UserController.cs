@@ -1,18 +1,13 @@
 ﻿using Dapper;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.Data.SqlClient;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using WebApplication1.Models;
-using RestSharp;
 using ReadEase_C_.Services;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
-using System.Security.Cryptography;
+using RestSharp;
+using System.Data.SqlClient;
+using System.Security.Claims;
+using WebApplication1.Models;
 
 namespace userController.Controllers
 {

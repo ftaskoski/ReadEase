@@ -83,7 +83,6 @@ namespace WebApplication1.Controllers
         [HttpGet("getallbooks")]
         public IEnumerable<BookModel> GetAllBooks()
         {
-            Console.WriteLine(UserId);
             return _bookService.GetAllBooksForUser(UserId);
 
         }
