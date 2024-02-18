@@ -55,12 +55,13 @@
       </button>
 
     </form>
-    
+    <div v-if="profilePictureUrl" class="h-[60px]    mx-auto w-[60px]">
+    <img :src="profilePictureUrl" alt="Profile Picture" class="rounded-full object-cover " />
+</div>
   </div>
   
-  <div v-if="profilePictureUrl" class="w-full">
-      <img :src="profilePictureUrl" alt="Profile Picture" class="rounded-full w-24 h-24 mx-auto" />
-    </div>
+
+
 
 </template>
 
@@ -152,3 +153,11 @@ onMounted(() => {
   getProfilePicture();
 });
 </script>
+
+<style scoped>
+.image-container {
+    width: 60px; /* Adjust dimensions as needed */
+    height: 60px; /* Adjust dimensions as needed */
+}
+
+</style>
