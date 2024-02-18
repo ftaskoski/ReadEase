@@ -2,33 +2,46 @@
   <div >
     <div class="order-1 sm:order-2 sm:ml-64 p-4 ">
       <div>
-    <div>
-      <Card class="">
-      <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2" >Insert books</p>
+    <div >
+      <Card class="max-w-md flex justify-center items-center">
+      <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2" >INSERT BOOKS</p>
       <form @submit.prevent="addBook">
-        <label for="author">Author</label>
-        <input
-          class="rounded-lg border-gray-200 border focus:border-blue-500 focus:outline-none"
-          type="text"
-          id="author"
-          v-model="author"
-          required
-        />
-
-        <label for="title">Title</label>
-        <input
-          class="rounded-lg border-gray-200 border focus:border-blue-500 focus:outline-none"
-          type="text"
-          id="title"
-          v-model="title"
-          required
-        />
-        <select required @change="getCategoryIdFromSelectedCategory" v-model="selectedCategory" class="w-full sm:w-auto px-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300">
+        <div class="relative w-full h-10 ">
+          <input
+            required
+            v-model="author"
+            class="peer sm:w-[80%] flex items-center justify-center w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-gray-900"
+            placeholder=" "
+          />
+          <label
+            class="flex  sm:w-[80%] w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:flex-shrink before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900"
+            :class="{ 'placeholder-shown': !author }"
+          >
+            Author
+          </label>
+        
+        </div>
+        <div class="relative w-full h-10 mt-2">
+          <input
+            required
+            v-model="title"
+            class="peer sm:w-[80%]  w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-gray-900"
+            placeholder=" "
+          />
+          <label
+            class="flex sm:w-[80%] w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:flex-shrink before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900"
+            :class="{ 'placeholder-shown': !title }"
+          >
+            Title
+          </label>
+        
+        </div>
+        <select required @change="getCategoryIdFromSelectedCategory" v-model="selectedCategory" class="w-full sm:w-auto mt-2 px-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300">
           <option  value="null" disabled selected hidden>Select a Category</option>
           <option  v-for="category in categories" :key="category" :value="category">{{ category.categoryName }}</option>
         </select>
         <button
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
+          class="text-white flex justify-center items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
           type="submit"
         >
           Submit
@@ -96,7 +109,8 @@
   </div>
 </div>
 
-<div v-else>
+
+<div  v-else>
   <BookTable
     :searchedBooks="searchedBooks"
     :searchQuery="searchQuery"
@@ -106,7 +120,6 @@
     :deleteBook="deleteBook"
   />
 </div>
-
 
 
 <div class="flex justify-center items-center mt-4">
