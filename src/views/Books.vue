@@ -86,6 +86,11 @@
   </div>
 </div>
 
+<div>
+    <select v-model="booksPerPage" @change="handleChange" class="w-80 px-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300">
+      <option v-for="page in booksPerPageArr" :key="page" :value="page">{{ page }}</option>
+    </select>
+  </div>
 
 
     <div v-if="searchandcategorybooks && searchandcategorybooks.length > 0">
@@ -194,9 +199,36 @@ const searchedBooks = ref<any[]>([]);
 const searchedBooksAll = ref<any[]>([]);
 const searchandcategoryall = ref<any[]>([]);
 const searchandcategorybooks = ref<any[]>([]);
+const booksPerPageArr = ref<number[]>([2,5,10, 20, 30, 40, 50]);
+const booksPerPage = ref<number>(10);
+
+  function handleChange(event : any) {
+  currPage.value = 1;
+  const selectedValue = parseInt(event.target.value);
+  booksPerPage.value = selectedValue;
+  sessionStorage.setItem("booksPerPage", String(selectedValue));
+  sessionStorage.setItem("page", "1");
+  router.push({ query: { booksPerPage: String(selectedValue) } });
+
+  if(searchQuery.value){
+    handleInput();
+    searchedBooksFull();
+  } else if(checkedCategories.value.length > 0){
+    check();
+    getAllCheckedBooks();
+  } else if(searchandcategorybooks.value.length > 0){
+    searchAndCategory();
+    searchAndCategoryPaginated();
+  }else {
+    getBooks();
+    getAllBooks();
+
+  }
+
+}
+
 // Pagination
-const booksPerPage = ref(10);
-const currPage = ref(1);
+const currPage = ref<number>(1);
 const totalPages = computed(() => {
   let totalBooks;
   if (searchQuery.value && checkedCategories.value.length > 0) {
@@ -223,6 +255,7 @@ const visiblePages = computed(() => {
 });
 
 const changePage = (page: number) => {
+  sessionStorage.setItem("booksPerPage", String(booksPerPage.value));
   if (page >= 1 && page <= totalPages.value) {
     currPage.value = page;
     sessionStorage.setItem("page", String(currPage.value)); // Update session storage with current page
@@ -249,6 +282,7 @@ const changePage = (page: number) => {
         page: currPage.value,
         search: searchQuery.value,
         categories: checkedCategories.value.join(","),
+        booksPerPage: booksPerPage.value
       },
     });
   }
@@ -262,6 +296,7 @@ const getBooks = () => {
     .get(`${url}api/getbooks`, {
       params: {
         pageNumber: currPage.value,
+        pageSize: booksPerPage.value
       },
       withCredentials: true,
     })
@@ -405,6 +440,7 @@ const searchBook = () => {
       params: {
         search: searchQuery.value,
         pageNumber: currPage.value,
+        pageSize: booksPerPage.value
       },
       withCredentials: true,
     })
@@ -443,6 +479,8 @@ const check = () => {
         params: {
           categories: checkedCategories.value.join(","),
           pageNumber: currPage.value,
+          pageSize: booksPerPage.value
+
         },
         withCredentials: true,
       })
@@ -489,7 +527,9 @@ const searchAndCategoryPaginated =  () => {
       params: {
         search: searchQuery.value,
         categories: checkedCategories.value.join(','),
-        pageNumber: currPage.value
+        pageNumber: currPage.value,
+        pageSize: booksPerPage.value
+
       }
   }).then((response) => {
 
@@ -596,6 +636,11 @@ onMounted(() => {
   const categoriesFromStorage = sessionStorage.getItem("categories");
   const searchFromStorage = sessionStorage.getItem("search");
   const pageFromStorage = sessionStorage.getItem("page");
+  const booksPerPageFromStorage = sessionStorage.getItem("booksPerPage");
+
+  if (booksPerPageFromStorage) {
+    booksPerPage.value = parseInt(booksPerPageFromStorage, 10);
+  }
 
   if (pageFromStorage) {
     currPage.value = parseInt(pageFromStorage, 10);
