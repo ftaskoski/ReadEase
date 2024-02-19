@@ -142,10 +142,10 @@
     </button>
     <div class="flex">
       <button
-        v-for="page in totalPages"
+        v-for="page in visiblePages"
         :key="page"
         class=" bg-blue-500  hover:bg-blue-700 text-white font-bold py-2 px-4 border border-black"
-        @click="changePage(page)"
+        @click="changePage(page as number)"
         :disabled="currPage === page"
         :class="{ 'cursor-not-allowed': currPage === page, 'animate-pulse': currPage === page }"
       >
@@ -209,6 +209,17 @@ const totalPages = computed(() => {
     totalBooks = bookCollection.value?.length ?? 0;
   }
   return Math.ceil(totalBooks / booksPerPage.value);
+});
+
+const windowSize=ref<number>(3);
+
+const visiblePages = computed(() => {
+  let start = currPage.value - Math.floor(windowSize.value / 2);
+  start = Math.max(start, 1);
+  let end = start + windowSize.value - 1;
+  end = Math.min(end, totalPages.value);
+  start = Math.max(1, end - windowSize.value + 1); // Adjusted start to be at least 1
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 });
 
 const changePage = (page: number) => {
