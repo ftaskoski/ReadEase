@@ -55,7 +55,7 @@ namespace WebApplication1.Controllers
         [HttpGet("getbooks")]
         public IActionResult GetBooks( int pageNumber = 1, int pageSize = 10)
         {
-           var books =_bookService.GetPaginatedBooks(UserId,pageNumber);
+           var books =_bookService.GetPaginatedBooks(UserId,pageNumber,pageSize);
            return Ok(books);
         }
 
@@ -67,9 +67,9 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("searchbooks")]
-        public IActionResult SearchBooks( string search,int pageNumber)
+        public IActionResult SearchBooks( string search,int pageNumber,int pageSize=10)
         {
-            var book = _bookService.GetPaginatedBooksFromSearch(UserId,search,pageNumber);
+            var book = _bookService.GetPaginatedBooksFromSearch(UserId,search,pageNumber,pageSize);
             return Ok(book);
         }
 
