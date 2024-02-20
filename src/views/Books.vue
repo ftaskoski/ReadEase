@@ -202,13 +202,11 @@ const searchandcategorybooks = ref<any[]>([]);
 const booksPerPageArr = ref<number[]>([2,5,10, 20, 30, 40, 50]);
 const booksPerPage = ref<number>(10);
 
-  function handleChange(event : any) {
+  function handleChange() {
   currPage.value = 1;
-  const selectedValue = parseInt(event.target.value);
-  booksPerPage.value = selectedValue;
-  sessionStorage.setItem("booksPerPage", String(selectedValue));
-  sessionStorage.setItem("page", "1");
-  router.push({ query: { booksPerPage: String(selectedValue) } });
+  sessionStorage.setItem("booksPerPage", String(booksPerPage.value));
+  sessionStorage.setItem("page", String(currPage.value));
+  router.push({ query: { booksPerPage: String(booksPerPage.value) } });
 
   if(searchQuery.value){
     handleInput();
