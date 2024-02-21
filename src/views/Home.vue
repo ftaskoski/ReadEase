@@ -9,29 +9,13 @@
 </template>
 
 <script setup lang="ts">
-import { setAuthenticated, clearUserFromCookie} from "@/store/authStore";
+
 import axios from "axios";
 import { useRouter,} from "vue-router";
 import {ref , onMounted } from 'vue';
-const router = useRouter();
-const url = "https://localhost:7284/";
 
-const logout = (): void => {
-  axios.post(`${url}api/logout`, {}, {
-    withCredentials: true
-  })
-  .then(response => {
 
-  clearUserFromCookie();
 
-  router.push("/login");
-  
-  setAuthenticated(false);
-  })
-  .catch(error => {
-    console.error('Error during logout:', error);
-  });
-};
 const books = ref<any[]>([]);
 const getnybooks = async () => {
   const url = `https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=egM8BbGFHGODa7lpiV0SFCAKhJlzG72G`;
