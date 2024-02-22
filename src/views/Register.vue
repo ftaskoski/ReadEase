@@ -22,7 +22,7 @@
                       <RouterLink to="/login"
                           class="font-semibold text-gray-600 hover:underline focus:text-gray-800 focus:outline-none">Sign
                           in
-                      </RouterLink>.
+                      </RouterLink>
                       <p v-if="errorMsg" class="text-red-500">{{errorMsg}}</p>
                   </p>
               </form>
