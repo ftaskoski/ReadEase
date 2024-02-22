@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
 import SettingsVue from "@/views/Settings.vue";
 import HomeVue from "@/views/Home.vue";
-import { isAuthenticated, role, } from "@/store/authStore";
+import { isAuthenticated, role,getRole } from "@/store/authStore";
 import LoginVue from "@/views/Login.vue";
 import BooksVue from "@/views/Books.vue";
 import AdminVue from "@/views/Admin.vue";
+const url="https://localhost:7284/"
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -52,22 +54,26 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
       },
-      beforeEnter: (to, from, next) => {
-        // Check if the user is authenticated
+      async beforeEnter(to, from, next) {
         if (!isAuthenticated.value) {
           next("/login");
         } else {
-          // Check if the user has the 'Admin' role
-          if (role.value === "Admin") {
-            next();
-          } else {
-            // Redirect to home if the user doesn't have the 'Admin' role
-            next("/");
+          try {
+            
+            await getRole(url);
+            if (role.value === "Admin") {
+              next();
+            } else {
+              // Redirect to home if the user doesn't have the 'Admin' role
+              next("/");
+            }
+          } catch (error) {
+            console.error("Error fetching role:", error);
+            // Handle error if needed
+            next("/login");
           }
         }
-        
-      },
-      
+      }
     },
   ],
 });
