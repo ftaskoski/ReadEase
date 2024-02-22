@@ -33,6 +33,14 @@ namespace userController.Controllers
            return _userService.GetAllUsers();
         }
 
+        [HttpGet("lookup")]
+        [Authorize]
+        public IActionResult Lookup()
+        {
+            return Ok(User?.Identity?.IsAuthenticated ?? false);
+        }
+
+
         [HttpPost("logout")]
         public IActionResult Logout()
         {
