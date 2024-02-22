@@ -22,7 +22,7 @@
                       <RouterLink to="/register"
                           class="font-semibold text-gray-600 hover:underline focus:text-gray-800 focus:outline-none">Sign
                           up
-                      </RouterLink>.
+                      </RouterLink>
                   </p>
               </form>
           </div>
