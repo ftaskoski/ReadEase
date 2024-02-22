@@ -35,7 +35,7 @@
   import { ref,onMounted } from "vue";
   import axios from "axios";
   import { RouterLink, useRouter } from "vue-router";
-  import { setAuthenticated, saveUserToCookie, loggedInUser,role,getRole } from "@/store/authStore";
+  import { AuthStatus,isAuthenticated } from "@/store/authStore";
   import Card from "@/components/Card.vue";
   const router = useRouter();
   //work const url = "https://readease-c20240125180045.azurewebsites.net/";
@@ -46,39 +46,36 @@
   const loginPassword = ref<string>("");
   const Incorrect = ref<boolean>(false);
   const Success = ref<boolean>(false);
-    const login = () => {
-    axios
-      .post(`${url}api/login`, {
-        username: loginUsername.value,
-        password: loginPassword.value,
-      },{
-        withCredentials: true
-      })
-      .then(async (response) => {
-        await saveUserToCookie(response.data);
-        await setAuthenticated(true);
-        loggedInUser.value = response.data;
-        role.value = await getRole(url);
-        Success.value = true;
+    const login = async () => {
+  axios
+    .post(`${url}api/login`, {
+      username: loginUsername.value,
+      password: loginPassword.value,
+    },{
+      withCredentials: true
+    })
+    .then(async (response) => {
+
+      await AuthStatus();
+      if (isAuthenticated.value) {
         router.push("/");
-        
-  ;
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          Incorrect.value = true;
-          setTimeout(() => {
-            Incorrect.value = false;
-          }, 2000);
-        } else {
-          console.log(`Unexpected error: ${error}`);
-        }
-      });
-  
-    loginUsername.value = "";
-    loginPassword.value = "";
-  };
-  
+      }
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 401) {
+        Incorrect.value = true;
+        setTimeout(() => {
+          Incorrect.value = false;
+        }, 2000);
+      } else {
+        console.log(`Unexpected error: ${error}`);
+      }
+    });
+
+  loginUsername.value = "";
+  loginPassword.value = "";
+};
+
   </script>
   
   

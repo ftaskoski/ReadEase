@@ -36,11 +36,8 @@ import { ref } from "vue";
 import axios from "axios";
 import Card from "@/components/Card.vue";
 import {
-  setAuthenticated,
-  saveUserToCookie,
-  loggedInUser,
-  role,
-  getRole
+  AuthStatus,
+  isAuthenticated
 } from "@/store/authStore";
 import { RouterLink, useRouter } from "vue-router";
 
@@ -70,11 +67,10 @@ const register = () => {
       { withCredentials: true }
     )
     .then(async(response) => {
-      await saveUserToCookie(response.data);
-      await setAuthenticated(true);
-      loggedInUser.value = response.data;
-
-      role.value = await getRole(url);
+      await AuthStatus();
+      if (isAuthenticated.value) {
+        router.push("/");
+      }
       router.push("/");
     }).catch(error =>{
 

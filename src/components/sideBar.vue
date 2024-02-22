@@ -124,7 +124,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount } from "vue";
-import { setAuthenticated, clearUserFromCookie, role,isAuthenticated } from "@/store/authStore";
+import { setAuthenticated,  role,isAuthenticated } from "@/store/authStore";
 import axios from "axios";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -150,7 +150,6 @@ const logout = (): void => {
       }
     )
     .then((response) => {
-      clearUserFromCookie();
       router.push("/login");
       role.value = "";
       setAuthenticated(false);
