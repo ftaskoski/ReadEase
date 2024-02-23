@@ -39,7 +39,7 @@
         </div>
 
 <div class="relative inline-block w-full mt-2 text-gray-500">
-  <select @change="getCategoryIdFromSelectedCategory" v-model="selectedCategory" class="peer block appearance-none  w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500">
+  <select @change="getCategoryIdFromSelectedCategory" v-model="selectedCategory" class="peer block appearance-none  w-full  border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500">
     <option value="null" disabled selected hidden>Select a Category</option>
     <option v-for="category in categories" :key="category" :value="category">{{ category.categoryName }}</option>
   </select>
