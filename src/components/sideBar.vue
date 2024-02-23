@@ -81,7 +81,7 @@
                 <span class="flex-1 ms-3 whitespace-nowrap">Settings</span>
               </RouterLink>
             </li>
-            <li v-if="isAuthenticated">
+            <li v-if="isAuthenticated" @click="toggleSidebarOnPhone">
               <RouterLink
                 @click="logout"
                 to="/login"
