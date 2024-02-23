@@ -96,7 +96,7 @@
 
 
     <div v-if="searchandcategorybooks && searchandcategorybooks.length > 0">
-  <div class="flex justify-center items-center">
+  <div class="flex justify-center items-center overflow-auto">
     <table class="table-auto w-full">
       <thead>
         <tr>
