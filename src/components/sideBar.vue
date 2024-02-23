@@ -153,6 +153,7 @@ const logout = (): void => {
       router.push("/login");
       role.value = "";
       setAuthenticated(false);
+      sessionStorage.clear();
     })
     .catch((error) => {
       console.error("Error during logout:", error);
