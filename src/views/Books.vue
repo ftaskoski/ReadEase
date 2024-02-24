@@ -430,7 +430,7 @@ const searchedBooksFull = () => {
       })
     .then((response) => {
       searchedBooksAll.value = response.data;
-      searchBook(); 
+       searchBook();
     });
 };
 
@@ -565,8 +565,8 @@ watch([checkedCategories, searchQuery],  () => {
     sessionStorage.removeItem("categories");
     searchQuery.value = sessionStorage.getItem("search") || "";
     handleInput();
-    searchBook();
-    searchedBooksFull();
+    
+    
 
   } else if(checkedCategories.value.length > 0 && searchQuery.value){
     searchAndCategory();
@@ -582,8 +582,8 @@ watch([checkedCategories, searchQuery],  () => {
   else if(searchQuery.value && checkedCategories.value.length === 0){
     handleInput();
     sessionStorage.setItem("page", String(currPage.value));
-    searchBook();
-    searchedBooksFull();
+    
+    
     router.push({ query: { categories: null, search: searchQuery.value, page: currPage.value } });
     sessionStorage.setItem("search", searchQuery.value);
     sessionStorage.removeItem("categories");
@@ -598,8 +598,8 @@ watch([checkedCategories, searchQuery],  () => {
     getBooks();
     getAllBooks();
     handleInput();
-    searchBook();
-    searchedBooksFull();
+    
+    
   }
 });
 
@@ -613,7 +613,7 @@ watch(totalPages, () => {
       check();
     }
      else if(searchQuery.value){
-      searchedBooksFull();
+      
       handleInput();
     }
     if (checkedCategories.value.length  && searchQuery.value) {
@@ -654,7 +654,7 @@ onMounted(() => {
 
   if (searchFromStorage) {
     searchQuery.value = searchFromStorage;
-    searchBook();
+    
   }
 
   getAllCategories();
