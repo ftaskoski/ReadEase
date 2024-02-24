@@ -143,10 +143,3 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-.image-container {
-    width: 60px; /* Adjust dimensions as needed */
-    height: 60px; /* Adjust dimensions as needed */
-}
-
-</style>
