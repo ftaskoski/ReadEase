@@ -29,12 +29,8 @@
       </button>
    
     </form>
-
-
-  </div>
-  
-
-  <div class="mx-auto w-64 text-center ">
+    <p class="text-2xl mt-6 md:mt-0 font-semibold text-gray-900 flex justify-center pb-2">Upload Profile Picture</p>
+    <div class="mx-auto w-64 text-center ">
     <form @submit.prevent="changeProfilePicture">
       <div class="relative w-64  ">
       <img class="w-64 h-64 rounded-full absolute object-cover" :src="profilePictureUrl ? profilePictureUrl : 'https://www.svgrepo.com/show/33565/upload.svg'" alt="" />
@@ -49,6 +45,11 @@
 
     </form>
 </div>
+
+  </div>
+  
+
+
 
 
 
