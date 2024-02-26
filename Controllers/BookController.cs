@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Books.Services;
 using System.Security.Claims;
 using System.Data.SqlClient;
+using ReadEase_C_.Models;
+using System.Data;
 
 namespace WebApplication1.Controllers
 {
@@ -94,11 +96,7 @@ namespace WebApplication1.Controllers
             return Ok();
         }
 
-        private SqlConnection GetSqlConnection()
-        {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            return new SqlConnection(connectionString);
-        }
+   
 
         [HttpGet("searchandcategoryall")]
         public IEnumerable<BookModel> GetSearchAndCategoryAll(string search, [FromQuery] string categories)
@@ -117,10 +115,49 @@ namespace WebApplication1.Controllers
             return _bookService.SearchAndCategory(UserId, search, categoriesList,pageNumber,pageSize);
    
         }
+        private SqlConnection GetSqlConnection()
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            return new SqlConnection(connectionString);
+        }
+
+        [HttpPost("updatebook")]
+        public IActionResult UpdateBook(UpdateBook book)
+        {
+            Console.WriteLine( book.NewAuthor, book.NewTitle, book.NewCategory);
+           var connection = GetSqlConnection();
+            string sql = "UPDATE Books SET ";
+            var parameters = new DynamicParameters();
+
+            if (!string.IsNullOrEmpty(book.NewTitle))
+            {
+                sql += "Title = @NewTitle, ";
+                parameters.Add("@NewTitle", book.NewTitle);
+            }
+
+            if (!string.IsNullOrEmpty(book.NewAuthor))
+            {
+                sql += "Author = @NewAuthor, ";
+                parameters.Add("@NewAuthor", book.NewAuthor);
+            }
+
+            if (!string.IsNullOrEmpty(book.NewCategory.ToString()))
+            {
+                sql += "CategoryId = @NewCategory, ";
+                parameters.Add("@NewCategory", book.NewCategory);
+            }
+
+            // Remove the trailing comma and space
+            sql = sql.TrimEnd(',', ' ');
+
+            sql += " WHERE BookId = @BookId";
+            parameters.Add("@BookId", book.Id);
+
+            connection.Execute(sql, parameters);
+            return Ok("Updated");
+        }
     }
 
-
-
-
     }
+
 
