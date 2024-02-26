@@ -145,9 +145,14 @@
     :showEditModal="showEditModal"
     :closeEditModal="closeEditModal"
     :bookIdToEdit="bookIdToEdit"
-    :author="author"
-    :title="title"
     :categories="categories"
+    :newTitle="newTitle"
+    :newAuthor="newAuthor"
+    :updateBook="updateBook"
+    :newCategoryId="newCategoryId"
+    @update:newTitle="val => newTitle = val"
+    @update:new-author="val => newAuthor = val"
+    @update:new-category-id="val => newCategoryId = val"
   />
 </div>
 
@@ -222,16 +227,47 @@ const showModal = ref<boolean>(false);
 const bookIdToDelete = ref<number | null>(null);
 const showEditModal = ref<boolean>(false);
 const bookIdToEdit = ref<number | null>(null);
-
+const newTitle = ref<string>("");
+const newAuthor = ref<string>("");
+const newCategoryId = ref<number>();
 const openEditModal = (bookId: number) => {
   document.body.style.overflow = 'hidden';
   showEditModal.value = !showEditModal.value;
   bookIdToEdit.value = bookId;
 }
 
+const updateBook = () => {
+  axios.post(`${url}api/updatebook`, {
+    Id: bookIdToEdit.value,
+    NewTitle: newTitle.value,
+    NewAuthor: newAuthor.value,
+    NewCategory: newCategoryId.value
+  }, { withCredentials: true })
+  .then(response => {
+    console.log(response.data); // Check response for debugging
+    if(searchQuery.value){
+      handleInput();
+    }else if(checkedCategories.value.length > 0){
+      check();
+    } else if(searchQuery.value && checkedCategories.value.length > 0){
+      searchAndCategory();
+    } else {
+      getBooks();
+    }
+  })
+  .catch(error => {
+    console.error(error); // Log any errors
+  });
+}
+
+
 function closeEditModal(){
   document.body.style.overflow = 'auto';
   showEditModal.value = false;
+  bookIdToEdit.value = null;
+  newTitle.value = "";
+  newAuthor.value = "";
+  newCategoryId.value = undefined;
 }
 
   const openModal = (bookId: number) => {

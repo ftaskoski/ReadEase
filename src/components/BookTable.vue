@@ -76,8 +76,8 @@
     </table>
   </div>
   <DeleteModal :showModal="showModal" :closeModal="closeModal" :deleteBook="deleteBook" />
-  <div v-if="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
-      <div class="relative w-auto max-w-md mx-auto my-6">
+  <div v-if="showEditModal" class="fixed  inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+      <div class="relative w-auto max-w-md  mx-auto my-6">
         <!-- Content -->
         <div class="relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none">
           <!-- Header -->
@@ -93,11 +93,11 @@
           </div>
           <!-- Body -->
           <div class="relative p-6 flex-auto">
-            <input type="text" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Title" >
-            <input type="text" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Author" >
-            <select class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <input type="text"   :value="newTitle" @input="$emit('update:newTitle', ($event.target as HTMLInputElement).value)" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Title" >
+            <input type="text" :value="newAuthor" @input="$emit('update:newAuthor', ($event.target as HTMLInputElement).value)" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Author" >
+            <select :value="newCategoryId" @change="$emit('update:newCategoryId', ($event.target as HTMLInputElement).value)"  class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
               <option value="">Select category</option>
-              <option v-for="category in categories" :key="category.categoryId" :value="category.categoryId">{{ category.categoryName }}</option>
+              <option  v-for="category in categories" :key="category.categoryId" :value="category.categoryId">{{ category.categoryName }}</option>
             </select>
           </div>
           <!-- Footer -->
@@ -105,6 +105,7 @@
             <button
               class="text-blue-500 rounded-full hover:bg-gray-200 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
               type="button"
+              @click="updateBook()"
             >
               Update
             </button>
@@ -124,5 +125,8 @@
 <script setup lang="ts">
 import DeleteModal from '../components/DeleteModal.vue'
 
- defineProps(['searchedBooks', 'searchQuery', 'bookPaginated', 'checkedBooks', 'getCategoryName', 'openModal', 'showModal', 'deleteBook','closeModal', 'openEditModal', 'showEditModal', 'closeEditModal', 'title', 'author', 'categoryId', 'categories']);
+ defineProps(['searchedBooks', 'searchQuery', 'bookPaginated', 'checkedBooks', 'getCategoryName', 'openModal', 'showModal', 'deleteBook','closeModal', 'openEditModal', 'showEditModal', 'closeEditModal',  'categoryId', 'categories','newTitle', 'updateBook', 'newAuthor', 'newCategoryId']);
+
+defineEmits(['update:newTitle', 'update:newAuthor', 'update:newCategoryId']);
+
 </script>
