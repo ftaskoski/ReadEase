@@ -25,14 +25,14 @@
           <div class="flex items-center justify-end p-6 border-t border-solid rounded-b border-blueGray-200">
             <button
             @click="deleteBook()"
-              class="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
+              class="text-red-500 rounded-full hover:bg-gray-200 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
               type="button"
             >
               Delete
             </button>
             <button
             @click="closeModal()"
-              class="text-blueGray-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
+              class="text-blueGray-500 rounded-full hover:bg-gray-200 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
               type="button"
             >
               Cancel
