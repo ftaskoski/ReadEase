@@ -75,21 +75,59 @@ namespace Books.Services
             Execute(deleteQuery, new { id = id });
         }
 
-        public IEnumerable<BookModel> SearchAndCategoryAll(int UserId,string search,List<int>categories)
+        public IEnumerable<BookModel> SearchAndCategoryAll(int UserId, string? search = null, List<int>? categories = null)
         {
-            var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND AUTHOR LIKE @search AND CategoryId IN @categories ORDER BY CategoryId ";
-            var parameters = new { Id = UserId, search = $"{search}%", categories = categories };
+            string getQuery = "SELECT * FROM Books WHERE UserId=@Id ";
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", UserId);
+
+            // If search term is provided, add it to the query and parameters
+            if (!string.IsNullOrEmpty(search))
+            {
+                getQuery += "AND AUTHOR LIKE @search ";
+                parameters.Add("@search", $"%{search}%");
+            }
+
+            // If categories are provided, add them to the query and parameters
+            if (categories != null && categories.Any())
+            {
+                getQuery += "AND CategoryId IN @categories ";
+                parameters.Add("@categories", categories);
+            }
+
+            getQuery += "ORDER BY CategoryId";
+
             return QueryBooks(getQuery, parameters);
         }
 
-        public IEnumerable<BookModel> SearchAndCategory(int UserId,string search,List<int>categories, int pageNumber = 1, int pageSize = 10)
-        {
 
+
+        public IEnumerable<BookModel> SearchAndCategory(int UserId, string? search, List<int>? categories = null, int pageNumber = 1, int pageSize = 10)
+        {
             int startIndex = (pageNumber - 1) * pageSize;
-            var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND AUTHOR LIKE @search AND CategoryId IN @categories ORDER BY CategoryId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY ";
-            var parameters = new { Id = UserId, search = $"{search}%", categories = categories, startindex = startIndex, pageSize = pageSize };
+            var getQuery = "SELECT * FROM Books WHERE UserId=@Id ";
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", UserId);
+
+            // If search term is provided, add it to the query and parameters
+            if (!string.IsNullOrEmpty(search))
+            {
+                getQuery += "AND AUTHOR LIKE @search ";
+                parameters.Add("@search", $"{search}%");
+            }
+
+            // If categories are provided, add them to the query and parameters
+            if (categories != null && categories.Any())
+            {
+                getQuery += "AND CategoryId IN @categories ";
+                parameters.Add("@categories", categories);
+            }
+
+            getQuery += "ORDER BY CategoryId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY ";
+            parameters.Add("@startIndex", startIndex);
+            parameters.Add("@pageSize", pageSize);
+
             return QueryBooks(getQuery, parameters);
-          
         }
 
     }
