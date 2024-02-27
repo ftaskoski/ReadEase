@@ -96,7 +96,7 @@
   </div>
 
 
-    <div v-if="searchandcategorybooks && searchandcategorybooks.length > 0">
+    <!-- <div v-if="searchandcategorybooks && searchandcategorybooks.length > 0">
   <div class="flex justify-center items-center overflow-auto">
     <table class="table-auto w-full">
       <thead>
@@ -127,10 +127,92 @@
     
     </table>
   </div>
-</div>
+</div> -->
+<div class="flex justify-center items-center overflow-auto">
+    <table class="table-auto w-full">
+      <thead>
+        <tr>
+          <th class="px-4 py-2">Author</th>
+          <th class="px-4 py-2">Title</th>
+          <th class="px-4 py-2">Category</th>
+          <th class="px-4 py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="book in books" :key="book.bookId">
+          <td class="border px-4 py-2">{{ book.author }}</td>
+          <td class="border px-4 py-2">{{ book.title }}</td>
+          <td class="border px-4 py-2">{{ getCategoryName(book.categoryId) }}</td>
+          <td class="border px-4 py-2">
+            <button
+              class="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
+              @click="openModal(book.bookId)"
+            >
+              Delete book <i class="fa-sharp fa-solid fa-trash"></i>
+            </button>
+          </td>
+          <td class="border px-4 py-2">
+            <button
+              class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
+              @click="openEditModal(book.bookId)"
+            >
+              Edit book <i class="fa-sharp fa-solid fa-pen-to-square"></i>
+          </button>
+          </td>
+          <div v-if="showEditModal" class="fixed  inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+      <div class="relative w-auto max-w-md  mx-auto my-6">
+        <!-- Content -->
+        <div class="relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none">
+          <!-- Header -->
+          <div class="flex items-start justify-between p-5 border-b border-solid rounded-t border-blueGray-200">
+            <h3 class="text-3xl font-semibold">
+             Edit book
+            </h3>
+            <button
+              class="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+            >
+              <span class="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">×</span>
+            </button>
+          </div>
+          <!-- Body -->
+          <div class="relative p-6 flex-auto">
+            <input type="text"   v-model="newTitle" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Title" >
+            <input type="text" v-model="newAuthor" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Author" >
+            <select v-model="newCategoryId"  class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+              <option value="null" disabled selected hidden>Select a Category</option>
+    <option value="undefined">Select category</option>
+              <option  v-for="category in categories" :key="category.categoryId" :value="category.categoryId">{{ category.categoryName }}</option>
+            </select>
+          </div>
+          <!-- Footer -->
+          <div class="flex items-center justify-end p-6 border-t border-solid rounded-b border-blueGray-200">
+            <button
+              class="text-blue-500 rounded-full hover:bg-gray-200 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
+              type="button"
+              @click="updateBook()"
+            >
+              Update
+            </button>
+            <button
+            @click="closeEditModal()"
+              class="text-blueGray-500 rounded-full hover:bg-gray-200 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
+              type="button"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+        </tr>
+      </tbody>
 
+   <DeleteModal :showModal="showModal" :closeModal="closeModal" :deleteBook="deleteBook"/>
+    
+    </table>
+  </div>
 
-<div  v-else>
+<!-- <div  v-else>
   <BookTable
     :searchedBooks="searchedBooks"
     :searchQuery="searchQuery"
@@ -154,7 +236,7 @@
     @update:new-author="val => newAuthor = val"
     @update:new-category-id="val => newCategoryId = val"
   />
-</div>
+</div> -->
 
 
 <div class="flex justify-center items-center mt-4">
@@ -229,7 +311,8 @@ const showEditModal = ref<boolean>(false);
 const bookIdToEdit = ref<number | null>(null);
 const newTitle = ref<string>("");
 const newAuthor = ref<string>("");
-const newCategoryId = ref<number>();
+const newCategoryId = ref<number | undefined>(undefined);
+const books = ref<any[]>([]);
 const openEditModal = (bookId: number) => {
   document.body.style.overflow = 'hidden';
   showEditModal.value = !showEditModal.value;
@@ -245,15 +328,22 @@ const updateBook = () => {
   }, { withCredentials: true })
   .then(response => {
     console.log(response.data); // Check response for debugging
-    if(searchQuery.value){
-      handleInput();
-    }else if(checkedCategories.value.length > 0){
+    if(checkedCategories.value.length > 0 || searchQuery.value){
       check();
-    } else if(searchQuery.value && checkedCategories.value.length > 0){
-      searchAndCategory();
-    } else {
-      getBooks();
+      handleInput();
+    }else if (!searchQuery.value && checkedCategories.value.length == 0){
+       getBooks();
+       getAllBooks();
+      
     }
+
+    document.body.style.overflow = 'auto';
+    showEditModal.value = false;
+    bookIdToEdit.value = null;
+    newTitle.value = "";
+    newAuthor.value = "";
+    newCategoryId.value = undefined;
+    
   })
   .catch(error => {
     console.error(error); // Log any errors
@@ -287,20 +377,16 @@ function closeEditModal(){
   sessionStorage.setItem("page", String(currPage.value));
   router.push({ query: { booksPerPage: String(booksPerPage.value) } });
 
-  if(searchQuery.value){
-    handleInput();
-    searchedBooksFull();
-  } else if(checkedCategories.value.length > 0){
-    check();
-    getAllCheckedBooks();
-  } else if(searchandcategorybooks.value.length > 0){
-    searchAndCategory();
-    searchAndCategoryPaginated();
-  }else {
-    getBooks();
-    getAllBooks();
-
-  }
+  if(checkedCategories.value.length > 0 && !searchQuery.value){
+      check();
+    } else if(searchQuery.value && checkedCategories.value.length == 0){
+      handleInput();
+      
+    }
+    else{
+      getBooks();
+      getAllBooks();
+    }
 
 }
 
@@ -336,22 +422,14 @@ const changePage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
     currPage.value = page;
     sessionStorage.setItem("page", String(currPage.value)); // Update session storage with current page
-    if (checkedCategories.value.length > 0) {
-      getAllCheckedBooks();
-      check();
-    } else {
-      if (!searchQuery.value) {
-        getBooks();
-      } else {
-        searchedBooksFull();
-      }
     
-    }
-
-    if(checkedCategories.value.length > 0 && searchQuery.value){
+    if(checkedCategories.value.length > 0 || searchQuery.value){
+      check();
+      handleInput();
+    }else if (!searchQuery.value && checkedCategories.value.length == 0){
+       getBooks();
+       getAllBooks();
       
-      searchAndCategory();
-      searchAndCategoryPaginated();
     }
 
     router.push({
@@ -379,6 +457,7 @@ const getBooks = () => {
     })
     .then((response) => {
       bookPaginated.value = response.data;
+      books.value = response.data;
     })
     .catch((error) => {
       console.error(error);
@@ -422,19 +501,14 @@ const addBook = () => {
       title.value = "";
       selectedCategory.value = null;
 
-      if (checkedCategories.value.length > 0) {
-        getAllCheckedBooks();
-        check();
-      }
-      getAllBooks();
-      getBooks();
-      if (searchQuery.value) {
-        searchedBooksFull();
-      }
-      if (checkedCategories.value.length > 0 && searchQuery.value) {
-        searchAndCategory();
-        searchAndCategoryPaginated();
-      }
+      if(checkedCategories.value.length > 0 || searchQuery.value){
+      check();
+      handleInput();
+    }else if (!searchQuery.value && checkedCategories.value.length == 0){
+       getBooks();
+       getAllBooks();
+      
+    }
     })
     .catch((error) => {
       console.error(error);
@@ -460,63 +534,62 @@ const downloadBooks = () => {
 
 const deleteBook = () => {
   showModal.value = false;
+  document.body.style.overflow = 'auto';
   axios
     .delete(`${url}api/deletebook/${bookIdToDelete.value}`, {
       withCredentials: true,
     })
     .then(() => {
-      if (checkedCategories.value.length > 0) {
-        getAllCheckedBooks();
-        check();
-      }
-      if ((checkedbooksAll.value?.length === 1 || checkedBooks.value?.length === 1) && currPage.value > 1) {
-        currPage.value = currPage.value - 1;
-        sessionStorage.setItem("page", String(currPage.value));
-        getAllCheckedBooks();
-        check();
-      }
-      if (checkedCategories.value.length  && searchQuery.value) {
-        searchAndCategory();
-        searchAndCategoryPaginated();
-      }
-      if (searchQuery.value) {
-        searchedBooksFull();
-      } else {
-        getAllBooks();
-        getBooks();
-      }
-      if ((bookPaginated.value?.length === 1 || searchedBooks.value?.length === 1) && currPage.value > 1) {
-        currPage.value = currPage.value - 1;
-        sessionStorage.setItem("page", String(currPage.value));
-        getBooks();
-      }
+      if(checkedCategories.value.length > 0 && !searchQuery.value){
+      check();
+    } else if(searchQuery.value && checkedCategories.value.length == 0){
+      handleInput();
+      
+    }
+    else{
+      getBooks();
+      getAllBooks();
+      checkedBooks.value = [];
+    }
     })
     .catch((error) => {
       console.error(`Error deleting book with ID ${bookIdToDelete.value}:`, error);
     });
 };
 
+
 // Search Functions
 const searchedBooksFull = () => {
   axios
-    .get(`${url}api/searchbooksall`,
+    .get(`${url}api/searchandcategoryall`,
       {
         params: {
           search: searchQuery.value,
+          categories: checkedCategories.value.join(",")
+
         },
         withCredentials: true,
       })
     .then((response) => {
-      searchedBooksAll.value = response.data;
+      if(checkedCategories.value.length == 0){
+        
+        searchedBooksAll.value = response.data;
+      }else{
+        searchandcategoryall.value = response.data;
+      }
+      sessionStorage.setItem("search", searchQuery.value);
        searchBook();
     });
 };
 
 const searchBook = () => {
+  books.value = [];
+  bookPaginated.value = [];
   axios
-    .get(`${url}api/searchbooks`, {
+    .get(`${url}api/searchandcategory`, {
       params: {
         search: searchQuery.value,
+        categories: checkedCategories.value.join(","),
         pageNumber: currPage.value,
         pageSize: booksPerPage.value
       },
@@ -524,53 +597,70 @@ const searchBook = () => {
     })
     .then((response) => {
       searchedBooks.value = response.data;
+      books.value = response.data;
     });
 };
 
 const handleInput = () => {
   clearTimeout(debounceTimer);
   searchedBooks.value = [];
-  debounceTimer = setTimeout(() => {
-    searchedBooksFull();
-  }, 1000);
+  books.value = [];
+  sessionStorage.removeItem("search");  
+  if (searchQuery.value.trim() !== "") { 
+    debounceTimer = setTimeout(() => {
+      searchedBooksFull();
+    }, 1000);
+  }
 };
+
 
 // Checked Books Functions
 const getAllCheckedBooks = () => {
-  axios.get(`${url}api/checkedall`, {
+  axios.get(`${url}api/searchandcategoryall`, {
     params: {
       categories: checkedCategories.value.join(","),
+      search: searchQuery.value,
     },
     withCredentials: true,
   }).then((response) => {
-    checkedbooksAll.value = response.data;
+    if(!searchQuery.value){
+      
+      checkedbooksAll.value = response.data;
+    }else{
+      searchandcategoryall.value = response.data;
+    }
     bookCollection.value = [];
     bookPaginated.value = [];
   });
 };
 
 const check = () => {
+
   if (checkedCategories.value.length > 0) {
     getAllCheckedBooks();
+    sessionStorage.setItem('categories', String(checkedCategories.value));
     axios
-      .get(`${url}api/checked`, {
+      .get(`${url}api/searchandcategory`, {
         params: {
-          categories: checkedCategories.value.join(","),
-          pageNumber: currPage.value,
-          pageSize: booksPerPage.value
+          search: searchQuery.value,
+        categories: checkedCategories.value.join(","),
+        pageNumber: currPage.value,
+        pageSize: booksPerPage.value
 
         },
         withCredentials: true,
       })
       .then((response) => {
-        checkedBooks.value = response.data;
+       
+        books.value = response.data;
       })
       .catch((error) => {
         console.error(error);
       });
   } else {
-    getBooks();
-    getAllBooks();
+    //getBooks();
+    //getAllBooks();
+    sessionStorage.removeItem('categories');
     checkedBooks.value = [];
   }
 };
@@ -581,104 +671,55 @@ const getCategoryName = (categoryId : number) => {
 };
 
 
-const searchAndCategory =  () => {
-  if (searchQuery.value && checkedCategories.value.length > 0) {
-  axios.get(`${url}api/searchandcategoryall`, {
-    withCredentials: true,
-      params: {
-        search: searchQuery.value,
-        categories: checkedCategories.value.join(',')
-      }
-    }).then((response) => {
-      searchandcategoryall.value = response.data;
-      searchAndCategoryPaginated();
-    })
+// const searchAndCategory =  () => {
+//   if (searchQuery.value && checkedCategories.value.length > 0) {
+//   axios.get(`${url}api/searchandcategoryall`, {
+//     withCredentials: true,
+//       params: {
+//         search: searchQuery.value,
+//         categories: checkedCategories.value.join(',')
+//       }
+//     }).then((response) => {
+//       searchandcategoryall.value = response.data;
+//       searchAndCategoryPaginated();
+//     })
 
 
-  }
-};
+//   }
+// };
 
-const searchAndCategoryPaginated =  () => {
-  if (searchQuery.value && checkedCategories.value.length > 0) {
-  axios.get(`${url}api/searchandcategory`, {
-    withCredentials: true,
-      params: {
-        search: searchQuery.value,
-        categories: checkedCategories.value.join(','),
-        pageNumber: currPage.value,
-        pageSize: booksPerPage.value
+// const searchAndCategoryPaginated =  () => {
+//   if (searchQuery.value && checkedCategories.value.length > 0) {
+//   axios.get(`${url}api/searchandcategory`, {
+//     withCredentials: true,
+//       params: {
+//         search: searchQuery.value,
+//         categories: checkedCategories.value.join(','),
+//         pageNumber: currPage.value,
+//         pageSize: booksPerPage.value
 
-      }
-  }).then((response) => {
+//       }
+//   }).then((response) => {
 
-    searchandcategorybooks.value = response.data;
-  })
-  }
-}
+//     searchandcategorybooks.value = response.data;
+//   })
+//   }
+// }
 
 
 
 watch([checkedCategories, searchQuery],  () => {
-  if (checkedCategories.value.length > 0 && !searchQuery.value ) {
-    if (!sessionStorage.getItem("categories")) {
-      currPage.value = 1;
+    if(checkedCategories.value.length > 0 || searchQuery.value){
+      books.value = [];
+      bookPaginated.value = [];
+      check();
+      handleInput();
+    } 
+    else{
+      getBooks();
+      getAllBooks();
+      checkedBooks.value = [];
     }
-    searchandcategorybooks.value=[];
-    searchandcategoryall.value = [];
-    check();
-    router.push({ query: { categories: checkedCategories.value.join(','), page: currPage.value } });
-    sessionStorage.setItem("categories", checkedCategories.value.join(","));
-    sessionStorage.removeItem("search");
-    searchedBooks.value = [];
-
-  } else if (searchQuery.value && checkedCategories.value.length === 0) {
-    if (!sessionStorage.getItem("search")) {
-      currPage.value = 1;
-    }
-    searchandcategorybooks.value=[];
-    searchandcategoryall.value = [];
-    router.push({ query: { search: searchQuery.value, page: currPage.value } });
-    sessionStorage.setItem("search", searchQuery.value);
-    sessionStorage.setItem("page", String(currPage.value));
-    sessionStorage.removeItem("categories");
-    searchQuery.value = sessionStorage.getItem("search") || "";
-    handleInput();
-    
-    
-
-  } else if(checkedCategories.value.length > 0 && searchQuery.value){
-    searchAndCategory();
-    searchAndCategoryPaginated();
-    checkedBooks.value = [];
-    searchedBooks.value = [];
-    router.push({ query: { categories: checkedCategories.value.join(','), search: searchQuery.value, page: currPage.value } });
-    sessionStorage.setItem("categories", checkedCategories.value.join(","));
-    sessionStorage.setItem("search", searchQuery.value);
-    sessionStorage.setItem("page", String(currPage.value));
-  }
-  
-  else if(searchQuery.value && checkedCategories.value.length === 0){
-    handleInput();
-    sessionStorage.setItem("page", String(currPage.value));
-    
-    
-    router.push({ query: { categories: null, search: searchQuery.value, page: currPage.value } });
-    sessionStorage.setItem("search", searchQuery.value);
-    sessionStorage.removeItem("categories");
-  }
-
-  else {
-    currPage.value = 1;
-    router.push({ query: { categories: null, search: null, page: currPage.value } });
-    sessionStorage.setItem("page", String(currPage.value));
-    sessionStorage.removeItem("categories");
-    sessionStorage.removeItem("search");
-    getBooks();
-    getAllBooks();
-    handleInput();
-    
-    
-  }
 });
 
 
@@ -686,18 +727,19 @@ watch(totalPages, () => {
   if (currPage.value > totalPages.value) {
     currPage.value = Math.max(totalPages.value, 1);
     sessionStorage.setItem("page", String(currPage.value));
-    if (checkedCategories.value.length > 0) {
-      getAllCheckedBooks();
+    books.value = [];
+    bookPaginated.value = [];
+    if(checkedCategories.value.length > 0 && !searchQuery.value){
       check();
-    }
-     else if(searchQuery.value){
-      
+    } else if(searchQuery.value && checkedCategories.value.length == 0){
       handleInput();
+      
     }
-    if (checkedCategories.value.length  && searchQuery.value) {
-        searchAndCategory();
-        searchAndCategoryPaginated();
-      }
+    else{
+      getBooks();
+      getAllBooks();
+      checkedBooks.value = [];
+    }
 
     router.push({
       query: {
@@ -724,20 +766,28 @@ onMounted(() => {
     currPage.value = parseInt(pageFromStorage, 10);
   }
 
-  if (categoriesFromStorage) {
-    checkedCategories.value = categoriesFromStorage.split(",").map(Number);
-    getAllCheckedBooks();
-    check();
-  }
 
-  if (searchFromStorage) {
-    searchQuery.value = searchFromStorage;
+
+
+  if(categoriesFromStorage){
+
+      checkedCategories.value = categoriesFromStorage.split(',').map(Number);
+      check();
+    } 
+     if(searchFromStorage){
     
-  }
-
+      searchQuery.value = searchFromStorage;
+      handleInput();
+      
+    }
+    else{
+      getBooks();
+      getAllBooks();
+      checkedBooks.value = [];
+    }
   getAllCategories();
-  getAllBooks();
-  getBooks();
+   getAllBooks();
+   getBooks();
 });
 
 
