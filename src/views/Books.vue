@@ -612,43 +612,6 @@ const getCategoryName = (categoryId : number) => {
 };
 
 
-// const searchAndCategory =  () => {
-//   if (searchQuery.value && checkedCategories.value.length > 0) {
-//   axios.get(`${url}api/searchandcategoryall`, {
-//     withCredentials: true,
-//       params: {
-//         search: searchQuery.value,
-//         categories: checkedCategories.value.join(',')
-//       }
-//     }).then((response) => {
-//       searchandcategoryall.value = response.data;
-//       searchAndCategoryPaginated();
-//     })
-
-
-//   }
-// };
-
-// const searchAndCategoryPaginated =  () => {
-//   if (searchQuery.value && checkedCategories.value.length > 0) {
-//   axios.get(`${url}api/searchandcategory`, {
-//     withCredentials: true,
-//       params: {
-//         search: searchQuery.value,
-//         categories: checkedCategories.value.join(','),
-//         pageNumber: currPage.value,
-//         pageSize: booksPerPage.value
-
-//       }
-//   }).then((response) => {
-
-//     searchandcategorybooks.value = response.data;
-//   })
-//   }
-// }
-
-
-
 watch([checkedCategories, searchQuery],  () => {
     if(checkedCategories.value.length > 0 || searchQuery.value){
       books.value = [];
