@@ -128,8 +128,8 @@ namespace WebApplication1.Controllers
         [HttpPost("updatebook")]
         public IActionResult UpdateBook(UpdateBook book)
         {
-            Console.WriteLine( book.NewAuthor, book.NewTitle, book.NewCategory);
-           var connection = GetSqlConnection();
+            Console.WriteLine(book.NewAuthor, book.NewTitle, book.NewCategory);
+            var connection = GetSqlConnection();
             string sql = "UPDATE Books SET ";
             var parameters = new DynamicParameters();
 
@@ -145,7 +145,7 @@ namespace WebApplication1.Controllers
                 parameters.Add("@NewAuthor", book.NewAuthor);
             }
 
-            if (!string.IsNullOrEmpty(book.NewCategory.ToString()))
+            if (book.NewCategory != 0) // Check if the category is different from 0
             {
                 sql += "CategoryId = @NewCategory, ";
                 parameters.Add("@NewCategory", book.NewCategory);
@@ -160,8 +160,9 @@ namespace WebApplication1.Controllers
             connection.Execute(sql, parameters);
             return Ok("Updated");
         }
-    }
 
     }
+
+}
 
 
