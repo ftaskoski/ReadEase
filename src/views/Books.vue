@@ -179,8 +179,8 @@
             <input type="text"   v-model="newTitle" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Title" >
             <input type="text" v-model="newAuthor" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Author" >
             <select v-model="newCategoryId"  class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-              <option value="null" disabled selected hidden>Select a Category</option>
-    <option value="undefined">Select category</option>
+              <option value="0" disabled selected hidden>Select a Category</option>
+              <option value="0">Select category</option>
               <option  v-for="category in categories" :key="category.categoryId" :value="category.categoryId">{{ category.categoryName }}</option>
             </select>
           </div>
@@ -311,7 +311,7 @@ const showEditModal = ref<boolean>(false);
 const bookIdToEdit = ref<number | null>(null);
 const newTitle = ref<string>("");
 const newAuthor = ref<string>("");
-const newCategoryId = ref<number | undefined>(undefined);
+const newCategoryId = ref<number | undefined>(0);
 const books = ref<any[]>([]);
 const openEditModal = (bookId: number) => {
   document.body.style.overflow = 'hidden';
@@ -342,7 +342,7 @@ const updateBook = () => {
     bookIdToEdit.value = null;
     newTitle.value = "";
     newAuthor.value = "";
-    newCategoryId.value = undefined;
+    newCategoryId.value = 0;
     
   })
   .catch(error => {
@@ -357,7 +357,7 @@ function closeEditModal(){
   bookIdToEdit.value = null;
   newTitle.value = "";
   newAuthor.value = "";
-  newCategoryId.value = undefined;
+  newCategoryId.value = 0;
 }
 
   const openModal = (bookId: number) => {
