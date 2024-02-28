@@ -254,6 +254,7 @@ const newTitle = ref<string>("");
 const newAuthor = ref<string>("");
 const newCategoryId = ref<number | undefined>(0);
 const books = ref<any[]>([]);
+const totalFilteredBooks = ref<any[]>([]);
 const openEditModal = (bookId: number) => {
   document.body.style.overflow = 'hidden';
   showEditModal.value = !showEditModal.value;
@@ -335,13 +336,18 @@ function closeEditModal(){
 const currPage = ref<number>(1);
 const totalPages = computed(() => {
   let totalBooks;
-  if (searchQuery.value && checkedCategories.value.length > 0) {
-    totalBooks = searchandcategoryall.value.length;
-  } else if (checkedCategories.value.length > 0) {
-    totalBooks = checkedbooksAll.value.length;
-  } else if (searchedBooks.value && searchQuery.value) {
-    totalBooks = searchedBooksAll.value.length;
-  } else {
+  // if (searchQuery.value && checkedCategories.value.length > 0) {
+  //   totalBooks = searchandcategoryall.value.length;
+  // } else if (checkedCategories.value.length > 0) {
+  //   totalBooks = checkedbooksAll.value.length;
+  // } else if (searchedBooks.value && searchQuery.value) {
+  //   totalBooks = searchedBooksAll.value.length;
+  // } else {
+  //   totalBooks = bookCollection.value?.length ?? 0;
+  // }
+  if(checkedCategories.value.length > 0 || searchQuery.value){
+    totalBooks = totalFilteredBooks.value.length;
+  }else{
     totalBooks = bookCollection.value?.length ?? 0;
   }
   return Math.ceil(totalBooks / booksPerPage.value);
@@ -518,6 +524,7 @@ const searchedBooksFull = () => {
       }else{
         searchandcategoryall.value = response.data;
       }
+      totalFilteredBooks.value = response.data;
       sessionStorage.setItem("search", searchQuery.value);
        searchBook();
     });
@@ -564,6 +571,7 @@ const getAllCheckedBooks = () => {
     },
     withCredentials: true,
   }).then((response) => {
+    totalFilteredBooks.value = response.data;
     if(!searchQuery.value){
       
       checkedbooksAll.value = response.data;
