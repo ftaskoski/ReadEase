@@ -621,6 +621,7 @@ const getCategoryName = (categoryId : number) => {
 
 
 watch([checkedCategories, searchQuery],  () => {
+    currPage.value = 1;
     if(checkedCategories.value.length > 0 || searchQuery.value){
       books.value = [];
       bookPaginated.value = [];
