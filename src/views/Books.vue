@@ -96,38 +96,6 @@
   </div>
 
 
-    <!-- <div v-if="searchandcategorybooks && searchandcategorybooks.length > 0">
-  <div class="flex justify-center items-center overflow-auto">
-    <table class="table-auto w-full">
-      <thead>
-        <tr>
-          <th class="px-4 py-2">Author</th>
-          <th class="px-4 py-2">Title</th>
-          <th class="px-4 py-2">Category</th>
-          <th class="px-4 py-2">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="book in searchandcategorybooks" :key="book.bookId">
-          <td class="border px-4 py-2">{{ book.author }}</td>
-          <td class="border px-4 py-2">{{ book.title }}</td>
-          <td class="border px-4 py-2">{{ getCategoryName(book.categoryId) }}</td>
-          <td class="border px-4 py-2">
-            <button
-              class="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
-              @click="openModal(book.bookId)"
-            >
-              Delete book <i class="fa-sharp fa-solid fa-trash"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-
-   <DeleteModal :showModal="showModal" :closeModal="closeModal" :deleteBook="deleteBook"/>
-    
-    </table>
-  </div>
-</div> -->
 <div class="flex justify-center items-center overflow-auto">
     <table class="table-auto w-full">
       <thead>
