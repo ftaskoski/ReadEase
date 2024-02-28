@@ -180,32 +180,6 @@
     </table>
   </div>
 
-<!-- <div  v-else>
-  <BookTable
-    :searchedBooks="searchedBooks"
-    :searchQuery="searchQuery"
-    :bookPaginated="bookPaginated"
-    :checkedBooks="checkedBooks"
-    :getCategoryName="getCategoryName"
-    :deleteBook="deleteBook"
-    :openModal="openModal"
-    :showModal="showModal"
-    :closeModal="closeModal"
-    :openEditModal="openEditModal"
-    :showEditModal="showEditModal"
-    :closeEditModal="closeEditModal"
-    :bookIdToEdit="bookIdToEdit"
-    :categories="categories"
-    :newTitle="newTitle"
-    :newAuthor="newAuthor"
-    :updateBook="updateBook"
-    :newCategoryId="newCategoryId"
-    @update:newTitle="val => newTitle = val"
-    @update:new-author="val => newAuthor = val"
-    @update:new-category-id="val => newCategoryId = val"
-  />
-</div> -->
-
 
 <div class="flex justify-center items-center mt-4">
     <button
@@ -248,7 +222,6 @@
 <script setup lang="ts">
 import axios from "axios";
 import { ref, onMounted, computed, watch } from "vue";
-import BookTable from "@/components/BookTable.vue";
 import { useRouter } from "vue-router";
 import Card from "@/components/Card.vue";
 import DeleteModal from "@/components/DeleteModal.vue";
