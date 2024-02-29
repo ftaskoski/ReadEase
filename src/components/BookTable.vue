@@ -1,15 +1,16 @@
 <template>
-  <div class="flex justify-center items-center overflow-auto">
+ <div class="flex justify-center items-center overflow-auto">
     <table class="table-auto w-full">
       <thead>
         <tr>
           <th class="px-4 py-2">Author</th>
           <th class="px-4 py-2">Title</th>
           <th class="px-4 py-2">Category</th>
+          <th class="px-4 py-2">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-if="searchedBooks && searchQuery" v-for="book in searchedBooks">
+        <tr v-for="book in books" :key="book.bookId">
           <td class="border px-4 py-2">{{ book.author }}</td>
           <td class="border px-4 py-2">{{ book.title }}</td>
           <td class="border px-4 py-2">{{ getCategoryName(book.categoryId) }}</td>
@@ -29,54 +30,7 @@
               Edit book <i class="fa-sharp fa-solid fa-pen-to-square"></i>
           </button>
           </td>
-        </tr>
-        <tr v-else-if="bookPaginated" v-for="book in bookPaginated" :key="book.id">
-          <td class="border px-4 py-2">{{ book.author }}</td>
-          <td class="border px-4 py-2">{{ book.title }}</td>
-          <td class="border px-4 py-2">{{ getCategoryName(book.categoryId) }}</td>
-          <td class="border px-4 py-2">
-            <button
-              class="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
-              @click="openModal(book.bookId)"
-            >
-              Delete book <i class="fa-sharp fa-solid fa-trash"></i>
-            </button>
-          </td>
-          <td class="border px-4 py-2">
-            <button
-              class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
-              @click="openEditModal(book.bookId)"
-            >
-              Edit book <i class="fa-sharp fa-solid fa-pen-to-square"></i>
-          </button>
-          </td>
-        </tr>
-        <tr v-if="checkedBooks" v-for="book in checkedBooks">
-          <td class="border px-4 py-2">{{ book.author }}</td>
-          <td class="border px-4 py-2">{{ book.title }}</td>
-          <td class="border px-4 py-2">{{ getCategoryName(book.categoryId) }}</td>
-          <td class="border px-4 py-2">
-            <button
-              class="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
-              @click="openModal(book.bookId)"
-            >
-              Delete book <i class="fa-sharp fa-solid fa-trash"></i>
-            </button>
-          </td>
-          <td class="border px-4 py-2">
-            <button
-              class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
-              @click="openEditModal(book.bookId)"
-            >
-              Edit book <i class="fa-sharp fa-solid fa-pen-to-square"></i>
-          </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <DeleteModal :showModal="showModal" :closeModal="closeModal" :deleteBook="deleteBook" />
-  <div v-if="showEditModal" class="fixed  inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+          <div v-if="showEditModal" class="fixed  inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
       <div class="relative w-auto max-w-md  mx-auto my-6">
         <!-- Content -->
         <div class="relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none">
@@ -94,9 +48,10 @@
           <!-- Body -->
           <div class="relative p-6 flex-auto">
             <input type="text"   :value="newTitle" @input="$emit('update:newTitle', ($event.target as HTMLInputElement).value)" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Title" >
-            <input type="text" :value="newAuthor" @input="$emit('update:newAuthor', ($event.target as HTMLInputElement).value)" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Author" >
+            <input type="text"   :value="newAuthor" @input="$emit('update:newAuthor', ($event.target as HTMLInputElement).value)" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Author" >
             <select :value="newCategoryId" @change="$emit('update:newCategoryId', ($event.target as HTMLInputElement).value)"  class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-              <option value="">Select category</option>
+              <option value="0" disabled selected hidden>Select a Category</option>
+              <option value="0">Select category</option>
               <option  v-for="category in categories" :key="category.categoryId" :value="category.categoryId">{{ category.categoryName }}</option>
             </select>
           </div>
@@ -120,13 +75,21 @@
         </div>
       </div>
     </div>
+        </tr>
+      </tbody>
+
+   <DeleteModal :showModal="showModal" :closeModal="closeModal" :deleteBook="deleteBook"/>
+    
+    </table>
+  </div>
+
 </template>
 
 <script setup lang="ts">
 import DeleteModal from '../components/DeleteModal.vue'
 
- defineProps(['searchedBooks', 'searchQuery', 'bookPaginated', 'checkedBooks', 'getCategoryName', 'openModal', 'showModal', 'deleteBook','closeModal', 'openEditModal', 'showEditModal', 'closeEditModal',  'categoryId', 'categories','newTitle', 'updateBook', 'newAuthor', 'newCategoryId']);
-
+defineProps([ 'getCategoryName', 'openModal', 'showModal', 'deleteBook','closeModal', 'openEditModal', 'showEditModal', 'closeEditModal',  'categoryId', 'categories','newTitle', 'updateBook', 'newAuthor', 'newCategoryId','books']);
 defineEmits(['update:newTitle', 'update:newAuthor', 'update:newCategoryId']);
+
 
 </script>
