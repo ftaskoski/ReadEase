@@ -336,15 +336,7 @@ function closeEditModal(){
 const currPage = ref<number>(1);
 const totalPages = computed(() => {
   let totalBooks;
-  // if (searchQuery.value && checkedCategories.value.length > 0) {
-  //   totalBooks = searchandcategoryall.value.length;
-  // } else if (checkedCategories.value.length > 0) {
-  //   totalBooks = checkedbooksAll.value.length;
-  // } else if (searchedBooks.value && searchQuery.value) {
-  //   totalBooks = searchedBooksAll.value.length;
-  // } else {
-  //   totalBooks = bookCollection.value?.length ?? 0;
-  // }
+
   if(checkedCategories.value.length > 0 || searchQuery.value){
     totalBooks = totalFilteredBooks.value.length;
   }else{
