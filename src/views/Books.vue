@@ -96,9 +96,46 @@
   </div>
 
 
-  <BookTable :books="books" :getCategoryName="getCategoryName" :openModal="openModal" :showModal="showModal" :deleteBook="deleteBook" :closeModal="closeModal"    :categories="categories" :currPage="currPage" :totalPages="totalPages" :newAuthor="newAuthor" :newTitle="newTitle" :newCategoryId="newCategoryId" :updateBook="updateBook" :openEditModal="openEditModal" :showEditModal="showEditModal" :closeEditModal="closeEditModal"  @update:newTitle="val => newTitle = val"
-    @update:new-author="val => newAuthor = val"
-    @update:new-category-id="val => newCategoryId = val"  />  
+  <BookTable
+      :books="books"
+      :getCategoryName="getCategoryName"
+      :openModal="openModal"
+      :showModal="showModal"
+      :deleteBook="deleteBook"
+      :closeModal="closeModal"
+      :categories="categories"
+      :currPage="currPage"
+      :totalPages="totalPages"
+      :newAuthor="newAuthor"
+      :newTitle="newTitle"
+      :newCategoryId="newCategoryId"
+      :updateBook="updateBook"
+      :openEditModal="openEditModal"
+      :showEditModal="showEditModal"
+      :closeEditModal="closeEditModal"
+      @update:newAuthor="value => newAuthor = value"
+      @update:newTitle="value => newTitle = value"
+      @update:newCategoryId="value => newCategoryId = value"
+    />
+
+    <DeleteModal
+      :showModal="showModal"
+      :closeModal="closeModal"
+      :deleteBook="deleteBook"
+    />
+
+    <EditModal
+      :showEditModal="showEditModal"
+      :closeEditModal="closeEditModal"
+      :updateBook="updateBook"
+      :categories="categories"
+      :newTitle="newTitle"
+      :newAuthor="newAuthor"
+      :newCategoryId="newCategoryId"
+      @update:newAuthor="newAuthor = $event"
+      @update:newTitle="newTitle = $event"
+      @update:newCategoryId="newCategoryId = $event"
+    />
     
 
 
@@ -147,6 +184,7 @@ import { useRouter } from "vue-router";
 import Card from "@/components/Card.vue";
 import DeleteModal from "@/components/DeleteModal.vue";
 import BookTable from "@/components/BookTable.vue";
+import EditModal from "@/components/EditModal.vue";
 const router = useRouter();
 const url = "https://localhost:7284/";
 let debounceTimer = 0;
