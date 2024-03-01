@@ -203,7 +203,6 @@ const searchQuery = ref<string>("");
 const searchedBooks = ref<any[]>([]);
 const searchedBooksAll = ref<any[]>([]);
 const searchandcategoryall = ref<any[]>([]);
-const searchandcategorybooks = ref<any[]>([]);
 const booksPerPageArr = ref<number[]>([2,5,10, 20, 30, 40, 50]);
 const booksPerPage = ref<number>(10);
 const showModal = ref<boolean>(false);
@@ -312,7 +311,7 @@ const visiblePages = computed(() => {
   start = Math.max(start, 1);
   let end = start + windowSize.value - 1;
   end = Math.min(end, totalPages.value);
-  start = Math.max(1, end - windowSize.value + 1); // Adjusted start to be at least 1
+  start = Math.max(1, end - windowSize.value + 1); 
   return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 });
 
@@ -320,7 +319,7 @@ const changePage = (page: number) => {
   sessionStorage.setItem("booksPerPage", String(booksPerPage.value));
   if (page >= 1 && page <= totalPages.value) {
     currPage.value = page;
-    sessionStorage.setItem("page", String(currPage.value)); // Update session storage with current page
+    sessionStorage.setItem("page", String(currPage.value)); 
     
     if(checkedCategories.value.length > 0 || searchQuery.value){
       check();
