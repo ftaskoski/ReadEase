@@ -39,7 +39,7 @@
         </div>
 
 <div class="relative inline-block w-full mt-2 text-gray-500">
-  <select @change="getCategoryIdFromSelectedCategory" v-model="selectedCategory" class="peer block appearance-none  w-full  border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500">
+  <select v-model="selectedCategory" class="peer block appearance-none  w-full  border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500">
     <option value="null" disabled selected hidden>Select a Category</option>
     <option value="">Select category</option>
     <option v-for="category in categories" :key="category" :value="category">{{ category.categoryName }}</option>
@@ -185,11 +185,10 @@ import Card from "@/components/Card.vue";
 import DeleteModal from "@/components/DeleteModal.vue";
 import BookTable from "@/components/BookTable.vue";
 import EditModal from "@/components/EditModal.vue";
+
 const router = useRouter();
 const url = "https://localhost:7284/";
 let debounceTimer = 0;
-
-// Form and Book Data
 const author = ref<string>("");
 const title = ref<string>("");
 const selectedCategory = ref<{ categoryName: string; categoryId: number } | null>(null);
@@ -209,68 +208,14 @@ const newAuthor = ref<string>("");
 const newCategoryId = ref<number | undefined>(0);
 const books = ref<any[]>([]);
 const totalFilteredBooks = ref<any[]>([]);
-const openEditModal = (bookId: number) => {
-  document.body.style.overflow = 'hidden';
-  showEditModal.value = !showEditModal.value;
-  bookIdToEdit.value = bookId;
-}
-
-const updateBook = () => {
-  axios.post(`${url}api/updatebook`, {
-    Id: bookIdToEdit.value,
-    NewTitle: newTitle.value,
-    NewAuthor: newAuthor.value,
-    NewCategory: newCategoryId.value
-  }, { withCredentials: true })
-  .then(response => {
-    checkFilter();
-
-    document.body.style.overflow = 'auto';
-    showEditModal.value = false;
-    bookIdToEdit.value = null;
-    newTitle.value = "";
-    newAuthor.value = "";
-    newCategoryId.value = 0;
-    
-  })
-  .catch(error => {
-    console.error(error); // Log any errors
-  });
-}
 
 
-function closeEditModal(){
-  document.body.style.overflow = 'auto';
-  showEditModal.value = false;
-  bookIdToEdit.value = null;
-  newTitle.value = "";
-  newAuthor.value = "";
-  newCategoryId.value = 0;
-}
 
-  const openModal = (bookId: number) => {
-    document.body.style.overflow = 'hidden';
-  showModal.value = !showModal.value;
-  bookIdToDelete.value = bookId;
-};
 
-  const closeModal = () => {
-    document.body.style.overflow = 'auto';
-  showModal.value = false;
-  }
 
-  function handleChange() {
-  currPage.value = 1;
-  sessionStorage.setItem("booksPerPage", String(booksPerPage.value));
-  sessionStorage.setItem("page", String(currPage.value));
-  router.push({ query: { booksPerPage: String(booksPerPage.value) } });
-
-  checkFilter();
-
-}
-
-// Pagination
+// Pagination !!!!!!!!!!!!
 const currPage = ref<number>(1);
+
 const totalPages = computed(() => {
   let totalBooks;
 
@@ -313,6 +258,10 @@ const changePage = (page: number) => {
 };
 
 
+
+
+
+// CRUD FUNCTIONS !!!!!!!!!!!
 
 const getBooks = () => {
   axios
@@ -407,11 +356,7 @@ const getAllCategories = () => {
   });
 };
 
-const getCategoryIdFromSelectedCategory = () => {
-  console.log(selectedCategory.value ? selectedCategory.value.categoryId : null);
-};
 
-// Post Functions
 const addBook = () => {
   const categoryIdToAdd = selectedCategory.value ? selectedCategory.value.categoryId : null;
   axios
@@ -466,7 +411,69 @@ const deleteBook = () => {
 
 
 
+// Modal functions !!!!!!!!!
 
+const openEditModal = (bookId: number) => {
+  document.body.style.overflow = 'hidden';
+  showEditModal.value = !showEditModal.value;
+  bookIdToEdit.value = bookId;
+}
+
+const updateBook = () => {
+  axios.post(`${url}api/updatebook`, {
+    Id: bookIdToEdit.value,
+    NewTitle: newTitle.value,
+    NewAuthor: newAuthor.value,
+    NewCategory: newCategoryId.value
+  }, { withCredentials: true })
+  .then(response => {
+    checkFilter();
+
+    document.body.style.overflow = 'auto';
+    showEditModal.value = false;
+    bookIdToEdit.value = null;
+    newTitle.value = "";
+    newAuthor.value = "";
+    newCategoryId.value = 0;
+    
+  })
+  .catch(error => {
+    console.error(error); // Log any errors
+  });
+}
+
+
+function closeEditModal(){
+  document.body.style.overflow = 'auto';
+  showEditModal.value = false;
+  bookIdToEdit.value = null;
+  newTitle.value = "";
+  newAuthor.value = "";
+  newCategoryId.value = 0;
+}
+
+  const openModal = (bookId: number) => {
+    document.body.style.overflow = 'hidden';
+  showModal.value = !showModal.value;
+  bookIdToDelete.value = bookId;
+};
+
+  const closeModal = () => {
+    document.body.style.overflow = 'auto';
+  showModal.value = false;
+  }
+
+// Handle fucntions !!!!!!!!!!!!
+
+  function handleChange() {
+  currPage.value = 1;
+  sessionStorage.setItem("booksPerPage", String(booksPerPage.value));
+  sessionStorage.setItem("page", String(currPage.value));
+  router.push({ query: { booksPerPage: String(booksPerPage.value) } });
+
+  checkFilter();
+
+}
 
 const handleInput = () => {
   clearTimeout(debounceTimer);
@@ -480,16 +487,12 @@ const handleInput = () => {
 };
 
 
-
-
-
-
 const getCategoryName = (categoryId : number) => {
   const category = categories.value.find((cat) => cat.categoryId === categoryId);
   return category ? category.categoryName : 'Unknown Category';
 };
 
-
+// Watchers !!!!!!!!!!!!!!!!!!!!
 watch([checkedCategories, searchQuery],  () => {
     currPage.value = 1;
     checkFilter();
@@ -513,6 +516,7 @@ watch(totalPages, () => {
     });
   }
 });
+
 
 // Lifecycle Hook
 onMounted(() => {
