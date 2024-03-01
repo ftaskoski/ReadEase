@@ -228,7 +228,6 @@ const updateBook = () => {
     NewCategory: newCategoryId.value
   }, { withCredentials: true })
   .then(response => {
-    console.log(response.data); // Check response for debugging
     if(checkedCategories.value.length > 0 || searchQuery.value){
       check();
       handleInput();
