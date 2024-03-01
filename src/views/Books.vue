@@ -84,7 +84,7 @@
 
     <div class="flex flex-wrap">
   <div v-for="category in categories" :key="category.categoryId" class="mr-4 mb-2">
-    <input v-model="checkedCategories" @change="check" type="checkbox" :value="category.categoryId" class="form-checkbox h-5 w-5 text-blue-600" />
+    <input v-model="checkedCategories" @change="filterBooksAll" type="checkbox" :value="category.categoryId" class="form-checkbox h-5 w-5 text-blue-600" />
     <label class="ml-2">{{ category.categoryName }}</label>
   </div>
 </div>
@@ -197,12 +197,7 @@ const categories = ref<any[]>([]);
 const bookCollection = ref<any[]>([]);
 const bookPaginated = ref<any[]>([]);
 const checkedCategories = ref<number[]>([]);
-const checkedBooks = ref<any[]>([]);
-const checkedbooksAll = ref<any[]>([]);
 const searchQuery = ref<string>("");
-const searchedBooks = ref<any[]>([]);
-const searchedBooksAll = ref<any[]>([]);
-const searchandcategoryall = ref<any[]>([]);
 const booksPerPageArr = ref<number[]>([2,5,10, 20, 30, 40, 50]);
 const booksPerPage = ref<number>(10);
 const showModal = ref<boolean>(false);
@@ -228,14 +223,7 @@ const updateBook = () => {
     NewCategory: newCategoryId.value
   }, { withCredentials: true })
   .then(response => {
-    if(checkedCategories.value.length > 0 || searchQuery.value){
-      check();
-      handleInput();
-    }else if (!searchQuery.value && checkedCategories.value.length == 0){
-       getBooks();
-       getAllBooks();
-      
-    }
+    checkFilter();
 
     document.body.style.overflow = 'auto';
     showEditModal.value = false;
@@ -277,16 +265,7 @@ function closeEditModal(){
   sessionStorage.setItem("page", String(currPage.value));
   router.push({ query: { booksPerPage: String(booksPerPage.value) } });
 
-  if(checkedCategories.value.length > 0 && !searchQuery.value){
-      check();
-    } else if(searchQuery.value && checkedCategories.value.length == 0){
-      handleInput();
-      
-    }
-    else{
-      getBooks();
-      getAllBooks();
-    }
+  checkFilter();
 
 }
 
@@ -320,14 +299,7 @@ const changePage = (page: number) => {
     currPage.value = page;
     sessionStorage.setItem("page", String(currPage.value)); 
     
-    if(checkedCategories.value.length > 0 || searchQuery.value){
-      check();
-      handleInput();
-    }else if (!searchQuery.value && checkedCategories.value.length == 0){
-       getBooks();
-       getAllBooks();
-      
-    }
+    checkFilter();
 
     router.push({
       query: {
@@ -341,8 +313,7 @@ const changePage = (page: number) => {
 };
 
 
-// Functions
-// Get Functions
+
 const getBooks = () => {
   axios
     .get(`${url}api/getbooks`, {
@@ -360,6 +331,62 @@ const getBooks = () => {
       console.error(error);
     });
 };
+
+const filterBooksAll = () => {
+  books.value = [];
+  bookPaginated.value = [];
+  const searchParams = {
+    search: searchQuery.value,
+    categories: checkedCategories.value.join(","),
+
+  };
+  axios
+    .get(`${url}api/searchandcategoryall`, {
+      params: searchParams,
+      withCredentials: true,
+    })
+    .then((response) => {
+      totalFilteredBooks.value = response.data;
+      filterBooksPaginated();
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+const filterBooksPaginated = () => {
+  const searchParams = {
+    search: searchQuery.value,
+    categories: checkedCategories.value.join(","),
+    pageNumber: currPage.value,
+    pageSize: booksPerPage.value
+  };
+  axios.get(`${url}api/searchandcategory`, {
+    params: searchParams,
+    withCredentials: true,
+  }).then((response) => {
+    books.value = response.data;
+    sessionStorage.setItem("search", searchQuery.value);
+    sessionStorage.setItem("categories", String(checkedCategories.value));
+    sessionStorage.setItem("page", String(currPage.value));
+
+  }).catch((error) => {
+    console.error(error);
+  })
+}
+
+function checkFilter(){
+  if (checkedCategories.value.length > 0 && !searchQuery.value) {
+    filterBooksAll();
+  }else if(searchQuery.value && checkedCategories.value.length == 0){
+    handleInput();
+  } 
+  else{
+    getBooks();
+    getAllBooks();
+  }
+
+}
 
 const getAllBooks = () => {
   axios
@@ -398,14 +425,7 @@ const addBook = () => {
       title.value = "";
       selectedCategory.value = null;
 
-      if(checkedCategories.value.length > 0 || searchQuery.value){
-      check();
-      handleInput();
-    }else if (!searchQuery.value && checkedCategories.value.length == 0){
-       getBooks();
-       getAllBooks();
-      
-    }
+      checkFilter();
     })
     .catch((error) => {
       console.error(error);
@@ -437,17 +457,7 @@ const deleteBook = () => {
       withCredentials: true,
     })
     .then(() => {
-      if(checkedCategories.value.length > 0 && !searchQuery.value){
-      check();
-    } else if(searchQuery.value && checkedCategories.value.length == 0){
-      handleInput();
-      
-    }
-    else{
-      getBooks();
-      getAllBooks();
-      checkedBooks.value = [];
-    }
+        checkFilter();
     })
     .catch((error) => {
       console.error(`Error deleting book with ID ${bookIdToDelete.value}:`, error);
@@ -455,114 +465,24 @@ const deleteBook = () => {
 };
 
 
-// Search Functions
-const searchedBooksFull = () => {
-  axios
-    .get(`${url}api/searchandcategoryall`,
-      {
-        params: {
-          search: searchQuery.value,
-          categories: checkedCategories.value.join(",")
 
-        },
-        withCredentials: true,
-      })
-    .then((response) => {
-      if(checkedCategories.value.length == 0){
-        
-        searchedBooksAll.value = response.data;
-      }else{
-        searchandcategoryall.value = response.data;
-      }
-      totalFilteredBooks.value = response.data;
-      sessionStorage.setItem("search", searchQuery.value);
-       searchBook();
-    });
-};
 
-const searchBook = () => {
-  books.value = [];
-  bookPaginated.value = [];
-  axios
-    .get(`${url}api/searchandcategory`, {
-      params: {
-        search: searchQuery.value,
-        categories: checkedCategories.value.join(","),
-        pageNumber: currPage.value,
-        pageSize: booksPerPage.value
-      },
-      withCredentials: true,
-    })
-    .then((response) => {
-      searchedBooks.value = response.data;
-      books.value = response.data;
-    });
-};
 
 const handleInput = () => {
   clearTimeout(debounceTimer);
-  searchedBooks.value = [];
   books.value = [];
   sessionStorage.removeItem("search");  
   if (searchQuery.value.trim() !== "") { 
     debounceTimer = setTimeout(() => {
-      searchedBooksFull();
+      filterBooksAll();
     }, 1000);
   }
 };
 
 
-// Checked Books Functions
-const getAllCheckedBooks = () => {
-  axios.get(`${url}api/searchandcategoryall`, {
-    params: {
-      categories: checkedCategories.value.join(","),
-      search: searchQuery.value,
-    },
-    withCredentials: true,
-  }).then((response) => {
-    totalFilteredBooks.value = response.data;
-    if(!searchQuery.value){
-      
-      checkedbooksAll.value = response.data;
-    }else{
-      searchandcategoryall.value = response.data;
-    }
-    bookCollection.value = [];
-    bookPaginated.value = [];
-  });
-};
 
-const check = () => {
 
-  if (checkedCategories.value.length > 0) {
-    getAllCheckedBooks();
-    sessionStorage.setItem('categories', String(checkedCategories.value));
-    axios
-      .get(`${url}api/searchandcategory`, {
-        params: {
-          search: searchQuery.value,
-        categories: checkedCategories.value.join(","),
-        pageNumber: currPage.value,
-        pageSize: booksPerPage.value
 
-        },
-        withCredentials: true,
-      })
-      .then((response) => {
-       
-        books.value = response.data;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  } else {
-    //getBooks();
-    //getAllBooks();
-    sessionStorage.removeItem('categories');
-    checkedBooks.value = [];
-  }
-};
 
 const getCategoryName = (categoryId : number) => {
   const category = categories.value.find((cat) => cat.categoryId === categoryId);
@@ -572,17 +492,7 @@ const getCategoryName = (categoryId : number) => {
 
 watch([checkedCategories, searchQuery],  () => {
     currPage.value = 1;
-    if(checkedCategories.value.length > 0 || searchQuery.value){
-      books.value = [];
-      bookPaginated.value = [];
-      check();
-      handleInput();
-    } 
-    else{
-      getBooks();
-      getAllBooks();
-      checkedBooks.value = [];
-    }
+    checkFilter();
 });
 
 
@@ -592,17 +502,7 @@ watch(totalPages, () => {
     sessionStorage.setItem("page", String(currPage.value));
     books.value = [];
     bookPaginated.value = [];
-    if(checkedCategories.value.length > 0 && !searchQuery.value){
-      check();
-    } else if(searchQuery.value && checkedCategories.value.length == 0){
-      handleInput();
-      
-    }
-    else{
-      getBooks();
-      getAllBooks();
-      checkedBooks.value = [];
-    }
+    checkFilter();
 
     router.push({
       query: {
@@ -635,7 +535,7 @@ onMounted(() => {
   if(categoriesFromStorage){
 
       checkedCategories.value = categoriesFromStorage.split(',').map(Number);
-      check();
+      filterBooksAll();
     } 
      if(searchFromStorage){
     
@@ -646,11 +546,9 @@ onMounted(() => {
     else{
       getBooks();
       getAllBooks();
-      checkedBooks.value = [];
     }
   getAllCategories();
-   getAllBooks();
-   getBooks();
+ 
 });
 
 
