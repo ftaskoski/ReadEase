@@ -63,7 +63,6 @@ const url = "https://localhost:7284/";
 const profilePictureUrl = ref<string | null>(null);
 
 function changeUsername() {
-  console.log(newUsername.value);
   axios
     .put(
       `${url}api/update`,
