@@ -1,5 +1,6 @@
 ﻿using System.Data.SqlClient;
 using Dapper;
+using ReadEase_C_.Models;
 using WebApplication1.Models;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
@@ -128,6 +129,40 @@ namespace Books.Services
             parameters.Add("@pageSize", pageSize);
 
             return QueryBooks(getQuery, parameters);
+        }
+
+
+        public void UpdateBook (UpdateBook book)
+        {
+            var connection = GetSqlConnection();
+            string sql = "UPDATE Books SET ";
+            var parameters = new DynamicParameters();
+            
+            if (!string.IsNullOrEmpty(book.NewTitle))
+            {
+                sql += "Title = @NewTitle, ";
+                parameters.Add("@NewTitle", book.NewTitle);
+            }
+
+            if (!string.IsNullOrEmpty(book.NewAuthor))
+            {
+                sql += "Author = @NewAuthor, ";
+                parameters.Add("@NewAuthor", book.NewAuthor);
+            }
+
+            if (book.NewCategory != 0) // Check if the category is different from 0
+            {
+                sql += "CategoryId = @NewCategory, ";
+                parameters.Add("@NewCategory", book.NewCategory);
+            }
+
+            // Remove the trailing comma and space
+            sql = sql.TrimEnd(',', ' ');
+
+            sql += " WHERE BookId = @BookId";
+            parameters.Add("@BookId", book.Id);
+
+            connection.Execute(sql, parameters);
         }
 
     }
