@@ -128,7 +128,6 @@ namespace WebApplication1.Controllers
         [HttpPost("updatebook")]
         public IActionResult UpdateBook(UpdateBook book)
         {
-            Console.WriteLine(book.NewAuthor, book.NewTitle, book.NewCategory);
             var connection = GetSqlConnection();
             string sql = "UPDATE Books SET ";
             var parameters = new DynamicParameters();
