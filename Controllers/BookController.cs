@@ -128,35 +128,7 @@ namespace WebApplication1.Controllers
         [HttpPost("updatebook")]
         public IActionResult UpdateBook(UpdateBook book)
         {
-            var connection = GetSqlConnection();
-            string sql = "UPDATE Books SET ";
-            var parameters = new DynamicParameters();
-
-            if (!string.IsNullOrEmpty(book.NewTitle))
-            {
-                sql += "Title = @NewTitle, ";
-                parameters.Add("@NewTitle", book.NewTitle);
-            }
-
-            if (!string.IsNullOrEmpty(book.NewAuthor))
-            {
-                sql += "Author = @NewAuthor, ";
-                parameters.Add("@NewAuthor", book.NewAuthor);
-            }
-
-            if (book.NewCategory != 0) // Check if the category is different from 0
-            {
-                sql += "CategoryId = @NewCategory, ";
-                parameters.Add("@NewCategory", book.NewCategory);
-            }
-
-            // Remove the trailing comma and space
-            sql = sql.TrimEnd(',', ' ');
-
-            sql += " WHERE BookId = @BookId";
-            parameters.Add("@BookId", book.Id);
-
-            connection.Execute(sql, parameters);
+           _bookService.UpdateBook(book);
             return Ok("Updated");
         }
 
