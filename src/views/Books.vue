@@ -4,7 +4,10 @@
       <div>
     <div >
 
-      <Card class="max-w-md flex justify-center items-center">
+
+      <div class="flex flex-col  sm:flex-row justify-between space-y-2 sm:space-y-0 md:space-x-2">
+
+      <Card class="max-w-md w-full flex justify-center items-center">
       <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2" >INSERT BOOKS</p>
       <form @submit.prevent="addBook">
         <div class="relative w-full h-10 ">
@@ -59,7 +62,26 @@
         </button>
       </form>
     </Card>
+      <div class="relative">
+    <Card class="space-y-2 sm:space-y-0">
+      <div class="mb-4 ">
+        <label for="search" class="block text-sm font-medium text-gray-600">Search by Author</label>
+        <input
+          v-model="searchQuery"
+          @input="handleInput"
+          type="text"
+          id="search"
+          placeholder="Enter author's name..."
+          class="w-80 px-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300"
+        />
+      </div>
+    </Card>
 
+
+      </div>
+
+  </div>
+  
       <button
         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
         @click="downloadBooks"
@@ -68,19 +90,6 @@
       </button>
     </div>
 
-    <div class="mb-4">
-      <label for="search" class="block text-sm font-medium text-gray-600"
-        >Search by Author</label
-      >
-      <input
-        v-model="searchQuery"
-        @input="handleInput"
-        type="text"
-        id="search"
-        placeholder="Enter author's name..."
-        class="w-80 px-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300"
-      />
-    </div>
 
     <div class="flex flex-wrap">
   <div v-for="category in categories" :key="category.categoryId" class="mr-4 mb-2">
