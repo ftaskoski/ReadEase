@@ -26,7 +26,7 @@
       <!-- Sidebar -->
       <aside
         id="default-sidebar"
-        class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform sm:translate-x-0"
+        class="fixed top-0 left-0 z-40 w-64 h-full transition-transform sm:translate-x-0"
         :class="{ '-translate-x-full': !isSidebarOpen }"
         aria-label="Sidebar"
       >
