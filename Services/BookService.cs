@@ -1,5 +1,6 @@
 ﻿using System.Data.SqlClient;
 using Dapper;
+using ReadEase_C_.Interface;
 using ReadEase_C_.Models;
 using WebApplication1.Models;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
@@ -7,7 +8,7 @@ using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext
 namespace Books.Services
 
 {
-    public class BookService
+    public class BookService : IBookService
     {
         private readonly IConfiguration _configuration;
 
@@ -41,7 +42,7 @@ namespace Books.Services
         public IEnumerable<BookModel> GetAllBooksForUser(int userId)
         {
             string getQuery = "SELECT * FROM BOOKS WHERE UserId=@UserId";
-             return QueryBooks(getQuery, new {UserId=userId});
+            return QueryBooks(getQuery, new { UserId = userId });
         }
 
         public IEnumerable<BookModel> GetPaginatedBooks(int id, int pageNumber = 1, int pageSize = 10)
@@ -51,7 +52,7 @@ namespace Books.Services
             return QueryBooks(getQuery, new { id = id, startIndex = startIndex, pageSize = pageSize });
         }
 
-        public IEnumerable<BookModel> GetAllBooksFromSearch(int id,string search)
+        public IEnumerable<BookModel> GetAllBooksFromSearch(int id, string search)
         {
             string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE @Search";
             return QueryBooks(searchQuery, new { id = id, Search = $"{search}%" });
@@ -61,10 +62,10 @@ namespace Books.Services
         {
             int startIndex = (pageNumber - 1) * pageSize;
             string searchQuery = "SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE @Search ORDER BY BookId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
-            return QueryBooks(searchQuery, new { id = id, Search = $"{search}%", startIndex = startIndex, pageSize = pageSize });      
+            return QueryBooks(searchQuery, new { id = id, Search = $"{search}%", startIndex = startIndex, pageSize = pageSize });
         }
 
-        public void InsertBook(BookModel book,int id) 
+        public void InsertBook(BookModel book, int id)
         {
             string insertQuery = "INSERT INTO Books (Title, Author, UserId, CategoryId) VALUES (@Title, @Author, @UserId, @CategoryId);";
             Execute(insertQuery, new { book.Title, Author = book.Author, UserId = id, CategoryId = book.CategoryId });
@@ -132,12 +133,12 @@ namespace Books.Services
         }
 
 
-        public void UpdateBook (UpdateBook book)
+        public void UpdateBook(UpdateBook book)
         {
             var connection = GetSqlConnection();
             string sql = "UPDATE Books SET ";
             var parameters = new DynamicParameters();
-            
+
             if (!string.IsNullOrEmpty(book.NewTitle))
             {
                 sql += "Title = @NewTitle, ";
