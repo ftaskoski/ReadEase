@@ -5,7 +5,7 @@
     <div >
 
 
-      <div class="flex flex-col  sm:flex-row justify-between space-y-2 sm:space-y-0 md:space-x-2">
+      <div class="flex flex-col  sm:flex-row sm:space-x-10 space-y-4">
 
       <Card class="max-w-md w-full flex justify-center items-center">
       <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2" >INSERT BOOKS</p>
