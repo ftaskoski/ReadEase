@@ -1,11 +1,11 @@
-﻿using System.Data.SqlClient;
+﻿using Dapper;
+using ReadEase_C_.Interface;
+using System.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
-using Dapper;
-using WebApplication1.Models;
 namespace ReadEase_C_.Services
 {
-    public class HashingService
+    public class HashingService : IHashingService
     {
 
 
