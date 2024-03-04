@@ -62,8 +62,8 @@
         </button>
       </form>
     </Card>
-      <div class="relative">
-    <Card class="space-y-2 sm:space-y-0">
+      <div class="flex justify-center items-center">
+    <Card class="space-y-2 sm:space-y-2 ">
       <div class="mb-4 ">
         <label for="search" class="block text-sm font-medium text-gray-600">Search by Author</label>
         <input
