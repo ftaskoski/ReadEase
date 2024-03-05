@@ -5,7 +5,7 @@
     <div >
 
 
-      <div class="flex flex-col  sm:flex-row sm:space-x-10 space-y-4">
+      <div class="flex flex-col  xl:flex-row  sm:space-x-10 space-y-4">
 
       <Card class="max-w-md w-full flex justify-center items-center">
       <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2" >INSERT BOOKS</p>
@@ -66,14 +66,19 @@
     <Card class="space-y-2 sm:space-y-2 ">
       <div class="mb-4 ">
         <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2" >SEARCH BY AUTHOR</p>
-        <input
-          v-model="searchQuery"
-          @input="handleInput"
-          type="text"
-          id="search"
-          placeholder="Enter author's name..."
-          class="w-80 px-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300"
-        />
+        <div class="flex items-center justify-center p-5">
+  <div >
+    <div class="flex  border border-gray-200 rounded-lg">
+      <div class="flex w-10 items-center justify-center rounded-tl-lg rounded-bl-lg border-r border-gray-200 bg-white p-5">
+        <svg viewBox="0 0 20 20" aria-hidden="true" class="pointer-events-none absolute w-5 fill-gray-500 transition">
+          <path d="M16.72 17.78a.75.75 0 1 0 1.06-1.06l-1.06 1.06ZM9 14.5A5.5 5.5 0 0 1 3.5 9H2a7 7 0 0 0 7 7v-1.5ZM3.5 9A5.5 5.5 0 0 1 9 3.5V2a7 7 0 0 0-7 7h1.5ZM9 3.5A5.5 5.5 0 0 1 14.5 9H16a7 7 0 0 0-7-7v1.5Zm3.89 10.45 3.83 3.83 1.06-1.06-3.83-3.83-1.06 1.06ZM14.5 9a5.48 5.48 0 0 1-1.61 3.89l1.06 1.06A6.98 6.98 0 0 0 16 9h-1.5Zm-1.61 3.89A5.48 5.48 0 0 1 9 14.5V16a6.98 6.98 0 0 0 4.95-2.05l-1.06-1.06Z"></path>
+        </svg>
+      </div>
+      <input type="text" v-model="searchQuery" @input="handleInput" class="w-full rounded-tr-lg rounded-br-lg max-w-[160px] bg-white pl-2 text-base font-semibold outline-0" placeholder="Enter author's name" id="">
+    
+    </div>
+  </div>
+</div>
       </div>
     </Card>
 
@@ -346,7 +351,7 @@ function checkFilter(){
   }else if(searchQuery.value && checkedCategories.value.length == 0){
     handleInput();
   } 
-  else{
+  else if(checkedCategories.value.length == 0 && !searchQuery.value){
     getBooks();
     getAllBooks();
   }
