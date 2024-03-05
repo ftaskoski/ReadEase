@@ -65,7 +65,7 @@
       <div class="flex justify-center items-center">
     <Card class="space-y-2 sm:space-y-2 ">
       <div class="mb-4 ">
-        <label for="search" class="block text-sm font-medium text-gray-600">Search by Author</label>
+        <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2" >SEARCH BY AUTHOR</p>
         <input
           v-model="searchQuery"
           @input="handleInput"
