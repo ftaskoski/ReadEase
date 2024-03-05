@@ -1,9 +1,11 @@
-﻿namespace ReadEase_C_.Models
+﻿using ReadEase_C_.Interface;
+
+namespace ReadEase_C_.Models
 {
-    public class CategoriesModel
+    public class CategoriesModel : ICategoriesModel
     {
         public string CategoryName { get; set; }
-        public int CategoryId { get; set; } 
+        public int CategoryId { get; set; }
 
     }
 }
