@@ -90,13 +90,19 @@
       </button>
     </div>
 
+<Card>
+  <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2" >SEARCH BY CATEGORY</p>
 
-    <div class="flex flex-wrap">
+    <div class=" flex-wrap mt-2 flex items-center justify-center">
   <div v-for="category in categories" :key="category.categoryId" class="mr-4 mb-2">
-    <input v-model="checkedCategories" @change="filterBooksAll" type="checkbox" :value="category.categoryId" class="form-checkbox h-5 w-5 text-blue-600" />
-    <label class="ml-2">{{ category.categoryName }}</label>
-  </div>
+    <div class="">
+  <label >
+    <input v-model="checkedCategories" :value="category.categoryId" @change="handleChange" class="dark:border-white-400/20 dark:scale-100 transition-all duration-500 ease-in-out dark:hover:scale-110 dark:checked:scale-100 w-6 h-6" type="checkbox">{{ category.categoryName }}
+  </label>
 </div>
+</div>
+</div>
+</Card>
 
 <div>
     <select v-model="booksPerPage" @change="handleChange" class="w-80 px-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300">
