@@ -112,11 +112,10 @@
       </aside>
       <div
         v-if="isSidebarOpen"
-        class="fixed inset-0 bg-gray-900 bg-opacity-30 blur"
+        class="fixed inset-0 bg-gray-900 bg-opacity-30 z-10" 
         @click="toggleSidebar"
         :class="{ 'overflow-hidden': isSidebarOpen }"
       >
-        <!-- You can add any additional content here -->
       </div>
     </div>
   </div>
