@@ -49,32 +49,32 @@ namespace Books.Services
         {
             int startIndex = (pageNumber - 1) * pageSize;
             string getQuery = "SELECT * FROM BOOKS WHERE UserId=@Id ORDER BY BookId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
-            return QueryBooks(getQuery, new { id = id, startIndex = startIndex, pageSize = pageSize });
+            return QueryBooks(getQuery, new {id,startIndex,pageSize });
         }
 
         public IEnumerable<BookModel> GetAllBooksFromSearch(int id, string search)
         {
             string searchQuery = $"SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE @Search";
-            return QueryBooks(searchQuery, new { id = id, Search = $"{search}%" });
+            return QueryBooks(searchQuery, new { id, Search = $"{search}%" });
         }
 
         public IEnumerable<BookModel> GetPaginatedBooksFromSearch(int id, string search, int pageNumber = 1, int pageSize = 10)
         {
             int startIndex = (pageNumber - 1) * pageSize;
             string searchQuery = "SELECT * FROM BOOKS WHERE UserId=@Id AND Author LIKE @Search ORDER BY BookId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
-            return QueryBooks(searchQuery, new { id = id, Search = $"{search}%", startIndex = startIndex, pageSize = pageSize });
+            return QueryBooks(searchQuery, new { id, Search = $"{search}%",  startIndex,  pageSize });
         }
 
         public void InsertBook(BookModel book, int id)
         {
             string insertQuery = "INSERT INTO Books (Title, Author, UserId, CategoryId) VALUES (@Title, @Author, @UserId, @CategoryId);";
-            Execute(insertQuery, new { book.Title, Author = book.Author, UserId = id, CategoryId = book.CategoryId });
+            Execute(insertQuery, new { book.Title,  book.Author, UserId = id, book.CategoryId });
         }
 
         public void DeleteBook(int id)
         {
             string deleteQuery = "DELETE FROM Books WHERE bookId=@id";
-            Execute(deleteQuery, new { id = id });
+            Execute(deleteQuery, new { id });
         }
 
         public IEnumerable<BookModel> SearchAndCategoryAll(int UserId, string? search = null, List<int>? categories = null)
@@ -132,7 +132,7 @@ namespace Books.Services
             return QueryBooks(getQuery, parameters);
         }
 
-
+        
         public void UpdateBook(UpdateBook book)
         {
             var connection = GetSqlConnection();
