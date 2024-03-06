@@ -119,11 +119,6 @@ namespace WebApplication1.Controllers
             }
             return _bookService.SearchAndCategory(UserId, search, categoriesList, pageNumber, pageSize);
         }
-        private SqlConnection GetSqlConnection()
-        {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            return new SqlConnection(connectionString);
-        }
 
         [HttpPost("updatebook")]
         public IActionResult UpdateBook(UpdateBook book)
