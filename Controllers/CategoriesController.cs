@@ -15,10 +15,10 @@ namespace WebApplication1.Controllers
     {
         private readonly IConfiguration _configuration;
 
-        public CategoriesController(IConfiguration configuration) 
-        { 
-        _configuration = configuration;
-        
+        public CategoriesController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+
         }
 
         private SqlConnection GetSqlConnection()
@@ -55,22 +55,20 @@ namespace WebApplication1.Controllers
         [HttpPost("insertcategory")]
         public void insertCategories(CategoriesModel category)
         {
-            using(var connection = GetSqlConnection())
-            {
-                string insertQuery = "INSERT INTO Categories (CategoryName) VALUES (@CategoryName)";
-                connection.Execute(insertQuery, new { CategoryName=category.CategoryName });
-            }
+            using var connection = GetSqlConnection();
+            string insertQuery = "INSERT INTO Categories (CategoryName) VALUES (@CategoryName)";
+            connection.Execute(insertQuery, new { CategoryName = category.CategoryName });
         }
 
 
         [HttpGet("checked")]
-        public IEnumerable<BookModel> getChecked([FromQuery] string categories,int pageNumber=1, int pageSize=10)
+        public IEnumerable<BookModel> getChecked([FromQuery] string categories, int pageNumber = 1, int pageSize = 10)
         {
             int startIndex = (pageNumber - 1) * pageSize;
             var categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
             var connection = GetSqlConnection();
             var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND CategoryId IN @categories ORDER BY CategoryId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY";
-            return connection.Query<BookModel>(getQuery, new { Id=UserId, categories = categoriesList,startIndex,pageSize });
+            return connection.Query<BookModel>(getQuery, new { Id = UserId, categories = categoriesList, startIndex, pageSize });
         }
 
         [HttpGet("checkedall")]
@@ -79,7 +77,7 @@ namespace WebApplication1.Controllers
             var categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
             var connection = GetSqlConnection();
             var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND CategoryId IN @categories ";
-            return connection.Query<BookModel>(getQuery, new { Id=UserId, categories = categoriesList, });
+            return connection.Query<BookModel>(getQuery, new { Id = UserId, categories = categoriesList, });
         }
 
     }
