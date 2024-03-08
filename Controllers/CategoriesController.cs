@@ -61,24 +61,6 @@ namespace WebApplication1.Controllers
         }
 
 
-        [HttpGet("checked")]
-        public IEnumerable<BookModel> getChecked([FromQuery] string categories, int pageNumber = 1, int pageSize = 10)
-        {
-            int startIndex = (pageNumber - 1) * pageSize;
-            var categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
-            var connection = GetSqlConnection();
-            var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND CategoryId IN @categories ORDER BY CategoryId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY";
-            return connection.Query<BookModel>(getQuery, new { Id = UserId, categories = categoriesList, startIndex, pageSize });
-        }
-
-        [HttpGet("checkedall")]
-        public IEnumerable<BookModel> getCheckedAll([FromQuery] string categories)
-        {
-            var categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
-            var connection = GetSqlConnection();
-            var getQuery = "SELECT * FROM Books WHERE UserId=@Id AND CategoryId IN @categories ";
-            return connection.Query<BookModel>(getQuery, new { Id = UserId, categories = categoriesList, });
-        }
 
     }
 }
