@@ -102,7 +102,7 @@
   <div v-for="category in categories" :key="category.categoryId" class="mr-4 mb-2">
     <div class="">
   <label >
-    <input v-model="checkedCategories" :value="category.categoryId" @change="handleChange" class="dark:border-white-400/20 dark:scale-100 transition-all duration-500 ease-in-out dark:hover:scale-110 dark:checked:scale-100 w-6 h-6" type="checkbox">{{ category.categoryName }}
+    <input v-model="checkedCategories" :value="category.categoryId" @change="filterBooksAll" class="dark:border-white-400/20 dark:scale-100 transition-all duration-500 ease-in-out dark:hover:scale-110 dark:checked:scale-100 w-6 h-6" type="checkbox">{{ category.categoryName }}
   </label>
 </div>
 </div>
@@ -176,7 +176,7 @@
       class="bg-gray-50 hover:bg-gray-200  font-semibold py-2 px-4 border border-black"
       @click="changePage(page as number)"
       :disabled="currPage === page"
-      :class="{ 'cursor-not-allowed': currPage === page , 'bg-gray-400': currPage === page }"
+      :class="{ 'cursor-not-allowed': currPage === page , 'bg-gray-200': currPage === page }"
     >
       {{ page }}
     </button>
@@ -265,8 +265,7 @@ const changePage = (page: number) => {
     currPage.value = page;
     sessionStorage.setItem("page", String(currPage.value)); 
     
-    checkFilter();
-
+checkFilter();
     router.push({
       query: {
         page: currPage.value,
@@ -346,12 +345,10 @@ const filterBooksPaginated = () => {
 }
 
 function checkFilter(){
-  if (checkedCategories.value.length > 0 && !searchQuery.value) {
+  if (checkedCategories.value.length > 0 || searchQuery.value) {
     filterBooksAll();
-  }else if(searchQuery.value && checkedCategories.value.length == 0){
-    handleInput();
-  } 
-  else if(checkedCategories.value.length == 0 && !searchQuery.value){
+    filterBooksPaginated();
+  }else {
     getBooks();
     getAllBooks();
   }
@@ -423,12 +420,21 @@ const deleteBook = () => {
       withCredentials: true,
     })
     .then(() => {
+      const totalBooks = totalFilteredBooks.value.length;
+      const totalPagesToDelete = Math.ceil(totalBooks / booksPerPage.value);
+      if (totalPagesToDelete < currPage.value) {
+        // If the current page becomes empty after deletion, move to the previous page
+        changePage(currPage.value - 1);
+      } else {
+        // Otherwise, just refresh the current page
         checkFilter();
+      }
     })
     .catch((error) => {
       console.error(`Error deleting book with ID ${bookIdToDelete.value}:`, error);
     });
 };
+
 
 
 
@@ -492,7 +498,12 @@ function closeEditModal(){
   sessionStorage.setItem("page", String(currPage.value));
   router.push({ query: { booksPerPage: String(booksPerPage.value) } });
 
-  checkFilter();
+  if (checkedCategories.value.length > 0 || searchQuery.value) {
+    filterBooksAll();
+  }else {
+    getBooks();
+    getAllBooks();
+  }
 
 }
 
@@ -578,4 +589,3 @@ onMounted(() => {
 
 
 </script>
-
