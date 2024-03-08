@@ -37,7 +37,17 @@ namespace userController.Controllers
         [Authorize]
         public IActionResult Lookup()
         {
-            return Ok(User?.Identity?.IsAuthenticated ?? false);
+            var isAuthenticated = User?.Identity?.IsAuthenticated ?? false;
+            var roleClaim = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            var role = roleClaim?.Value;
+
+            var response = new
+            {
+                IsAuthenticated = isAuthenticated,
+                Role = role
+            };
+
+            return Ok(response);
         }
 
 
