@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import SettingsVue from "@/views/Settings.vue";
 import HomeVue from "@/views/Home.vue";
-import { isAuthenticated, role,getRole } from "@/store/authStore";
+import { isAuthenticated, role} from "@/store/authStore";
 import LoginVue from "@/views/Login.vue";
 import BooksVue from "@/views/Books.vue";
 import AdminVue from "@/views/Admin.vue";
@@ -60,7 +60,6 @@ const router = createRouter({
         } else {
           try {
             
-            await getRole(url);
             if (role.value === "Admin") {
               next();
             } else {
