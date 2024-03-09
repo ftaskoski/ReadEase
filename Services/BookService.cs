@@ -23,7 +23,7 @@ namespace Books.Services
             return new SqlConnection(connectionString);
         }
 
-        private IEnumerable<BookModel> QueryBooks(string query, object parameters = null)
+        private IEnumerable<BookModel> QueryBooks(string query, object? parameters = null)
         {
             using (var connection = GetSqlConnection())
             {
@@ -31,7 +31,7 @@ namespace Books.Services
             }
         }
 
-        private void Execute(string query, object parameters = null)
+        private void Execute(string query, object? parameters = null)
         {
             using (var connection = GetSqlConnection())
             {
