@@ -33,65 +33,14 @@
         <div
           class="h-full w-64 px-3 py-16 overflow-y-auto bg-gray-50 dark:bg-gray-800"
         >
-          <ul class="space-y-2 font-medium">
-            <li @click="toggleSidebarOnPhone">
+        <ul class="space-y-2 font-medium">
+            <li v-for="link in navLinks" :key="link.to" @click="link.onClick ? link.onClick() : toggleSidebarOnPhone()">
               <RouterLink
-                to="/"
+                :to="link.to"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
-              <i class="fa-solid fa-medal flex-shrink-0 w-5 mt-1 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
-                <span class="ms-3">NY Times Best Sellers</span>
-              </RouterLink>
-            </li>
-
-            <li @click="toggleSidebarOnPhone">
-              <RouterLink
-                to="/books"
-                href="#"
-                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <i
-                  class="fa-solid fa-book flex-shrink-0 w-5 pt-0.5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                ></i>
-
-                <span class="flex-1 ms-3 whitespace-nowrap">Collection</span>
-              </RouterLink>
-            </li>
-            <li @click="toggleSidebarOnPhone">
-              <RouterLink
-                to="/settings"
-                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <i
-                  class="fa-solid fa-gear flex-shrink-0 w-5 mt-1 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                ></i>
-                <span class="flex-1 ms-3 whitespace-nowrap">Settings</span>
-              </RouterLink>
-            </li>
-            <li v-if="isAuthenticated" @click="toggleSidebarOnPhone">
-              <RouterLink
-                @click="logout"
-                to="/login"
-                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <i
-                  class="fa fa-sign-out flex-shrink-0 w-5 mt-1 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  aria-hidden="true"
-                ></i>
-                <span class="flex-1 ms-3 whitespace-nowrap mb-1">Sign Out</span>
-              </RouterLink>
-            </li>
-     
-            <li v-if="role == 'Admin'">
-              <RouterLink
-                to="/admin"
-                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <i
-                  class="fa fa-user-shield flex-shrink-0 w-5 mt-0.5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  aria-hidden="true"
-                ></i>
-                <span class="flex-1 ms-3 whitespace-nowrap mb-1">Admin</span>
+                <i :class="link.iconClasses" class="flex-shrink-0 w-5 mt-1 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
+                <span class="ms-3">{{ link.label }}</span>
               </RouterLink>
             </li>
           </ul>
@@ -109,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onBeforeUnmount } from "vue";
+import { ref, watch, onMounted, onBeforeUnmount, computed } from "vue";
 import { setAuthenticated,  role,isAuthenticated } from "@/store/authStore";
 import axios from "axios";
 import { useRouter } from "vue-router";
@@ -117,6 +66,41 @@ const router = useRouter();
 const url = "https://localhost:7284/";
 const isSidebarOpen = ref(false); // Set initial value to false
 const overflow = ref<boolean>(false);
+
+const isAdmin = computed(() => role.value === "Admin");
+
+const navLinks = ref([
+  { to: "/", label: "NY Times Best Sellers", iconClasses: "fa-solid fa-medal " },
+  { to: "/books", label: "Collection", iconClasses: "fa-solid fa-book " },
+  { to: "/settings", label: "Settings", iconClasses: "fa-solid fa-gear " },
+  {
+    to: "/login",
+    label: "Sign Out",
+    iconClasses: "fa fa-sign-out ",
+    onClick: () => logout(),
+  },
+]);
+
+if (isAdmin.value) {
+  navLinks.value.push({
+    to: "/admin",
+    label: "Admin",
+    iconClasses: "fa fa-user-shield ",
+  });
+}
+watch(role, (newRole) => {
+  if (newRole === "Admin" && !navLinks.value.some(link => link.label === "Admin")) {
+    navLinks.value.push({
+      to: "/admin",
+      label: "Admin",
+      iconClasses: "fa fa-user-shield flex-shrink-0 w-5 mt-0.5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white",
+    });
+  } else if (newRole !== "Admin") {
+    navLinks.value = navLinks.value.filter(link => link.label !== "Admin");
+  }
+});
+
+
 function toggleOverflow(): void {
   overflow.value = !overflow.value;
   if (overflow.value) {
