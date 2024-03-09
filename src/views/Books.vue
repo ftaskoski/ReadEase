@@ -212,7 +212,10 @@ const url = "https://localhost:7284/";
 let debounceTimer = 0;
 const author = ref<string>("");
 const title = ref<string>("");
-const selectedCategory = ref<{ categoryName: string; categoryId: number } | null>(null);
+  const selectedCategory = ref<{
+  categoryName: string;
+  categoryId: number;
+} | null>(null);
 const categories = ref<any[]>([]);
 const bookCollection = ref<any[]>([]);
 const bookPaginated = ref<any[]>([]);
