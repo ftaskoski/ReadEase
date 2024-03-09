@@ -111,7 +111,6 @@ function changeProfilePicture() {
     )
     .then((response) => {
       // Handle success
-      console.log('Photo uploaded successfully');
       getProfilePicture();
     })
     .catch((error) => {
