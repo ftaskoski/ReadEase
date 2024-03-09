@@ -93,7 +93,7 @@ watch(role, (newRole) => {
     navLinks.value.push({
       to: "/admin",
       label: "Admin",
-      iconClasses: "fa fa-user-shield flex-shrink-0 w-5 mt-0.5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white",
+      iconClasses: "fa fa-user-shield ",
     });
   } else if (newRole !== "Admin") {
     navLinks.value = navLinks.value.filter(link => link.label !== "Admin");
