@@ -18,7 +18,7 @@
           <!-- Body -->
           <div class="relative p-6 flex-auto">  
             <input type="text"  :value="title"  @input="$emit('update:newTitle', ($event.target as HTMLInputElement).value)" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Title" >
-            <input type="text" :value="newAuthor" @input="$emit('update:newAuthor', ($event.target as HTMLInputElement).value)" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Author">
+            <input type="text" :value="author" @input="$emit('update:newAuthor', ($event.target as HTMLInputElement).value)" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Author">
             <select :value="newCategoryId" @change="$emit('update:newCategoryId', ($event.target as HTMLInputElement).value)"  class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
               <option value="0" disabled selected hidden>Select a Category</option>
               <option value="0">Select category</option>
@@ -30,7 +30,7 @@
             <button
               class="text-blue-500 rounded-full hover:bg-gray-200 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
               type="button"
-              @click="updateBook()"
+              @click="updateBook()"   
             >
               Update
             </button>
@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-const props = defineProps([ 'getCategoryName', 'openModal', 'showModal', 'deleteBook','closeModal', 'openEditModal', 'showEditModal', 'closeEditModal',  'categoryId', 'categories','newTitle', 'updateBook', 'newAuthor', 'newCategoryId','books','title']);
+const props = defineProps([ 'getCategoryName', 'openModal', 'showModal', 'deleteBook','closeModal', 'openEditModal', 'showEditModal', 'closeEditModal',  'categoryId', 'categories','newTitle', 'updateBook', 'newAuthor', 'newCategoryId','books','title','author']);
 
 const emit = defineEmits(['update:newTitle', 'update:newAuthor', 'update:newCategoryId']);
 

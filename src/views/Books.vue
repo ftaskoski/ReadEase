@@ -153,6 +153,7 @@
       :newAuthor="newAuthor"
       :newCategoryId="newCategoryId"
       :title="currTitle"
+      :author="currAuthor"
       @update:newAuthor="newAuthor = $event"
       @update:newTitle="newTitle = $event"
       @update:newCategoryId="newCategoryId = $event"
@@ -233,7 +234,8 @@ const newAuthor = ref<string>("");
 const newCategoryId = ref<number | undefined>(0);
 const books = ref<any[]>([]);
 const totalFilteredBooks = ref<any[]>([]);
-
+const currTitle=ref<string>("");
+const currAuthor=ref<string>("");
 
 
 
@@ -442,17 +444,14 @@ const deleteBook = () => {
 
 
 
-const currTitle=ref<string>("");
 
-watch(() => newTitle.value, (newVal) => {
-  currTitle.value = newVal;
-});
 // Modal functions !!!!!!!!!
 const openEditModal = (book: any) => {
   document.body.style.overflow = 'hidden';
   showEditModal.value = !showEditModal.value;
   bookIdToEdit.value = book.bookId;
   currTitle.value = book.title;
+  currAuthor.value = book.author;
 } 
 
 const updateBook = () => {
@@ -489,7 +488,7 @@ function closeEditModal(){
 }
 
   const openModal = (bookId: number) => {
-    document.body.style.overflow = 'hidden';
+   document.body.style.overflow = 'hidden';
   showModal.value = !showModal.value;
   bookIdToDelete.value = bookId;
 };
@@ -538,6 +537,15 @@ watch([checkedCategories, searchQuery],  () => {
     currPage.value = 1;
     checkFilter();
 });
+
+
+watch(() => newTitle.value, (newVal) => {
+  currTitle.value = newVal;
+});
+
+watch(()=>newAuthor.value, (newVal) => {
+  currAuthor.value = newVal;
+})
 
 
 watch(totalPages, () => {
