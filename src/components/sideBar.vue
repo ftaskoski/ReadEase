@@ -81,13 +81,7 @@ const navLinks = ref([
   },
 ]);
 
-if (isAdmin.value) {
-  navLinks.value.push({
-    to: "/admin",
-    label: "Admin",
-    iconClasses: "fa fa-user-shield ",
-  });
-}
+
 watch(role, (newRole) => {
   if (newRole === "Admin" && !navLinks.value.some(link => link.label === "Admin")) {
     navLinks.value.push({
@@ -172,6 +166,13 @@ watch(
 
 // Add click event listener to close sidebar on click outside
 onMounted(() => {
+  if (isAdmin.value) {
+  navLinks.value.push({
+    to: "/admin",
+    label: "Admin",
+    iconClasses: "fa fa-user-shield ",
+  });
+}
   window.addEventListener("click", closeSidebarOnClickOutside);
 });
 
