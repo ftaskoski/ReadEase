@@ -17,8 +17,11 @@
           </div>
           <!-- Body -->
           <div class="relative p-6 flex-auto">  
+            <label class="text-gray-700 text-sm font-bold mb-2">Title</label>
             <input type="text"  :value="title"  @input="$emit('update:newTitle', ($event.target as HTMLInputElement).value)" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Title" >
+            <label class="text-gray-700 text-sm font-bold mb-2">Author</label>
             <input type="text" :value="author" @input="$emit('update:newAuthor', ($event.target as HTMLInputElement).value)" class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Author">
+            <label class="text-gray-700 text-sm font-bold mb-2">Category</label>
             <select :value="categoryId" @change="$emit('update:newCategoryId', ($event.target as HTMLInputElement).value)"  class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
               <option value="0" disabled selected hidden>Select a Category</option>
               <option value="0">Select category</option>
