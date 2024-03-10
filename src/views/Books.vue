@@ -345,6 +345,14 @@ const filterBooksPaginated = () => {
     sessionStorage.setItem("search", searchQuery.value);
     sessionStorage.setItem("categories", String(checkedCategories.value));
     sessionStorage.setItem("page", String(currPage.value));
+    router.push({
+      query: {
+        page: currPage.value,
+        search: searchQuery.value,
+        categories: checkedCategories.value.join(","),
+        booksPerPage: booksPerPage.value
+      },
+    });
 
   }).catch((error) => {
     console.error(error);
