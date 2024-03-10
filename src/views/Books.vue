@@ -154,6 +154,7 @@
       :newCategoryId="newCategoryId"
       :title="currTitle"
       :author="currAuthor"
+      :categoryId="currCategoryId"
       @update:newAuthor="newAuthor = $event"
       @update:newTitle="newTitle = $event"
       @update:newCategoryId="newCategoryId = $event"
@@ -236,7 +237,7 @@ const books = ref<any[]>([]);
 const totalFilteredBooks = ref<any[]>([]);
 const currTitle=ref<string>("");
 const currAuthor=ref<string>("");
-
+const currCategoryId=ref<number | undefined>(0);
 
 
 
@@ -452,6 +453,7 @@ const openEditModal = (book: any) => {
   bookIdToEdit.value = book.bookId;
   currTitle.value = book.title;
   currAuthor.value = book.author;
+  currCategoryId.value = book.categoryId;
 } 
 
 const updateBook = () => {
@@ -488,13 +490,13 @@ function closeEditModal(){
 }
 
   const openModal = (bookId: number) => {
-   document.body.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
   showModal.value = !showModal.value;
   bookIdToDelete.value = bookId;
 };
 
   const closeModal = () => {
-    document.body.style.overflow = 'auto';
+   document.body.style.overflow = 'auto';
   showModal.value = false;
   }
 
@@ -547,6 +549,10 @@ watch(()=>newAuthor.value, (newVal) => {
   currAuthor.value = newVal;
 })
 
+watch(()=>newCategoryId.value, (newVal) => {
+  currCategoryId.value = newVal;
+
+})
 
 watch(totalPages, () => {
   if (currPage.value > totalPages.value) {
