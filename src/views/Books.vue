@@ -152,6 +152,7 @@
       :newTitle="newTitle"
       :newAuthor="newAuthor"
       :newCategoryId="newCategoryId"
+      :title="currTitle"
       @update:newAuthor="newAuthor = $event"
       @update:newTitle="newTitle = $event"
       @update:newCategoryId="newCategoryId = $event"
@@ -441,13 +442,18 @@ const deleteBook = () => {
 
 
 
-// Modal functions !!!!!!!!!
+const currTitle=ref<string>("");
 
-const openEditModal = (bookId: number) => {
+watch(() => newTitle.value, (newVal) => {
+  currTitle.value = newVal;
+});
+// Modal functions !!!!!!!!!
+const openEditModal = (book: any) => {
   document.body.style.overflow = 'hidden';
   showEditModal.value = !showEditModal.value;
-  bookIdToEdit.value = bookId;
-}
+  bookIdToEdit.value = book.bookId;
+  currTitle.value = book.title;
+} 
 
 const updateBook = () => {
   axios.post(`${url}api/updatebook`, {

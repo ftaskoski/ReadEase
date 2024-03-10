@@ -55,7 +55,7 @@
               Delete
             </button>
             <button
-              @click="openEditModal(book.bookId)"
+              @click="openEditModal(book)"
               class="inline-flex items-center px-4 mt-2 mr-2 py-2 bg-blue-600 transition ease-in-out delay-75 hover:bg-blue-700 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-2"
             >
               <svg
