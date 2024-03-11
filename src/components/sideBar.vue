@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isAuthenticated">
     <div>
       <!-- Toggle button for small screens -->
       <button
@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount, computed } from "vue";
-import { setAuthenticated, role} from "@/store/authStore";
+import { setAuthenticated, role, isAuthenticated } from "@/store/authStore";
 import axios from "axios";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -124,6 +124,7 @@ const logout = (): void => {
       role.value = "";
       setAuthenticated(false);
       sessionStorage.clear();
+      activeLink.value = null;
     })
     .catch((error) => {
       console.error("Error during logout:", error);
