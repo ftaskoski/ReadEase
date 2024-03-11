@@ -37,7 +37,9 @@
             <li v-for="link in navLinks" :key="link.to" @click="link.onClick ? link.onClick() : toggleSidebarOnPhone()">
               <RouterLink
                 :to="link.to"
+                @click="activateLink(link.to)"
                 class="flex items-center shake-on-hover p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group "
+                :class="{ 'bg-gray-100 dark:bg-gray-700': activeLink === link.to }"
               >
                 <i :class="link.iconClasses" class="flex-shrink-0 w-5 mt-1 h-5  text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
                 <span class="ms-3">{{ link.label }}</span>
@@ -66,8 +68,12 @@ const router = useRouter();
 const url = "https://localhost:7284/";
 const isSidebarOpen = ref(false); // Set initial value to false
 const overflow = ref<boolean>(false);
-
+const activeLink = ref<string | null>(null);
 const isAdmin = computed(() => role.value === "Admin");
+
+const activateLink = (link: string): void => {
+  activeLink.value = link;
+}
 
 const navLinks = ref([
   { to: "/", label: "NY Times Best Sellers", iconClasses: "fa-solid fa-medal " },
