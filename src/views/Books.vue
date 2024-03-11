@@ -338,8 +338,8 @@ const filterBooksPaginated = () => {
 
 function checkFilter(){
   if (checkedCategories.value.length > 0 || searchQuery.value) {
-    filterBooksAll();
-    filterBooksPaginated();
+     handleInput();
+    //filterBooksAll();
   }else {
     getBooks();
     getAllBooks();
