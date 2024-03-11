@@ -41,6 +41,9 @@
         <div class="-ml-2.5"></div>
       </div>
       <div class="p-6 pt-0">
+        <div v-if="errorMsg">
+        <p class="text-red-500 justify-center items-center flex mb-2">{{ errorMsg }}</p>
+      </div>
         <button
           @click="register()"
           data-ripple-light="true"
@@ -68,7 +71,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import axios from "axios";
-import Card from "@/components/Card.vue";
 import {
   AuthStatus,
   isAuthenticated
@@ -84,14 +86,7 @@ const errorMsg=ref<string>("")
 
 
 const register = () => {
-    if (password.value.length < 3) {
-    errorMsg.value="Password too short"
-    setTimeout(() => {
-        errorMsg.value=""
-    }, 2000);
-    return;
-  }
-    axios
+  axios
     .post(
       `${url}api/register`,
       {
@@ -108,13 +103,10 @@ const register = () => {
       router.push("/");
     }).catch(error =>{
 
-        console.log(error);
-        if(error.response && error.response.status === 409){
-          errorMsg.value="User already exists"
+          errorMsg.value=error.response.data
           setTimeout(() => {
             errorMsg.value=""
           }, 2000);
-        }
 
     })
 };
