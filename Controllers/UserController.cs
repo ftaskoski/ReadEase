@@ -74,6 +74,10 @@ namespace userController.Controllers
 
             using (var connection = new SqlConnection(connectionString))
             {
+                if (model.Password.Length < 3)
+                {
+                    return Conflict("Password is too short!");
+                }
                 // Retrieve salt asynchronously
                 string salt = await _hashingService.GenerateSaltAsync();
 
@@ -87,7 +91,7 @@ namespace userController.Controllers
                 if (existingUser > 0)
                 {
                     // User with the same username already exists, handle accordingly
-                    return Conflict("Username already exists");
+                    return Conflict("Username already exists!");
                 }
 
                 // Insert the data into the Users table and retrieve the generated Id using Dapper
