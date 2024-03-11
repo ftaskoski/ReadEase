@@ -64,16 +64,14 @@ import { ref, watch, onMounted, onBeforeUnmount, computed } from "vue";
 import { setAuthenticated, role, isAuthenticated } from "@/store/authStore";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import  { activeLink,activateLink,initializeActiveLink } from "@/store/activeLinks";
+
 const router = useRouter();
 const url = "https://localhost:7284/";
 const isSidebarOpen = ref(false); // Set initial value to false
 const overflow = ref<boolean>(false);
-const activeLink = ref<string | null>(null);
 const isAdmin = computed(() => role.value === "Admin");
 
-const activateLink = (link: string): void => {
-  activeLink.value = link;
-}
 
 const navLinks = ref([
   { to: "/", label: "NY Times Best Sellers", iconClasses: "fa-solid fa-medal " },
@@ -173,6 +171,7 @@ watch(
 
 // Add click event listener to close sidebar on click outside
 onMounted(() => {
+  initializeActiveLink();
   if (isAdmin.value) {
   navLinks.value.push({
     to: "/admin",
