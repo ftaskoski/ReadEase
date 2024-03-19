@@ -25,7 +25,7 @@
           </label>
         
         </div>
-        <div class="relative w-full h-10 mt-2">
+        <div class="relative w-full h-10  mt-2">
           <input
             required
             v-model="title"
@@ -450,7 +450,8 @@ const updateBook = () => {
   }, { withCredentials: true })
   .then(response => {
     checkFilter();
-
+    filterBooksAll();
+    filterBooksPaginated();
     document.body.style.overflow = 'auto';
     showEditModal.value = false;
     bookIdToEdit.value = null;
