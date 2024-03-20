@@ -250,7 +250,7 @@ const changePage = (page: number) => {
     sessionStorage.setItem("page", String(currPage.value)); 
     
 checkFilter();
-    router.push({
+     router.push({
       query: {
         page: currPage.value,
         search: searchQuery.value,
@@ -338,12 +338,13 @@ const filterBooksPaginated = () => {
 
 function checkFilter(){
   if (checkedCategories.value.length > 0 || searchQuery.value) {
-     handleInput();
-    //filterBooksAll();
+     filterBooksAll();
+     filterBooksPaginated();
   }else {
     getBooks();
     getAllBooks();
-  }
+
+  } 
 
 }
 
@@ -524,7 +525,7 @@ const getCategoryName = (categoryId : number) => {
 watch([checkedCategories, searchQuery],  () => {
     currPage.value = 1;
     checkFilter();
-});
+  });
 
 
 watch(() => newTitle.value, (newVal) => {
