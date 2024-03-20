@@ -14,8 +14,8 @@
         :key="page"
         @click="changePage(page)"
         :disabled="currPage === page"
-        :class="{ 'cursor-not-allowed': currPage === page, 'bg-gray-200': currPage === page }"
-        class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 border border-black"
+        :class="{ 'cursor-not-allowed': currPage === page, 'bg-blue-200': currPage === page }"
+        class="bg-gray-50 hover:bg-blue-200 font-semibold py-2 px-4 border border-black"
       >
         {{ page }}
       </button>
