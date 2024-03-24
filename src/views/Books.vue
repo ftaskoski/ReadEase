@@ -42,11 +42,14 @@
         </div>
 
 <div class="relative inline-block w-full mt-2 text-gray-500">
-  <select v-model="selectedCategory" class="peer block appearance-none  w-full  border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500">
-    <option value="null" disabled selected hidden>Select a Category</option>
-    <option value="">Select category</option>
+  <select v-model="selectedCategory" required class="peer block appearance-none w-full border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500">
+    <option value="" disabled selected hidden>Select a Category</option>
     <option v-for="category in categories" :key="category" :value="category">{{ category.categoryName }}</option>
   </select>
+
+
+
+
   <div class="pointer-events-none absolute text-sm inset-y-0 right-0 flex items-center px-2 text-gray-700">
     <span class="flex items-center">&#9660;</span>
   </div>
@@ -195,7 +198,7 @@ const title = ref<string>("");
   const selectedCategory = ref<{
   categoryName: string;
   categoryId: number;
-} | null>(null);
+} | ''>('');
 const categories = ref<any[]>([]);
 const bookCollection = ref<any[]>([]);
 const bookPaginated = ref<any[]>([]);
@@ -379,7 +382,7 @@ const addBook = () => {
     .then((response) => {
       author.value = "";
       title.value = "";
-      selectedCategory.value = null;
+      selectedCategory.value = '';
 
       checkFilter();
     })
