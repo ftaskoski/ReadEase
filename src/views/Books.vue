@@ -171,6 +171,7 @@
       :totalPages="totalPages"
       :visiblePages="visiblePages"
       @page-changed="changePage"
+      @to-end="toEnd"
     /> 
 
 
@@ -265,6 +266,23 @@ checkFilter();
 };
 
 
+function toEnd(page: number) {
+  currPage.value = totalPages.value;
+  sessionStorage.setItem("page", String(totalPages.value));
+  sessionStorage.setItem("booksPerPage", String(booksPerPage.value));
+  sessionStorage.setItem("categories", String(checkedCategories.value.join(",")));
+  sessionStorage.setItem("search", String(searchQuery.value));
+  checkFilter();
+
+  router.push({
+    query: {
+      page: totalPages.value,
+      search: searchQuery.value,
+      categories: checkedCategories.value.join(","),
+      booksPerPage: booksPerPage.value
+    },
+  });
+}
 
 
 
@@ -343,6 +361,7 @@ function checkFilter(){
   if (checkedCategories.value.length > 0 || searchQuery.value) {
      filterBooksAll();
      filterBooksPaginated();
+     sessionStorage.setItem("page", String(currPage.value));
   }else {
     getBooks();
     getAllBooks();
@@ -525,11 +544,27 @@ const getCategoryName = (categoryId : number) => {
 };
 
 // Watchers !!!!!!!!!!!!!!!!!!!!
-watch([checkedCategories, searchQuery],  () => {
-    currPage.value = 1;
-    checkFilter();
-  });
+watch([checkedCategories, searchQuery], () => {
+  // Check if the page is being reloaded
+  const isReload = sessionStorage.getItem('isReload');
+  
+  // If the page is being reloaded, remove the sessionStorage item and return
+  if (isReload) {
+    sessionStorage.removeItem('isReload');
+    return;
+  }
 
+  // Reset the current page to 1 whenever filters change
+  currPage.value = 1;
+
+  // Call your filter function or any other necessary actions
+  checkFilter();
+});
+
+
+window.onbeforeunload = function () {
+  sessionStorage.setItem('isReload', 'true');
+};
 
 watch(() => newTitle.value, (newVal) => {
   currTitle.value = newVal;
@@ -570,6 +605,7 @@ onMounted(() => {
   const pageFromStorage = sessionStorage.getItem("page");
   const booksPerPageFromStorage = sessionStorage.getItem("booksPerPage");
 
+
   if (booksPerPageFromStorage) {
     booksPerPage.value = parseInt(booksPerPageFromStorage, 10);
   }
@@ -579,18 +615,18 @@ onMounted(() => {
   }
 
 
-
-
   if(categoriesFromStorage){
 
       checkedCategories.value = categoriesFromStorage.split(',').map(Number);
+      checkFilter();
       filterBooksAll();
     } 
      if(searchFromStorage){
     
       searchQuery.value = searchFromStorage;
-      handleInput();
-      
+      //handleInput();
+      checkFilter();
+
     }
     else{
       getBooks();
