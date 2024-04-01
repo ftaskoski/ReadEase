@@ -1,14 +1,18 @@
 <template>
   <div class="pagination flex justify-center items-center mt-4 text-sm text-gray-700">
+    <button @click="changePage(1)" :disabled="currPage === 1" class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 border border-black rounded-l" :class="{ 'cursor-not-allowed': currPage === 1, 'opacity-50': currPage === 1 }">
+        First Page
+      </button>
     <button
       @click="changePage(currPage - 1)"
       :disabled="currPage === 1"
       :class="{ 'cursor-not-allowed': currPage === 1, 'opacity-50': currPage === 1 }"
-      class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 rounded-l border border-black"
+      class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4  border border-black"
     >
       Previous
     </button>
     <div class="flex">
+    
       <button
         v-for="page in visiblePages"
         :key="page"
@@ -28,7 +32,7 @@
     >
       Next
     </button>
-    <button @click="toEnd(currPage)" class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 border border-black rounded-r">
+    <button @click="toEnd(currPage)" class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 border border-black rounded-r" :disabled="currPage === totalPages" :class="{ 'cursor-not-allowed': currPage === totalPages, 'opacity-50': currPage === totalPages }">
       Last Page
     </button>
   </div>
