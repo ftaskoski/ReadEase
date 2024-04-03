@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+
 const props = defineProps([ 'getCategoryName', 'openModal', 'showModal', 'deleteBook','closeModal', 'openEditModal', 'showEditModal', 'closeEditModal',  'categoryId', 'categories','newTitle', 'updateBook', 'newAuthor', 'newCategoryId','books','title','author','categoryId']);
 
 const emit = defineEmits(['update:newTitle', 'update:newAuthor', 'update:newCategoryId']);
