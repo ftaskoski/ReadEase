@@ -39,7 +39,6 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
 
 
 defineProps(["currPage", "totalPages", "visiblePages"]);
