@@ -27,6 +27,9 @@
               <option value="0">Select category</option>
               <option  v-for="category in categories" :key="category.categoryId" :value="category.categoryId">{{ category.categoryName }}</option>
             </select>
+          <div class="pointer-events-none absolute text-sm inset-y-0 right-6 top-[165px] flex items-center px-2 text-gray-700">
+              <span class="flex items-center">&#9660;</span>
+          </div>
           </div>
           <!-- Footer -->
           <div class="flex items-center justify-end p-6 border-t border-solid rounded-b border-blueGray-200">
