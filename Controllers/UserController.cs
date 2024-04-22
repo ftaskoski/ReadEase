@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using ReadEase_C_.Services;
 using RestSharp;
 using System.Data.SqlClient;
+using System.Net.Mail;
+using System.Net;
 using System.Security.Claims;
 using WebApplication1.Models;
 
@@ -122,6 +124,49 @@ namespace userController.Controllers
                 // Sign in the user after registration
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
                 model.Role = role ?? "User";
+                try
+                {
+                    string senderEmail = "filip.taskoski69@gmail.com"; // Your Gmail address
+                    string senderPassword = "vyut wntk rmfu wazg\r\n"; // Your Gmail password
+                    string recipientEmail = "filip.taskoski77@gmail.com"; // Recipient's email
+
+                    MailMessage mail = new MailMessage(senderEmail, recipientEmail);
+                    SmtpClient client = new SmtpClient();
+
+                    // Check if the sender email is a Gmail address
+                    if (senderEmail.EndsWith("@gmail.com"))
+                    {
+                        client.Host = "smtp.gmail.com";
+                        client.Port = 587;
+                        client.EnableSsl = true;
+                        client.UseDefaultCredentials = false;
+                        client.Credentials = new NetworkCredential(senderEmail, senderPassword);
+                    }
+                    // Check if the sender email is a Hotmail/Outlook address
+                    else if (senderEmail.EndsWith("@hotmail.com") || senderEmail.EndsWith("@outlook.com"))
+                    {
+                        client.Host = "smtp-mail.outlook.com";
+                        client.Port = 587; // or 465 if using SSL
+                        client.EnableSsl = true;
+                        client.UseDefaultCredentials = false;
+                        client.Credentials = new NetworkCredential(senderEmail, senderPassword);
+                    }
+                    else
+                    {
+                        // Handle unsupported email provider
+                        return BadRequest("Unsupported email provider.");
+                    }
+
+                    mail.Subject = "Test Email";
+                    mail.Body = "This is a test email from your application.";
+
+                    client.Send(mail);
+                }
+                catch (Exception ex)
+                {
+                    // Handle exception, log error, etc.
+                    return StatusCode(500, "Failed to send email: " + ex.Message);
+                }
                 return Ok(model.Role);
             }
         }
