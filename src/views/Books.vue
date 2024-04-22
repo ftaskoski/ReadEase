@@ -439,11 +439,9 @@ const deleteBook = () => {
       const totalPagesToDelete = Math.ceil(totalBooks / booksPerPage.value);
       if (totalPagesToDelete < currPage.value) {
         // If the current page becomes empty after deletion, move to the previous page
-        changePage(currPage.value - 1);
-      } else {
-        // Otherwise, just refresh the current page
-        checkFilter();
+      currPage.value - 1;
       }
+      checkFilter();
     })
     .catch((error) => {
       console.error(`Error deleting book with ID ${bookIdToDelete.value}:`, error);
