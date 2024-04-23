@@ -121,9 +121,11 @@ namespace userController.Controllers
 
                 var principal = new ClaimsPrincipal(identity);
 
-                // Sign in the user after registration
+                // Sign in the user after successful registration
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
                 model.Role = role ?? "User";
+
+                // Send the registration success email
                 try
                 {
                     string senderEmail = "filip.taskoski69@gmail.com"; // Your Gmail address
@@ -157,8 +159,8 @@ namespace userController.Controllers
                         return BadRequest("Unsupported email provider.");
                     }
 
-                    mail.Subject = "Test Email";
-                    mail.Body = "This is a test email from your application.";
+                    mail.Subject = "Registration Successful";
+                    mail.Body = "Congratulations! You have successfully registered.";
 
                     client.Send(mail);
                 }
@@ -167,6 +169,8 @@ namespace userController.Controllers
                     // Handle exception, log error, etc.
                     return StatusCode(500, "Failed to send email: " + ex.Message);
                 }
+
+                // Return the user's role after successful registration
                 return Ok(model.Role);
             }
         }
