@@ -5,7 +5,7 @@
       <button
         id="toggle-button"
         @click="toggleSidebar"
-        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+        class="inline-flex items-center border-2 p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
       >
         <svg
           class="w-6 h-6 text-gray-500"
@@ -52,7 +52,7 @@
         v-if="isSidebarOpen"
         class="fixed inset-0 bg-gray-900 bg-opacity-30 z-10" 
         @click="toggleSidebar"
-        :class="{ 'overflow-hidden': isSidebarOpen }"
+        :class="{ 'overflow-hidden': isSidebarOpen,}"
       >
       </div>
     </div>
