@@ -171,7 +171,6 @@
       :totalPages="totalPages"
       :visiblePages="visiblePages"
       @page-changed="changePage"
-      @to-end="toEnd"
     /> 
 
 
@@ -264,25 +263,6 @@ checkFilter();
     });
   }
 };
-
-
-function toEnd(page: number) {
-  currPage.value = totalPages.value;
-  sessionStorage.setItem("page", String(totalPages.value));
-  sessionStorage.setItem("booksPerPage", String(booksPerPage.value));
-  sessionStorage.setItem("categories", String(checkedCategories.value.join(",")));
-  sessionStorage.setItem("search", String(searchQuery.value));
-  checkFilter();
-
-  router.push({
-    query: {
-      page: totalPages.value,
-      search: searchQuery.value,
-      categories: checkedCategories.value.join(","),
-      booksPerPage: booksPerPage.value
-    },
-  });
-}
 
 
 

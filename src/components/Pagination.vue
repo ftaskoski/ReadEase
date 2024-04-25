@@ -32,7 +32,7 @@
     >
       Next
     </button>
-    <button @click="toEnd(currPage)" class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 border border-black rounded-r" :disabled="currPage === totalPages" :class="{ 'cursor-not-allowed': currPage === totalPages, 'opacity-50': currPage === totalPages }">
+    <button @click="changePage(totalPages)" class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 border border-black rounded-r" :disabled="currPage === totalPages" :class="{ 'cursor-not-allowed': currPage === totalPages, 'opacity-50': currPage === totalPages }">
       Last Page
     </button>
   </div>
@@ -50,11 +50,6 @@ const emits = defineEmits(["page-changed","to-end"]);
 const changePage = (page ) => {
     emits("page-changed", page);
 };
-
-const toEnd = (page) => {
-  emits("to-end", page);
-};
-
 
 </script>
 
