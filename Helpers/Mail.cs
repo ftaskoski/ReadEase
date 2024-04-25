@@ -17,8 +17,8 @@ namespace ReadEase_C_.Helpers
         {
             try
             {
-                string senderEmail = _configuration["Mail:e-mail"]; // Your Gmail address
-                string senderPassword = _configuration["Mail:pass"]; // Your Gmail password
+                string senderEmail = _configuration["Mail:e-mail"]; 
+                string senderPassword = _configuration["Mail:pass"]; 
 
                 MailMessage mail = new(senderEmail, recipientEmail);
                 SmtpClient client = new()
