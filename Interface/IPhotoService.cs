@@ -3,5 +3,6 @@
     public interface IPhotoService
     {
         byte[] GetPhoto(int UserId);
+        void InsertPhoto(int UserId, byte[] photo);
     }
 }

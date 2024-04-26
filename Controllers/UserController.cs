@@ -206,7 +206,6 @@ namespace userController.Controllers
         [Authorize]
         public IActionResult Photo(IFormFile file)
         {
-            var connection = GetSqlConnection();
 
             if (file == null || file.Length == 0)
                 return BadRequest("No file is uploaded.");
@@ -216,9 +215,7 @@ namespace userController.Controllers
                 file.CopyTo(memoryStream);
                 var imageBytes = memoryStream.ToArray();
 
-                string insertQuery = "UPDATE Users SET photo = @Photo WHERE Id = @UserId";
-
-                connection.Execute(insertQuery, new { Photo = imageBytes, UserId = UserId });
+                _photoService.InsertPhoto(UserId,imageBytes);
             }
 
             return Ok("Photo uploaded successfully.");
