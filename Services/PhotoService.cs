@@ -1,9 +1,10 @@
 ﻿using Dapper;
+using ReadEase_C_.Interface;
 using System.Data.SqlClient;
 
 namespace ReadEase_C_.Services
 {
-    public class PhotoService
+    public class PhotoService : IPhotoService
     {
 
         private readonly IConfiguration _configuration;
