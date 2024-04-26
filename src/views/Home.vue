@@ -1,5 +1,6 @@
 <template>
    <div class="order-1 sm:order-2 sm:ml-64 p-4 m">
+    <h1 class="flex justify-center items-center text-3xl font-semibold text-gray-900">New York Times</h1>
   <div class="relative lg:ml-16 group flex flex-wrap justify-center items-center">
     <div v-for="book in books" :key="book.rank" class="w-1/3 p-2">
       <img :src="book.book_image" :alt="book.title" class="" />
