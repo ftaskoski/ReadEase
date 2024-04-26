@@ -33,10 +33,8 @@ namespace Books.Services
 
         private void Execute(string query, object? parameters = null)
         {
-            using (var connection = GetSqlConnection())
-            {
-                connection.Execute(query, parameters);
-            }
+            using var connection = GetSqlConnection();
+            connection.Execute(query, parameters);
         }
 
         public IEnumerable<BookModel> GetAllBooksForUser(int userId)

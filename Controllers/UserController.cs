@@ -21,12 +21,14 @@ namespace userController.Controllers
         private readonly IConfiguration _configuration;
         private readonly UserService _userService;
         private readonly HashingService _hashingService;
+        private readonly PhotoService _photoService;
 
-        public UsersController(IConfiguration configuration,UserService service, HashingService hashingService)
+        public UsersController(IConfiguration configuration,UserService service, HashingService hashingService, PhotoService photoService)
         {
             _configuration = configuration;
             _userService = service;
             _hashingService = hashingService;
+            _photoService = photoService;
         }
 
         [HttpGet("users")]
@@ -226,11 +228,9 @@ namespace userController.Controllers
         [Authorize]
         public IActionResult GetPhoto()
         {
-            var connection = GetSqlConnection();
 
-            string selectQuery = "SELECT photo FROM Users WHERE Id = @UserId";
 
-            byte[] photoBytes = connection.QuerySingleOrDefault<byte[]>(selectQuery, new { UserId = UserId });
+            byte[] photoBytes = _photoService.GetPhoto(UserId);
 
             if (photoBytes == null)
                 return NotFound("No photo found for this user.");
