@@ -76,6 +76,7 @@ const isAdmin = computed(() => role.value === "Admin");
 const navLinks = ref([
   { to: "/", label: "NY Times Best Sellers", iconClasses: "fa-solid fa-medal " },
   { to: "/books", label: "Collection", iconClasses: "fa-solid fa-book " },
+  {to: "", label: "Download Collection", iconClasses: "fa-solid fa-download" , onClick: () => downloadBooks()},
   { to: "/settings", label: "Settings", iconClasses: "fa-solid fa-gear " },
   {
     to: "/login",
@@ -98,6 +99,23 @@ watch(role, (newRole) => {
   }
 });
 
+
+const downloadBooks = () => {
+  axios
+    .get(`${url}api/downloadbooks`, { responseType: "arraybuffer", withCredentials: true })
+    .then((response) => {
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "books.txt";
+      link.click();
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
 
 function toggleOverflow(): void {
   overflow.value = !overflow.value;
