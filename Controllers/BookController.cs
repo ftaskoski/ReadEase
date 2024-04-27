@@ -54,6 +54,29 @@ namespace WebApplication1.Controllers
             }
         }
 
+        [HttpGet("downloadbook/{bookId}")]
+        public IActionResult DownloadBook(int bookId)
+        {
+
+            var books = _bookService.GetSingleBook(bookId);
+
+            if (books?.AsList().Count > 0)
+            {
+                StringBuilder content = new StringBuilder();
+                foreach (var book in books)
+                {
+                    content.AppendLine($"Title: {book.Title}, Author: {book.Author}");
+                }
+
+                byte[] fileContents = Encoding.UTF8.GetBytes(content.ToString());
+                return File(fileContents, "text/plain", "books.txt");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [HttpGet("getbooks")]
         public IActionResult GetBooks( int pageNumber = 1, int pageSize = 10)
         {

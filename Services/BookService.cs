@@ -43,6 +43,11 @@ namespace Books.Services
             return QueryBooks(getQuery, new { UserId = userId });
         }
 
+        public IEnumerable<BookModel> GetSingleBook(int bookId)
+        {
+            string getQuery = "SELECT * FROM BOOKS WHERE BookId=@bookId";
+            return QueryBooks(getQuery, new { BookId=bookId });
+        }
         public IEnumerable<BookModel> GetPaginatedBooks(int id, int pageNumber = 1, int pageSize = 10)
         {
             int startIndex = (pageNumber - 1) * pageSize;
