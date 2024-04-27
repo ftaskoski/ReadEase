@@ -1,7 +1,7 @@
 <template>
   <div class="pagination flex justify-center items-center mt-4 text-sm text-gray-700">
     <button @click="changePage(1)" :disabled="currPage === 1" class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 border border-black rounded-l" :class="{ 'cursor-not-allowed': currPage === 1, 'opacity-50': currPage === 1 }">
-        First Page
+      <i class="fa-solid fa-angle-double-left"></i>
       </button>
     <button
       @click="changePage(currPage - 1)"
@@ -9,7 +9,7 @@
       :class="{ 'cursor-not-allowed': currPage === 1, 'opacity-50': currPage === 1 }"
       class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4  border border-black"
     >
-      Previous
+    <i class="fa-solid fa-angle-left"></i>
     </button>
     <div class="flex">
     
@@ -30,10 +30,10 @@
       :class="{ 'cursor-not-allowed': currPage === totalPages, 'opacity-50': currPage === totalPages }"
       class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4  border border-black"
     >
-      Next
+    <i class="fa-solid fa-angle-right"></i>
     </button>
     <button @click="changePage(totalPages)" class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 border border-black rounded-r" :disabled="currPage === totalPages" :class="{ 'cursor-not-allowed': currPage === totalPages, 'opacity-50': currPage === totalPages }">
-      Last Page
+      <i class="fa-solid fa-angle-double-right"></i>
     </button>
   </div>
 </template>
