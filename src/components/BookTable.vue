@@ -19,7 +19,7 @@
             Category
           </th>
           <th
-            class="px-2 text-left py-2 sm:px-3 sm:py-3 text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider"
+            class="px-2 text-center py-2 sm:px-3 sm:py-3 text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider"
           >
             Actions
           </th>
@@ -32,7 +32,8 @@
           <td class="px-2 py-2 sm:px-3 sm:py-3">
             {{ getCategoryName(book.categoryId) }}
           </td>
-          <td class="text-sm text-gray-500 pb-2">
+
+          <td class="text-sm text-gray-500 pb-2 flex justify-center">
             <button
               @click="openModal(book.bookId)"
               class="inline-flex items-center px-4 mt-2 mr-2 py-2 bg-red-600 transition ease-in-out delay-75 hover:bg-red-700 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-2"
@@ -51,7 +52,6 @@
                   stroke-linecap="round"
                 ></path>
               </svg>
-
               Delete
             </button>
             <button
@@ -67,8 +67,8 @@
                 viewBox="0 0 348.882 348.882"
                 xml:space="preserve"
                 stroke-width="2"
-                  stroke-linejoin="round"
-                  stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-linecap="round"
               >
                 <g>
                   <path
@@ -87,9 +87,16 @@
                   />
                 </g>
               </svg>
-
               Edit
             </button>
+            <div
+              class="inline-flex items-center px-4 mt-2 mr-2 py-2 bg-yellow-600 transition ease-in-out delay-75 hover:bg-yellow-700 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-2"
+            >
+              <button type="submit" @click="download(book.bookId)">
+                Download
+                <i class="fa-solid fa-download"></i>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -98,6 +105,7 @@
 </template>
 
 <script setup lang="ts">
+import axios from "axios";
 defineProps([
   "getCategoryName",
   "openModal",
@@ -115,4 +123,21 @@ defineProps([
   "newCategoryId",
   "books",
 ]);
+
+function download(id: number) {
+  axios
+    .get(`https://localhost:7284/api/downloadbook/${id}`, {
+      responseType: "blob",
+      withCredentials: true,
+    })
+    .then((response) => {
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "book.txt";
+      link.click();
+    });
+}
 </script>
