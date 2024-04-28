@@ -178,7 +178,7 @@ const closeSidebarOnClickOutside = (event: MouseEvent) => {
   }
 };
 
-// Watch for window width changes
+// Watch for window width changes!
 watch(
   () => window.innerWidth,
   (width) => {
