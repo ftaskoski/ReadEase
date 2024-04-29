@@ -98,21 +98,20 @@ const loading = ref<boolean>(false);
 const register = () => {
   loading.value = true;
   axios
-    .post(
-      `${url}api/register`,
-      {
-        username: username.value,
-        password: password.value,
-      },
-      { withCredentials: true }
-    )
-    .then(async(response) => {
+  .post(
+    `${url}api/register`,
+    {
+      username: username.value,
+      password: password.value,
+    },
+    { withCredentials: true }
+  )
+  .then(async(response) => {
       await AuthStatus();
       if (isAuthenticated.value) {
         router.push("/");
       }
       router.push("/");
-      loading.value = false;
     }).catch(error =>{
 
           errorMsg.value=error.response.data
@@ -120,6 +119,9 @@ const register = () => {
             errorMsg.value=""
           }, 2000);
 
+    }).finally(()=>{
+
+      loading.value=false
     })
 };
 </script>
