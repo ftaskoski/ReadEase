@@ -16,6 +16,7 @@
         <form @submit.prevent="login()" class="space-y-4">
   <div class="relative h-11 w-full min-w-[200px]">
     <input
+      required
       type="email"
       v-model="loginUsername"
       placeholder=""
@@ -31,6 +32,7 @@
   </div>
   <div class="relative h-11 w-full min-w-[200px]">
     <input
+      required
       type="password"
       v-model="loginPassword"
       placeholder=""
@@ -55,7 +57,9 @@
         <div class="-ml-2.5"></div>
       </div>
       <div class="p-6 pt-0">
-
+        <div v-if="errorMsg">
+          <p class="text-red-500 justify-center items-center flex mb-2">{{ errorMsg }}</p>
+        </div>
         <p
           class="mt-6 flex justify-center font-sans text-sm font-light leading-normal text-inherit antialiased"
         >
@@ -87,7 +91,7 @@ const url = "https://localhost:7284/";
 const loginUsername = ref<string>("");
 const loginPassword = ref<string>("");
 const Incorrect = ref<boolean>(false);
-const Success = ref<boolean>(false);
+  const errorMsg=ref<string>("")
 const login = async () => {
   axios
     .post(
@@ -108,14 +112,13 @@ const login = async () => {
       }
     })
     .catch((error) => {
-      if (error.response && error.response.status === 401) {
         Incorrect.value = true;
+        errorMsg.value=error.response.data
         setTimeout(() => {
           Incorrect.value = false;
+          errorMsg.value="";
         }, 2000);
-      } else {
-        console.log(`Unexpected error: ${error}`);
-      }
+      
     });
 
   loginUsername.value = "";
