@@ -1,4 +1,4 @@
-using Books.Services;
+ using Books.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using ReadEase_C_.Services;
 
@@ -9,7 +9,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddScoped<BookService>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<HashingService>();  
+builder.Services.AddScoped<HashingService>();
+builder.Services.AddScoped<PhotoService>();
 
 builder.Services.AddAuthentication(options =>
 {
