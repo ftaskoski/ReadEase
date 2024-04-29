@@ -150,7 +150,7 @@ namespace userController.Controllers
                 if (salt == null)
                 {
                     // User not found, return 401 Unauthorized
-                    return Unauthorized();
+                    return Conflict("User does not exist!");
                 }
 
                 // Hash the password with retrieved salt
@@ -158,6 +158,9 @@ namespace userController.Controllers
 
                 string selectQuery = "SELECT * FROM Users WHERE Username = @Username AND Password = @Password";
                 var user = await connection.QueryFirstOrDefaultAsync<FormModel>(selectQuery, new { Username = model.Username, Password = hashedPassword });
+
+              
+
 
                 if (user != null)
                 {
