@@ -199,11 +199,7 @@ namespace userController.Controllers
             }
         }
 
-        private SqlConnection GetSqlConnection()
-        {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            return new SqlConnection(connectionString);
-        }
+
 
         [HttpPost("photo")]
         [Authorize]
