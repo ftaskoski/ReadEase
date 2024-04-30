@@ -16,6 +16,7 @@ const router = createRouter({
       component: HomeVue,
       meta: {
         requiresAuth: true,
+        title: "New York Times",
       },
     },
     {
@@ -24,12 +25,16 @@ const router = createRouter({
       component: SettingsVue,
       meta: {
         requiresAuth: true,
+        title: "Settings",
       },
     },
     {
       path: "/login",
       name: "login",
       component: () => LoginVue,
+      meta: {
+        title: "Login",
+      },
     },
     {
       path: "/books",
@@ -37,6 +42,7 @@ const router = createRouter({
       component: () => BooksVue,
       meta: {
         requiresAuth: true,
+        title: "Books",
       },
       props:(route)=>{
         query: route.query
@@ -46,6 +52,9 @@ const router = createRouter({
       path: "/register",
       name: "register",
       component: () => import("@/views/Register.vue"),
+      meta: {
+        title: "Register",
+      },
     },
     {
       path: "/admin",
@@ -53,6 +62,7 @@ const router = createRouter({
       component: () => AdminVue,
       meta: {
         requiresAuth: true,
+        title: "Admin",
       },
       async beforeEnter(to, from, next) {
         if (!isAuthenticated.value) {
@@ -78,6 +88,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  document.title = to.meta.title as string;
   if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated.value) {
     next("/login");
   } else if ((to.name === "login" || to.name === "register") && isAuthenticated.value) {
