@@ -1,5 +1,6 @@
  using Books.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using ReadEase_C_.Helpers;
 using ReadEase_C_.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ builder.Services.AddScoped<BookService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<HashingService>();
 builder.Services.AddScoped<PhotoService>();
+builder.Services.AddScoped<Mail>();
 
 builder.Services.AddAuthentication(options =>
 {

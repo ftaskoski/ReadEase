@@ -11,6 +11,8 @@ using System.Net;
 using System.Security.Claims;
 using WebApplication1.Models;
 using ReadEase_C_.Helpers;
+using ReadEase_C_.Models;
+using System.Reflection;
 
 namespace userController.Controllers
 {
@@ -22,13 +24,15 @@ namespace userController.Controllers
         private readonly UserService _userService;
         private readonly HashingService _hashingService;
         private readonly PhotoService _photoService;
+        private readonly Mail _mail;
 
-        public UsersController(IConfiguration configuration,UserService service, HashingService hashingService, PhotoService photoService)
+        public UsersController(IConfiguration configuration,UserService service, HashingService hashingService, PhotoService photoService, Mail mail)
         {
             _configuration = configuration;
             _userService = service;
             _hashingService = hashingService;
             _photoService = photoService;
+            _mail = mail;
         }
 
         [HttpGet("users")]
@@ -129,8 +133,7 @@ namespace userController.Controllers
                 model.Role = role ?? "User";
 
                 // Send the registration success email
-                Mail sender = new Mail(_configuration);
-                sender.SendEmail(model.Username);
+                _mail.SendEmail(model.Username);
                 // Return the user's role after successful registration
                 return Ok(model.Role);
             }
@@ -197,6 +200,32 @@ namespace userController.Controllers
                     return Conflict("Incorrect password!");
                 }
             }
+        }
+
+
+
+        [HttpPost("recover")]
+        public async Task<ActionResult> PasswordRecovery([FromBody] RecoveryMail mail)
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using var connection = new SqlConnection(connectionString);
+
+            string countQuery = "SELECT COUNT(*) FROM USERS WHERE Username=@Username ";
+            int user = connection.QueryFirstOrDefault<int>(countQuery, new { Username = mail.email });
+
+            if (user == 0)
+            {
+                return Conflict("User does not exist!");
+            }
+
+            string salt = await _hashingService.GetSalt(mail.email, connection);
+            string randowPass = _hashingService.GenerateRandomPassword(6);
+            string hashedPass = await _hashingService.GenerateSaltedHash(randowPass, salt);
+            string insertQuery = "UPDATE USERS SET Password=@Value1 WHERE Username=@Username ";
+            connection.Execute(insertQuery,new {Username=mail.email,Value1=hashedPass});
+            
+            _mail.RecoverEmail(mail.email, randowPass);
+            return Ok("Your new password is sent to your e-mail!");
         }
 
 
