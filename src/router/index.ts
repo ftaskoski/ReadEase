@@ -5,6 +5,7 @@ import { isAuthenticated, role} from "@/store/authStore";
 import LoginVue from "@/views/Login.vue";
 import BooksVue from "@/views/Books.vue";
 import AdminVue from "@/views/Admin.vue";
+import Recovery from "@/views/Recovery.vue";
 const url="https://localhost:7284/"
 
 const router = createRouter({
@@ -26,6 +27,14 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
         title: "Settings",
+      },
+    },
+    {
+      path: "/recovery",
+      name: "recovery",
+      component: Recovery,
+      meta: {
+        title: "Recovery",
       },
     },
     {

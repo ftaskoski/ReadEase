@@ -71,6 +71,17 @@
             Sign up
           </RouterLink>
         </p>
+        <p
+          class="mt-6 flex justify-center font-sans text-sm font-light leading-normal text-inherit antialiased"
+        >
+          Forgot your password?
+          <RouterLink
+            to="/recovery"
+            class="ml-1 block font-sans text-sm font-bold leading-normal text-cyan-500 antialiased"
+          >
+            Reset now!
+          </RouterLink>
+        </p>      
       </div>
     </div>
   </div>

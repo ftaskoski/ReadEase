@@ -4,7 +4,7 @@ import axios from 'axios';
 export const isAuthenticated = ref<boolean>(false);
 export const loggedInUser = ref<any>();
 export const role = ref<string>('');
-const url="https://localhost:7284/"
+export const url="https://localhost:7284/"
 
 
 export const setAuthenticated = (value: boolean) => {
