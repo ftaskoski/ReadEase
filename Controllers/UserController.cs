@@ -194,7 +194,7 @@ namespace userController.Controllers
                 else
                 {
                     // Return 401 Unauthorized
-                    return Unauthorized();
+                    return Conflict("Incorrect password!");
                 }
             }
         }
