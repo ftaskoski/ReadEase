@@ -131,7 +131,7 @@ function getProfilePicture() {
       profilePictureUrl.value = URL.createObjectURL(blob);
     })
     .catch((error) => {
-      console.error('Error retrieving photo:', error);
+      console.error('Error retrieving photos:', error);
     });
 }
 
