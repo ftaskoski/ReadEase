@@ -292,6 +292,14 @@ namespace userController.Controllers
         {string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using var connection = new SqlConnection(connectionString);
 
+            string countUsers = "SELECT COUNT(*) FROM USERS WHERE Username=@Username";
+            int count = connection.QueryFirst<int>(countUsers, new { Username = user.UpdatedUsername });
+
+            if(count > 0) {
+                return Conflict("Email alredy in use!");
+            
+            }
+
             string emailQuery = "SELECT Username FROM USERS WHERE Id=@id";
 
             string userEmail = connection.QueryFirstOrDefault<string>(emailQuery, new {Id=UserId});
