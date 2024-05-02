@@ -2,10 +2,10 @@
   <div
     class="order-1 sm:order-3 sm:ml-64 px-4 sm:px-8 py-8 sm:py-16 md:py-32 lg:py-52"
   >
+  <div><p class="font-semibold text-green-500">{{ successMsg }}</p></div>
   <form @submit.prevent="changeUsername()" class="space-y-4">
   <div class="relative h-11  min-w-[200px]">
     <input
-      required
       type="email"
       v-model="newUsername"
       placeholder=""
@@ -21,7 +21,6 @@
   </div>
   <div class="relative h-11 w-80 min-w-[200px]">
     <input
-      required
       type="password"
       v-model="newPass"
       placeholder=""
@@ -73,7 +72,7 @@ import axios from "axios";
 const newUsername = ref<string>("");
 const url = "https://localhost:7284/";
 const profilePictureUrl = ref<string | null>(null);
-
+const successMsg = ref<string>("");
 const newPass = ref<string>("");
 
 function changeUsername() {
@@ -90,10 +89,16 @@ function changeUsername() {
     )
     .then((response) => {
       newUsername.value = "";
+      newPass.value = "";
+      successMsg.value = response.data;
     })
     .catch((error) => {
       console.error('Error updating username:', error);
-    });
+    }).finally(() => {
+      setTimeout(()=>{
+        successMsg.value = "";
+      },2000)
+    })
 }
 
 function changeProfilePicture() {
