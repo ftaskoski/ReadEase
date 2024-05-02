@@ -56,7 +56,7 @@ namespace ReadEase_C_.Services
             return role ?? string.Empty;
         }
 
-        public async Task<IActionResult> UpdateUserAsync(string newUser, int id)
+        public async Task<IActionResult> UpdateUserAsync(string newUsername, string newPassword, int id)
         {
             var connection = GetSqlConnection();
 
@@ -68,12 +68,45 @@ namespace ReadEase_C_.Services
                 return new NotFoundResult();
             }
 
-            string updateQuery = "UPDATE Users SET Username = @Username WHERE Id = @Id";
-            await connection.ExecuteAsync(updateQuery, new { Id = id, Username = newUser });
+            // Construct the update query based on the provided parameters
+            string updateQuery = "UPDATE Users SET ";
+            List<string> updateParams = new List<string>();
+            if (!string.IsNullOrEmpty(newUsername))
+            {
+                updateParams.Add("Username = @Username");
+            }
+            if (!string.IsNullOrEmpty(newPassword))
+            {
+                updateParams.Add("Password = @Password");
+            }
+
+            // Check if at least one field is being updated
+            if (updateParams.Count == 0)
+            {
+                // Nothing to update
+                return new BadRequestResult();
+            }
+
+            updateQuery += string.Join(", ", updateParams);
+            updateQuery += " WHERE Id = @Id";
+
+            // Create a DynamicParameters object
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", id);
+            parameters.Add("Username", newUsername);
+
+            // Only add the Password parameter if newPassword is not null or empty
+            if (!string.IsNullOrEmpty(newPassword))
+            {
+                parameters.Add("Password", newPassword);
+            }
+
+            // Execute the update query
+            await connection.ExecuteAsync(updateQuery, parameters);
 
             return new OkResult();
-
         }
+
 
     }
 }

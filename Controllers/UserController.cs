@@ -288,12 +288,28 @@ namespace userController.Controllers
 
         [HttpPut("update")]
         [Authorize]
-        public async Task<IActionResult> UpdateUser([FromBody]NewUsername user )
-        {
+        public async Task<IActionResult> UpdateUser([FromBody] NewUsername user)
+        {string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using var connection = new SqlConnection(connectionString);
 
-           await _userService.UpdateUserAsync(user.UpdatedUsername, UserId);
-            return Ok("Updated Username");
+            string emailQuery = "SELECT Username FROM USERS WHERE Id=@id";
+
+            string userEmail = connection.QueryFirstOrDefault<string>(emailQuery, new {Id=UserId});
+
+            string salt = await _hashingService.GetSalt(userEmail, connection);
+
+            if (!string.IsNullOrEmpty(user.UpdatedPassword))
+            {
+                string hashedPass = await _hashingService.GenerateSaltedHash(user.UpdatedPassword, salt);
+                await _userService.UpdateUserAsync(user.UpdatedUsername, hashedPass, UserId);
+            }
+            else
+            {
+                await _userService.UpdateUserAsync(user.UpdatedUsername, null, UserId);
+            }
+            return Ok("Username and/or password updated successfully");
         }
+
 
 
         [HttpDelete("delete/{id}")]
