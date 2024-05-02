@@ -6,7 +6,7 @@
       <p v-if="successMsg" class="text-green-500">{{ successMsg }}</p>
       <p v-else class="text-red-500">{{ errorMsg }}</p>
     </div>
-    <form @submit.prevent="changeUsername()" class="space-y-4">
+    <form @submit.prevent="updateCredentials()" class="space-y-4">
       <div class="relative h-11 min-w-[200px]">
         <input
           type="email"
@@ -94,7 +94,7 @@ const successMsg = ref<string>("");
 const errorMsg = ref<string>("");
 const newPass = ref<string>("");
 
-function changeUsername() {
+function updateCredentials() {
   axios
     .put(
       `${url}api/update`,
