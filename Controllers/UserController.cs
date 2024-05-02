@@ -288,7 +288,7 @@ namespace userController.Controllers
 
         [HttpPut("update")]
         [Authorize]
-        public async Task<IActionResult> UpdateUser([FromBody] NewUsername user)
+        public async Task<IActionResult> UpdateUser([FromBody] updateCredentialsModal user)
         {string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using var connection = new SqlConnection(connectionString);
 

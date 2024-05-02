@@ -1,6 +1,6 @@
 ﻿namespace WebApplication1.Models
 {
-    public class NewUsername
+    public class updateCredentialsModal
     {
         public string UpdatedUsername { get; set; }
         public string UpdatedPassword { get; set; } 
