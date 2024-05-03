@@ -9,7 +9,7 @@
 
     <form @submit.prevent="updateCredentials()" class="space-y-4 ">
       <!-- Input fields for email and password -->
-      <div class="flex flex-col space-y-2 justify-center items-center xl:items-start -mt-20 ">
+      <div class="flex flex-col space-y-2 justify-center items-center xl:items-start lg:-mt-20 ">
       <div class="relative h-11 min-w-[200px] w-80">
         <input
           type="email"
@@ -56,7 +56,7 @@
     <div class="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-[0.2px] bg-black block xl:hidden"></div>
 
     <!-- Upload Profile Picture section -->
-    <div class="flex xl:-mt-60 xl:justify-end lg:justify-center md:justify-center  lg:mr-20 lg:mt-96 mt-56 md:mt-[400px] justify-center ">
+    <div class="flex xl:-mt-60 xl:justify-end lg:justify-center md:justify-center  lg:mr-20 lg:mt-[400px] mt-56 md:mt-[400px] justify-center ">
       <p class="text-2xl md:mt-0 font-semibold text-gray-900 flex justify-end -mr-60 pb-2">
         Upload Profile Picture
       </p>
