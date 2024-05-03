@@ -6,8 +6,11 @@
       <p v-if="successMsg" class="text-green-500">{{ successMsg }}</p>
       <p v-else class="text-red-500">{{ errorMsg }}</p>
     </div>
-    <form @submit.prevent="updateCredentials()" class="space-y-4">
-      <div class="relative h-11 min-w-[200px]">
+
+    <form @submit.prevent="updateCredentials()" class="space-y-4 ">
+      <!-- Input fields for email and password -->
+      <div class="flex flex-col space-y-2 justify-center items-center xl:items-start -mt-20 ">
+      <div class="relative h-11 min-w-[200px] w-80">
         <input
           type="email"
           v-model="newUsername"
@@ -35,6 +38,7 @@
           Password
         </label>
       </div>
+      <!-- Update button -->
       <button
         data-ripple-light="true"
         type="submit"
@@ -42,46 +46,40 @@
       >
         Update
       </button>
+    </div>
     </form>
-    <p
-      class="text-2xl mt-6 md:mt-0 font-semibold text-gray-900 flex justify-center pb-2"
-    >
-      Upload Profile Picture
-    </p>
-    <div class="mx-auto w-64 text-center">
-      <form @submit.prevent="changeProfilePicture">
-        <div class="relative w-64">
+
+
+    <!-- Vertical line for LG and larger screens -->
+    <div class="absolute inset-y-0 left-1/2 transform -translate-x-1/2 w-[0.2px] bg-black hidden xl:block"></div>
+    <!-- Horizontal line for smaller screens -->
+    <div class="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-[0.2px] bg-black block xl:hidden"></div>
+
+    <!-- Upload Profile Picture section -->
+    <div class="flex xl:-mt-60 xl:justify-end lg:justify-center md:justify-center  lg:mr-20 lg:mt-96 mt-56 md:mt-[400px] justify-center ">
+      <p class="text-2xl md:mt-0 font-semibold text-gray-900 flex justify-end -mr-60 pb-2">
+        Upload Profile Picture
+      </p>
+      <form @submit.prevent="changeProfilePicture" class="">
+        <div class="relative w-64 mt-10">
           <img
             class="w-64 h-64 rounded-full absolute object-cover"
-            :src="
-              profilePictureUrl
-                ? profilePictureUrl
-                : 'https://www.svgrepo.com/show/33565/upload.svg'
-            "
+            :src="profilePictureUrl ? profilePictureUrl : 'https://www.svgrepo.com/show/33565/upload.svg'"
             alt=""
           />
           <label
             for="fileInput"
             class="w-64 h-64 group hover:bg-gray-200 opacity-60 rounded-full absolute flex justify-center items-center cursor-pointer transition duration-500"
           >
-            <img
-              class="hidden group-hover:block w-12"
-              src="https://www.svgrepo.com/show/33565/upload.svg"
-              alt=""
-            />
+            <img class="hidden group-hover:block w-12" src="https://www.svgrepo.com/show/33565/upload.svg" alt="" />
           </label>
-          <input
-            id="fileInput"
-            type="file"
-            accept="image/*"
-            name="file"
-            @change="changeProfilePicture"
-            style="display: none"
-          />
+          <input id="fileInput" type="file" accept="image/*" name="file" @change="changeProfilePicture" style="display: none" />
         </div>
       </form>
     </div>
+    
   </div>
+
 </template>
 
 <script setup lang="ts">
