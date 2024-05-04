@@ -289,7 +289,8 @@ namespace userController.Controllers
         [HttpPut("update")]
         [Authorize]
         public async Task<IActionResult> UpdateUser([FromBody] updateCredentialsModal user)
-        {string connectionString = _configuration.GetConnectionString("DefaultConnection");
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using var connection = new SqlConnection(connectionString);
 
             string countUsers = "SELECT COUNT(*) FROM USERS WHERE Username=@Username";
@@ -322,8 +323,13 @@ namespace userController.Controllers
 
         [HttpDelete("delete/{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public IActionResult DeleteUser(int id)
         {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using var connection = new SqlConnection(connectionString);
+            string deleteBooks = "DELETE FROM BOOKS WHERE UserId = @id";
+            connection.Execute(deleteBooks, new {id});
+            
 
             _userService.DeleteUser(id);
             return Ok();    
