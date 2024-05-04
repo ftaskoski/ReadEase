@@ -14,5 +14,7 @@ namespace ReadEase_C_.Interface
         IEnumerable<BookModel> SearchAndCategory(int UserId, string? search, List<int>? categories = null, int pageNumber = 1, int pageSize = 10);
         IEnumerable<BookModel> SearchAndCategoryAll(int UserId, string? search = null, List<int>? categories = null);
         void UpdateBook(UpdateBook book);
+        void DeleteBooksByUser(int userId);
+
     }
 }

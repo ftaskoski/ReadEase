@@ -169,5 +169,14 @@ namespace Books.Services
             connection.Execute(sql, parameters);
         }
 
+
+        public void DeleteBooksByUser(int id)
+        {
+            var connection = GetSqlConnection();
+            string deleteBooks = "DELETE FROM BOOKS WHERE UserId = @id";
+            connection.Execute(deleteBooks, new { id });
+
+        }
+
     }
 }

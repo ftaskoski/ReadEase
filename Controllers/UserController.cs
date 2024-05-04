@@ -13,6 +13,7 @@ using WebApplication1.Models;
 using ReadEase_C_.Helpers;
 using ReadEase_C_.Models;
 using System.Reflection;
+using Books.Services;
 
 namespace userController.Controllers
 {
@@ -25,14 +26,16 @@ namespace userController.Controllers
         private readonly HashingService _hashingService;
         private readonly PhotoService _photoService;
         private readonly Mail _mail;
+        private readonly BookService _bookService;
 
-        public UsersController(IConfiguration configuration,UserService service, HashingService hashingService, PhotoService photoService, Mail mail)
+        public UsersController(IConfiguration configuration,UserService service, HashingService hashingService, PhotoService photoService, Mail mail,BookService bookService)
         {
             _configuration = configuration;
             _userService = service;
             _hashingService = hashingService;
             _photoService = photoService;
             _mail = mail;
+            _bookService = bookService;
         }
 
         [HttpGet("users")]
@@ -325,12 +328,7 @@ namespace userController.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult DeleteUser(int id)
         {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            using var connection = new SqlConnection(connectionString);
-            string deleteBooks = "DELETE FROM BOOKS WHERE UserId = @id";
-            connection.Execute(deleteBooks, new {id});
-            
-
+            _bookService.DeleteBooksByUser(id);
             _userService.DeleteUser(id);
             return Ok();    
         }
