@@ -76,7 +76,7 @@ const addCategory = () =>{
 }
 const filteredUsers = ref<any[]>([]);
 watch(users, () => {
-  filteredUsers.value = users.value.filter(user => user.username !== 'admin');
+  filteredUsers.value = users.value.filter(user => user.role !== 'Admin');
 });
 
 onMounted(() => {
