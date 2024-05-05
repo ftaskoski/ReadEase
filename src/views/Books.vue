@@ -54,26 +54,28 @@
 
 <!-- Second Section -->
 <div class="w-full max-w-md">
-  <div class="flex justify-center items-center">
-    <Card class="space-y-2 sm:space-y-2">
-      <div class="mb-4">
-        <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">SEARCH BY AUTHOR</p>
-        <div class="flex items-center justify-center p-5">
-          <div>
-            <div class="flex border border-gray-200 rounded-lg">
-              <div class="flex w-10 items-center justify-center rounded-tl-lg rounded-bl-lg border-r border-gray-200 bg-white p-5">
-                <svg viewBox="0 0 20 20" aria-hidden="true" class="pointer-events-none absolute w-5 fill-gray-500 transition">
-                  <path d="M16.72 17.78a.75.75 0 1 0 1.06-1.06l-1.06 1.06ZM9 14.5A5.5 5.5 0 0 1 3.5 9H2a7 7 0 0 0 7 7v-1.5ZM3.5 9A5.5 5.5 0 0 1 9 3.5V2a7 7 0 0 0-7 7h1.5ZM9 3.5A5.5 5.5 0 0 1 14.5 9H16a7 7 0 0 0-7-7v1.5Zm3.89 10.45 3.83 3.83 1.06-1.06-3.83-3.83-1.06 1.06ZM14.5 9a5.48 5.48 0 0 1-1.61 3.89l1.06 1.06A6.98 6.98 0 0 0 16 9h-1.5Zm-1.61 3.89A5.48 5.48 0 0 1 9 14.5V16a6.98 6.98 0 0 0 4.95-2.05l-1.06-1.06Z"></path>
-                </svg>
-              </div>
-              <input type="text" v-model="searchQuery" @input="handleInput" class="w-full rounded-tr-lg rounded-br-lg max-w-[160px] bg-white pl-2 text-sm font-semibold outline-0" placeholder="Enter author's name" id="">
-            </div>
-          </div>
-        </div>
+  <Card>
+    <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">Search For Books</p>
+     
+      <div class="relative w-full h-10 mt-2">
+        <input
+          required
+          v-model="searchQuery"
+          @input="handleInput"
+          class="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-gray-900"
+          placeholder=""
+        />
+        <label
+          class="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:flex-shrink before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900"
+          :class="{ 'placeholder-shown': !title }"
+        >
+         By Author
+        </label>
       </div>
-    </Card>
-  </div>
+  </Card>
 </div>
+
+
 
 <!-- Third Section -->
 <div class="w-full max-w-md">
