@@ -212,7 +212,6 @@ const totalFilteredBooks = ref<any[]>([]);
 const currTitle = ref<string>("");
 const currAuthor = ref<string>("");
 const currCategoryId = ref<number | undefined>(0);
-
 // Pagination !!!!!!!!!!!!
 const currPage = ref<number>(1);
 
@@ -243,8 +242,13 @@ const changePage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
     currPage.value = page;
     sessionStorage.setItem("page", String(currPage.value));
-
-    checkFilter();
+    
+    if (checkedCategories.value.length > 0 || searchQuery.value) {
+      filterBooksAll();
+    } else {
+      getBooks();
+      getAllBooks();
+    }
     router.push({
       query: {
         page: currPage.value,
@@ -329,11 +333,14 @@ const filterBooksPaginated = () => {
 };
 
 function checkFilter() {
-  if (checkedCategories.value.length > 0 || searchQuery.value) {
+  if (checkedCategories.value.length > 0 && !searchQuery.value) {
     filterBooksAll();
-    filterBooksPaginated();
-    sessionStorage.setItem("page", String(currPage.value));
-  } else {
+  }else if (searchQuery.value && checkedCategories.value.length === 0) {
+    handleInput();
+  }else if (searchQuery.value && checkedCategories.value.length > 0) {
+    filterBooksAll();
+  }
+   else if (checkedCategories.value.length === 0 && !searchQuery.value) {
     getBooks();
     getAllBooks();
   }
