@@ -122,25 +122,25 @@ namespace WebApplication1.Controllers
 
 
         [HttpGet("searchandcategoryall")]
-        public IEnumerable<BookModel> GetSearchAndCategoryAll(string? search = null, [FromQuery] string? categories = null)
+        public IEnumerable<BookModel> GetSearchAndCategoryAll(string? search = null, string? searchTitle = null, [FromQuery] string? categories = null)
         {
             List<int>? categoriesList = null;
             if (!string.IsNullOrEmpty(categories))
             {
                 categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
             }
-            return _bookService.SearchAndCategoryAll(UserId, search, categoriesList);
+            return _bookService.SearchAndCategoryAll(UserId, search, searchTitle, categoriesList);
         }
 
         [HttpGet("searchandcategory")]
-        public IEnumerable<BookModel> GetSearchAndCategory(string? search = null, [FromQuery] string? categories = null, int pageNumber = 1, int pageSize = 10)
+        public IEnumerable<BookModel> GetSearchAndCategory(string? search = null, string? searchTitle = null, [FromQuery] string? categories = null, int pageNumber = 1, int pageSize = 10)
         {
             List<int>? categoriesList = null;
             if (!string.IsNullOrEmpty(categories))
             {
                 categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
             }
-            return _bookService.SearchAndCategory(UserId, search, categoriesList, pageNumber, pageSize);
+            return _bookService.SearchAndCategory(UserId, search, searchTitle, categoriesList, pageNumber, pageSize);
         }
 
         [HttpPost("updatebook")]

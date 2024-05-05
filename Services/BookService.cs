@@ -80,7 +80,7 @@ namespace Books.Services
             Execute(deleteQuery, new { id });
         }
 
-        public IEnumerable<BookModel> SearchAndCategoryAll(int UserId, string? search = null, List<int>? categories = null)
+        public IEnumerable<BookModel> SearchAndCategoryAll(int UserId, string? search = null, string? searchTitle = null, List<int>? categories = null)
         {
             string getQuery = "SELECT * FROM Books WHERE UserId=@Id ";
             var parameters = new DynamicParameters();
@@ -90,7 +90,13 @@ namespace Books.Services
             if (!string.IsNullOrEmpty(search))
             {
                 getQuery += "AND AUTHOR LIKE @search ";
-                parameters.Add("@search", $"%{search}%");
+                parameters.Add("@search", $"{search}%");
+            }
+
+            if (!string.IsNullOrEmpty(searchTitle))
+            {
+                getQuery += "AND TITLE LIKE @searchTitle ";
+                parameters.Add("@searchTitle", $"{searchTitle}%");
             }
 
             // If categories are provided, add them to the query and parameters
@@ -107,7 +113,7 @@ namespace Books.Services
 
 
 
-        public IEnumerable<BookModel> SearchAndCategory(int UserId, string? search, List<int>? categories = null, int pageNumber = 1, int pageSize = 10)
+        public IEnumerable<BookModel> SearchAndCategory(int UserId, string? search, string? searchTitle = null, List<int>? categories = null, int pageNumber = 1, int pageSize = 10)
         {
             int startIndex = (pageNumber - 1) * pageSize;
             var getQuery = "SELECT * FROM Books WHERE UserId=@Id ";
@@ -119,6 +125,12 @@ namespace Books.Services
             {
                 getQuery += "AND AUTHOR LIKE @search ";
                 parameters.Add("@search", $"{search}%");
+            }
+
+            if (!string.IsNullOrEmpty(searchTitle))
+            {
+                getQuery += "AND TITLE LIKE @searchTitle ";
+                parameters.Add("@searchTitle", $"{searchTitle}%");
             }
 
             // If categories are provided, add them to the query and parameters
