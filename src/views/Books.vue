@@ -72,6 +72,20 @@
          By Author
         </label>
       </div>
+      <div class="relative w-full h-10 mt-2">
+        <input
+          v-model="searchTitle"
+          @input="handleInput"
+          class="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-gray-900"
+          placeholder=""
+        />
+        <label
+          class="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:flex-shrink before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900"
+          :class="{ 'placeholder-shown': !title }"
+        >
+         By Title
+        </label>
+      </div>
   </Card>
 </div>
 
@@ -216,11 +230,12 @@ const currAuthor = ref<string>("");
 const currCategoryId = ref<number | undefined>(0);
 // Pagination !!!!!!!!!!!!
 const currPage = ref<number>(1);
+const searchTitle = ref<string>("");
 
 const totalPages = computed(() => {
   let totalBooks;
 
-  if (checkedCategories.value.length > 0 || searchQuery.value) {
+  if (checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value) {
     totalBooks = totalFilteredBooks.value.length;
   } else {
     totalBooks = bookCollection.value?.length ?? 0;
@@ -245,12 +260,12 @@ const changePage = (page: number) => {
     currPage.value = page;
     sessionStorage.setItem("page", String(currPage.value));
     
-    if (checkedCategories.value.length > 0 || searchQuery.value) {
-      filterBooksAll();
-    } else {
-      getBooks();
-      getAllBooks();
-    }
+    filterBooksAll();
+    filterBooksPaginated();
+    //  else {
+    //   getBooks();
+    //   getAllBooks();
+    // }
     router.push({
       query: {
         page: currPage.value,
@@ -287,6 +302,7 @@ const filterBooksAll = () => {
   bookPaginated.value = [];
   const searchParams = {
     search: searchQuery.value,
+    searchTitle: searchTitle.value,
     categories: checkedCategories.value.join(","),
   };
   axios
@@ -306,6 +322,7 @@ const filterBooksAll = () => {
 const filterBooksPaginated = () => {
   const searchParams = {
     search: searchQuery.value,
+    searchTitle: searchTitle.value,
     categories: checkedCategories.value.join(","),
     pageNumber: currPage.value,
     pageSize: booksPerPage.value,
@@ -316,7 +333,7 @@ const filterBooksPaginated = () => {
       withCredentials: true,
     })
     .then((response) => {
-      books.value = response.data;
+      books.value = response.data;      
       sessionStorage.setItem("search", searchQuery.value);
       sessionStorage.setItem("categories", String(checkedCategories.value));
       sessionStorage.setItem("page", String(currPage.value));
@@ -337,16 +354,21 @@ const filterBooksPaginated = () => {
 function checkFilter() {
   if (checkedCategories.value.length > 0 && !searchQuery.value) {
     filterBooksAll();
+    filterBooksPaginated();
   }else if (searchQuery.value && checkedCategories.value.length === 0) {
     handleInput();
   }else if (searchQuery.value && checkedCategories.value.length > 0) {
     filterBooksAll();
+    filterBooksPaginated();
   }
-   else if (checkedCategories.value.length === 0 && !searchQuery.value) {
+   else if (!searchQuery.value && checkedCategories.value.length === 0 && !searchTitle.value) {
+     
+   
     getBooks();
     getAllBooks();
   }
 }
+
 
 const getAllBooks = () => {
   axios
@@ -388,7 +410,15 @@ const addBook = () => {
       title.value = "";
       selectedCategory.value = "";
 
-      checkFilter();
+      if(checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value){
+        filterBooksAll();
+        filterBooksPaginated();
+      }else{
+        getBooks();
+        getAllBooks();
+      }
+
+      
     })
     .catch((error) => {
       console.error(error);
@@ -409,7 +439,16 @@ const deleteBook = () => {
         // If the current page becomes empty after deletion, move to the previous page
         currPage.value - 1;
       }
-      checkFilter();
+
+      if(checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value){
+        filterBooksAll();
+        filterBooksPaginated();
+      }else{
+        getBooks();
+        getAllBooks();
+      }
+
+
     })
     .catch((error) => {
       console.error(
@@ -485,22 +524,28 @@ function handleChange() {
   sessionStorage.setItem("page", String(currPage.value));
   router.push({ query: { booksPerPage: String(booksPerPage.value) } });
 
-  if (checkedCategories.value.length > 0 || searchQuery.value) {
+  if (checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value) {
     filterBooksAll();
-  } else {
+   }
+  else {
     getBooks();
     getAllBooks();
   }
 }
 
 const handleInput = () => {
+  currPage.value = 1;
+
   clearTimeout(debounceTimer);
   books.value = [];
   sessionStorage.removeItem("search");
-  if (searchQuery.value.trim() !== "") {
+  if (searchQuery.value.trim() !== "" || searchTitle.value.trim() !== "") {
     debounceTimer = setTimeout(() => {
       filterBooksAll();
     }, 1000);
+  }else{
+    getBooks();
+    getAllBooks();
   }
 };
 
@@ -560,8 +605,13 @@ watch(totalPages, () => {
     sessionStorage.setItem("page", String(currPage.value));
     books.value = [];
     bookPaginated.value = [];
-    checkFilter();
-
+    if(checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value){
+        filterBooksAll();
+        filterBooksPaginated();
+      }else{
+        getBooks();
+        getAllBooks();
+      }
     router.push({
       query: {
         page: currPage.value,
