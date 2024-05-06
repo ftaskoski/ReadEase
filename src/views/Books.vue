@@ -3,10 +3,10 @@
     <div class="order-1 sm:order-2 sm:ml-64 p-4">
       <div>
         <div>
-          <div class="flex flex-col lg:flex-row space-y-5 space-x-2">
+          <div class="flex flex-col lg:flex-row justify-between space-y-5 md:space-x-2">
 
 <!-- First Section -->
-<div class="w-full max-w-md">
+<div class="w-full max-w-md lg:max-w-xl">
   <Card>
     <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">INSERT BOOKS</p>
     <form @submit.prevent="addBook">
@@ -53,7 +53,7 @@
 </div>
 
 <!-- Second Section -->
-<div class="w-full max-w-md">
+<div class="w-full max-w-md lg:max-w-xl">
   <Card>
     <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">Search For Books</p>
      
@@ -92,7 +92,7 @@
 
 
 <!-- Third Section -->
-<div class="w-full max-w-md">
+<div class="w-full max-w-md lg:max-w-xl">
   <Card>
     <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">SEARCH BY CATEGORY</p>
     <div class="flex-wrap mt-2 flex items-center justify-center">
