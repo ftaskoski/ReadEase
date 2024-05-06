@@ -260,12 +260,7 @@ const changePage = (page: number) => {
     currPage.value = page;
     sessionStorage.setItem("page", String(currPage.value));
     
-    filterBooksAll();
-    filterBooksPaginated();
-    //  else {
-    //   getBooks();
-    //   getAllBooks();
-    // }
+    applyBookFilter();
     router.push({
       query: {
         page: currPage.value,
@@ -352,23 +347,24 @@ const filterBooksPaginated = () => {
 };
 
 function checkFilter() {
-  if (checkedCategories.value.length > 0 && !searchQuery.value) {
-    filterBooksAll();
-    filterBooksPaginated();
-  }else if (searchQuery.value && checkedCategories.value.length === 0) {
-    handleInput();
-  }else if (searchQuery.value && checkedCategories.value.length > 0) {
-    filterBooksAll();
-    filterBooksPaginated();
-  }
-   else if (!searchQuery.value && checkedCategories.value.length === 0 && !searchTitle.value) {
-     
-   
-    getBooks();
-    getAllBooks();
-  }
+  if(checkedCategories.value.length > 0 && !searchQuery.value && !searchTitle.value){
+        filterBooksAll();
+      } else if (checkedCategories.value.length === 0 && searchQuery.value || searchTitle.value) {
+        handleInput();
+      }else{
+        getBooks();
+        getAllBooks();
+      }
 }
 
+function applyBookFilter() {
+  if (checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value) {
+      filterBooksAll();
+    } else {
+      getBooks();
+      getAllBooks();
+    }
+}
 
 const getAllBooks = () => {
   axios
@@ -410,13 +406,7 @@ const addBook = () => {
       title.value = "";
       selectedCategory.value = "";
 
-      if(checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value){
-        filterBooksAll();
-        filterBooksPaginated();
-      }else{
-        getBooks();
-        getAllBooks();
-      }
+      applyBookFilter();
 
       
     })
@@ -440,13 +430,7 @@ const deleteBook = () => {
         currPage.value - 1;
       }
 
-      if(checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value){
-        filterBooksAll();
-        filterBooksPaginated();
-      }else{
-        getBooks();
-        getAllBooks();
-      }
+      applyBookFilter();
 
 
     })
@@ -481,9 +465,7 @@ const updateBook = () => {
       { withCredentials: true }
     )
     .then((response) => {
-      checkFilter();
-      filterBooksAll();
-      filterBooksPaginated();
+      applyBookFilter();
       document.body.style.overflow = "auto";
       showEditModal.value = false;
       bookIdToEdit.value = null;
@@ -524,13 +506,7 @@ function handleChange() {
   sessionStorage.setItem("page", String(currPage.value));
   router.push({ query: { booksPerPage: String(booksPerPage.value) } });
 
-  if (checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value) {
-    filterBooksAll();
-   }
-  else {
-    getBooks();
-    getAllBooks();
-  }
+  applyBookFilter();
 }
 
 const handleInput = () => {
@@ -605,13 +581,7 @@ watch(totalPages, () => {
     sessionStorage.setItem("page", String(currPage.value));
     books.value = [];
     bookPaginated.value = [];
-    if(checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value){
-        filterBooksAll();
-        filterBooksPaginated();
-      }else{
-        getBooks();
-        getAllBooks();
-      }
+    checkFilter();
     router.push({
       query: {
         page: currPage.value,
@@ -639,13 +609,13 @@ onMounted(() => {
 
   if (categoriesFromStorage) {
     checkedCategories.value = categoriesFromStorage.split(",").map(Number);
-    checkFilter();
-    filterBooksAll();
+    //checkFilter();
+   // filterBooksAll();
+    applyBookFilter();
   }
   if (searchFromStorage) {
     searchQuery.value = searchFromStorage;
-    //handleInput();
-    checkFilter();
+    applyBookFilter();
   } else {
     getBooks();
     getAllBooks();
