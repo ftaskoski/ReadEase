@@ -1,6 +1,6 @@
 <template>
-  <div class="flex justify-center items-center overflow-auto mt-2">
-    <table class="w-full divide-y divide-gray-200">
+ <div class="overflow-auto mt-2">
+  <table class="md:w-full sm:w-auto divide-y divide-gray-200">
       <thead class="bg-gray-50">
         <tr>
           <th
