@@ -50,13 +50,14 @@ namespace userController.Controllers
         public IActionResult Lookup()
         {
             var isAuthenticated = User?.Identity?.IsAuthenticated ?? false;
-            var roleClaim = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
-            var role = roleClaim?.Value;
+            var role = User?.FindFirstValue(ClaimTypes.Role);
+            var username = User?.FindFirstValue(ClaimTypes.Name);
 
             var response = new
             {
                 IsAuthenticated = isAuthenticated,
-                Role = role
+                Role = role,
+                Username = username 
             };
 
             return Ok(response);
@@ -174,13 +175,13 @@ namespace userController.Controllers
                     string role = await _userService.CheckIfUserIsAdminAsync(user.Id);
 
                     // Create claims for the authenticated user
-                    var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, role ?? "User") // Default to "User" if role is null
-                // Add additional claims as needed
-            };
+                   List<Claim> claims =
+                   [
+                new (ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new (ClaimTypes.Name, user.Username),
+                new (ClaimTypes.Role, role ?? "User") // Default to "User" if role is null
+                                                           // Add additional claims as needed
+                    ];
 
                     var authProperties = new AuthenticationProperties
                     {
@@ -192,7 +193,7 @@ namespace userController.Controllers
                     var principal = new ClaimsPrincipal(identity);
 
                     // Sign in the user
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
+                   await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
                     user.Role = role ?? "User";                    
                     return Ok(user.Role);
