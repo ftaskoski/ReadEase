@@ -84,10 +84,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { profilePictureUrl } from "@/store/picStore";
 import axios from "axios";
 const newUsername = ref<string>("");
 const url = "https://localhost:7284/";
-const profilePictureUrl = ref<string | null>(null);
 const successMsg = ref<string>("");
 const errorMsg = ref<string>("");
 const newPass = ref<string>("");

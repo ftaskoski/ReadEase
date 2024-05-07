@@ -31,10 +31,22 @@
     aria-label="Sidebar"
   >
     <div class="h-full w-64 px-3 py-6 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-        <div class="flex items-center justify-between mb-6">
-            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Logged in: {{ username }}</p>
-            <!-- Add any additional elements or buttons here if needed -->
-        </div>
+      <div class="flex items-center justify-between mb-6">
+  <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">Logged in as: {{ username }}</p>
+
+  <!-- Profile picture container -->
+  <div class="relative w-10">
+    <div class="rounded-full overflow-hidden w-10 h-10">
+      <img
+        class="w-full h-full object-cover"
+        :src="profilePictureUrl ? profilePictureUrl : 'https://www.svgrepo.com/show/33565/upload.svg'"
+        alt=""
+      />
+    </div>
+  </div>
+
+</div>
+
         <ul class="space-y-2 font-medium">
             <li v-for="link in navLinks" :key="link.to" @click="link.onClick ? link.onClick() : toggleSidebarOnPhone()">
               <RouterLink
@@ -68,12 +80,30 @@ import { setAuthenticated, role, isAuthenticated, username } from "@/store/authS
 import axios from "axios";
 import { useRouter } from "vue-router";
 import  { activeLink,activateLink,initializeActiveLink } from "@/store/activeLinks";
+import { profilePictureUrl } from "@/store/picStore";
 
 const router = useRouter();
 const url = "https://localhost:7284/";
 const isSidebarOpen = ref(false); // Set initial value to false
 const overflow = ref<boolean>(false);
 const isAdmin = computed(() => role.value === "Admin");
+
+
+function getProfilePicture() {
+  axios
+    .get(`${url}api/getphoto`, {
+      withCredentials: true,
+      responseType: "blob", // Ensure response is treated as a blob
+    })
+    .then((response) => {
+      // Convert blob to URL
+      const blob = new Blob([response.data]);
+      profilePictureUrl.value = URL.createObjectURL(blob);
+    })
+    .catch((error) => {
+      console.error("Error retrieving photos:", error);
+    });
+}
 
 
 const navLinks = ref([
@@ -193,6 +223,7 @@ watch(
 // Add click event listener to close sidebar on click outside
 onMounted(() => {
   initializeActiveLink();
+  getProfilePicture();
   if (isAdmin.value) {
   navLinks.value.push({
     to: "/admin",
