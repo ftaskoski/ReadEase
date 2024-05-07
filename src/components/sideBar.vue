@@ -25,15 +25,17 @@
 
       <!-- Sidebar -->
       <aside
-        id="default-sidebar"
-        class="fixed top-0 left-0 z-40 w-64 h-full transition-transform sm:translate-x-0"
-        :class="{ '-translate-x-full': !isSidebarOpen }"
-        aria-label="Sidebar"
-      >
-        <div
-          class="h-full w-64 px-3 py-16 overflow-y-auto bg-gray-50 dark:bg-gray-800"
-        >
-        <ul class="space-y-2 font-medium ">
+    id="default-sidebar"
+    class="fixed top-0 left-0 z-40 w-64 h-full transition-transform sm:translate-x-0"
+    :class="{ '-translate-x-full': !isSidebarOpen }"
+    aria-label="Sidebar"
+  >
+    <div class="h-full w-64 px-3 py-6 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+        <div class="flex items-center justify-between mb-6">
+            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Logged in: {{ username }}</p>
+            <!-- Add any additional elements or buttons here if needed -->
+        </div>
+        <ul class="space-y-2 font-medium">
             <li v-for="link in navLinks" :key="link.to" @click="link.onClick ? link.onClick() : toggleSidebarOnPhone()">
               <RouterLink
                 :to="link.to"
@@ -41,13 +43,14 @@
                 class="flex items-center shake-on-hover p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group "
                 :class="{ 'bg-gray-100 dark:bg-gray-700': activeLink === link.to }"
               >
-                <i :class="link.iconClasses" class="flex-shrink-0 w-5 mt-1 h-5  text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
+                <i :class="link.iconClasses" class="flex-shrink-0 w-5 mt-1 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
                 <span class="ms-3">{{ link.label }}</span>
               </RouterLink>
             </li>
           </ul>
-        </div>
-      </aside>
+    </div>
+</aside>
+
       <div
         v-if="isSidebarOpen"
         class="fixed inset-0 bg-gray-900 bg-opacity-30 z-10" 
@@ -61,7 +64,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount, computed } from "vue";
-import { setAuthenticated, role, isAuthenticated } from "@/store/authStore";
+import { setAuthenticated, role, isAuthenticated, username } from "@/store/authStore";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import  { activeLink,activateLink,initializeActiveLink } from "@/store/activeLinks";
