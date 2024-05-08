@@ -14,18 +14,13 @@ namespace ReadEase_C_.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly UserService _userService;
-        private readonly HashingService _hashingService;
-        private readonly PhotoService _photoService;
-        private readonly Mail _mail;
+
         private readonly BookService _bookService;
 
         public AdminController(IConfiguration configuration, UserService service, HashingService hashingService, PhotoService photoService, Mail mail, BookService bookService)
         {
             _configuration = configuration;
             _userService = service;
-            _hashingService = hashingService;
-            _photoService = photoService;
-            _mail = mail;
             _bookService = bookService;
         }
 
