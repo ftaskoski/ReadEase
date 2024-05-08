@@ -38,12 +38,7 @@ namespace userController.Controllers
             _bookService = bookService;
         }
 
-        [HttpGet("users")]
-        [Authorize(Roles ="Admin")]
-        public IEnumerable<FormModel> getUsers()
-        {
-           return _userService.GetAllUsers();
-        }
+ 
 
         [HttpGet("lookup")]
         [Authorize]
@@ -325,14 +320,6 @@ namespace userController.Controllers
 
 
 
-        [HttpDelete("delete/{id}")]
-        [Authorize(Roles = "Admin")]
-        public IActionResult DeleteUser(int id)
-        {
-            _bookService.DeleteBooksByUser(id);
-            _userService.DeleteUser(id);
-            return Ok();    
-        }
 
 
     }
