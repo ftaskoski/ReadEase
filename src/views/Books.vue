@@ -332,6 +332,7 @@ const filterBooksPaginated = () => {
       sessionStorage.setItem("search", searchQuery.value);
       sessionStorage.setItem("categories", String(checkedCategories.value));
       sessionStorage.setItem("page", String(currPage.value));
+      sessionStorage.setItem("title", searchTitle.value);
       router.push({
         query: {
           page: currPage.value,
@@ -515,6 +516,7 @@ const handleInput = () => {
   clearTimeout(debounceTimer);
   books.value = [];
   sessionStorage.removeItem("search");
+  sessionStorage.removeItem("title");
   if (searchQuery.value.trim() !== "" || searchTitle.value.trim() !== "") {
     debounceTimer = setTimeout(() => {
       filterBooksAll();
@@ -598,6 +600,7 @@ onMounted(() => {
   const searchFromStorage = sessionStorage.getItem("search");
   const pageFromStorage = sessionStorage.getItem("page");
   const booksPerPageFromStorage = sessionStorage.getItem("booksPerPage");
+  const bookTitleFromStorage = sessionStorage.getItem("title");
 
   if (booksPerPageFromStorage) {
     booksPerPage.value = parseInt(booksPerPageFromStorage, 10);
@@ -611,6 +614,11 @@ onMounted(() => {
     checkedCategories.value = categoriesFromStorage.split(",").map(Number);
     //checkFilter();
    // filterBooksAll();
+    applyBookFilter();
+  }
+
+  if (bookTitleFromStorage) {
+    searchTitle.value = bookTitleFromStorage;
     applyBookFilter();
   }
   if (searchFromStorage) {
