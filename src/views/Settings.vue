@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { profilePictureUrl } from "@/store/picStore";
+import { profilePictureUrl,getProfilePicture } from "@/store/picStore";
 import axios from "axios";
 const newUsername = ref<string>("");
 const url = "https://localhost:7284/";
@@ -155,22 +155,6 @@ function changeProfilePicture() {
     .catch((error) => {
       // Handle error
       console.error("Error uploading photo:", error);
-    });
-}
-
-function getProfilePicture() {
-  axios
-    .get(`${url}api/getphoto`, {
-      withCredentials: true,
-      responseType: "blob", // Ensure response is treated as a blob
-    })
-    .then((response) => {
-      // Convert blob to URL
-      const blob = new Blob([response.data]);
-      profilePictureUrl.value = URL.createObjectURL(blob);
-    })
-    .catch((error) => {
-      console.error("Error retrieving photos:", error);
     });
 }
 

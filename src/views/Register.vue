@@ -86,6 +86,7 @@ import {
   isAuthenticated
 } from "@/store/authStore";
 import { RouterLink, useRouter } from "vue-router";
+import { getProfilePicture } from "@/store/picStore";
 
 const router = useRouter();
 const username = ref<string>("");
@@ -110,6 +111,7 @@ const register = () => {
       await AuthStatus();
       if (isAuthenticated.value) {
         router.push("/");
+        getProfilePicture();
       }
       router.push("/");
     }).catch(error =>{

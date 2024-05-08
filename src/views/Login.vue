@@ -94,6 +94,7 @@ import { RouterLink, useRouter } from "vue-router";
 import { AuthStatus, isAuthenticated } from "@/store/authStore";
 import Card from "@/components/Card.vue";
 import { activeLink } from "@/store/activeLinks";
+import { getProfilePicture } from "@/store/picStore";
 const router = useRouter();
 //work const url = "https://readease-c20240125180045.azurewebsites.net/";
 //const url = "https://readease-c20240126222545.azurewebsites.net//";
@@ -119,7 +120,8 @@ const login = async () => {
       await AuthStatus();
       if (isAuthenticated.value) {
         router.push("/");
-        activeLink.value="/"
+        activeLink.value="/";
+        getProfilePicture();
       }
     })
     .catch((error) => {

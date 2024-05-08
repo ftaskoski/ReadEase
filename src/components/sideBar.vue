@@ -39,7 +39,7 @@
     <div class="rounded-full overflow-hidden w-10 h-10">
       <img
         class="w-full h-full object-cover"
-        :src="profilePictureUrl ? profilePictureUrl : 'https://www.svgrepo.com/show/33565/upload.svg'"
+        :src="profilePictureUrl ? profilePictureUrl : ''"
         alt=""
       />
     </div>
@@ -174,6 +174,7 @@ const logout = (): void => {
       setAuthenticated(false);
       sessionStorage.clear();
       activeLink.value = null;
+      profilePictureUrl.value = null;
     })
     .catch((error) => {
       console.error("Error during logout:", error);
@@ -223,7 +224,6 @@ watch(
 // Add click event listener to close sidebar on click outside
 onMounted(() => {
   initializeActiveLink();
-  getProfilePicture();
   if (isAdmin.value) {
   navLinks.value.push({
     to: "/admin",
