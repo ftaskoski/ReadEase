@@ -99,6 +99,7 @@
 
 <script setup lang="ts">
 import axios from "axios";
+import { url } from "@/store/authStore";
 defineProps([
   "getCategoryName",
   "openModal",
@@ -119,7 +120,7 @@ defineProps([
 
 function download(id: number) {
   axios
-    .get(`https://localhost:7284/api/downloadbook/${id}`, {
+    .get(`${url}api/downloadbook/${id}`, {
       responseType: "blob",
       withCredentials: true,
     })
