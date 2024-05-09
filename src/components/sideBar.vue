@@ -81,9 +81,9 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 import  { activeLink,activateLink,initializeActiveLink } from "@/store/activeLinks";
 import { profilePictureUrl } from "@/store/picStore";
+import { url } from "@/store/authStore";
 
 const router = useRouter();
-const url = "https://localhost:7284/";
 const isSidebarOpen = ref(false); // Set initial value to false
 const overflow = ref<boolean>(false);
 const isAdmin = computed(() => role.value === "Admin");

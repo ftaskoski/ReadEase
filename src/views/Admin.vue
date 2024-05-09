@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import axios from "axios";
 import { onMounted, ref,watch } from "vue";
-const url = "https://localhost:7284/";
+import { url } from "@/store/authStore";
 const users = ref<any[]>([]);
 const getUser = () => {
   axios

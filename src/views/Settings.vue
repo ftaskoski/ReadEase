@@ -86,8 +86,9 @@
 import { ref, onMounted } from "vue";
 import { profilePictureUrl,getProfilePicture } from "@/store/picStore";
 import axios from "axios";
+import { url } from "@/store/authStore";
+
 const newUsername = ref<string>("");
-const url = "https://localhost:7284/";
 const successMsg = ref<string>("");
 const errorMsg = ref<string>("");
 const newPass = ref<string>("");

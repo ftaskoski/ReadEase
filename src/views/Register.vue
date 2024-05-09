@@ -87,12 +87,12 @@ import {
 } from "@/store/authStore";
 import { RouterLink, useRouter } from "vue-router";
 import { getProfilePicture } from "@/store/picStore";
+import { url } from "@/store/authStore";
 
 const router = useRouter();
 const username = ref<string>("");
 const password = ref<string>("");
-// const url = "https://readease-c20240125180045.azurewebsites.net/";
-const url = "https://localhost:7284/";
+
 const errorMsg=ref<string>("")
 const loading = ref<boolean>(false);
 

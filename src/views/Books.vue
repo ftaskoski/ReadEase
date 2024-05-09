@@ -196,9 +196,9 @@ import DeleteModal from "@/components/DeleteModal.vue";
 import BookTable from "@/components/BookTable.vue";
 import EditModal from "@/components/EditModal.vue";
 import Pagination from "@/components/Pagination.vue";
+import { url } from "@/store/authStore";
 
 const router = useRouter();
-const url = "https://localhost:7284/";
 let debounceTimer = 0;
 const author = ref<string>("");
 const title = ref<string>("");
