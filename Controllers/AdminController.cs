@@ -1,8 +1,10 @@
 ﻿using Books.Services;
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadEase_C_.Helpers;
 using ReadEase_C_.Services;
+using System.Data.SqlClient;
 using WebApplication1.Models;
 
 namespace ReadEase_C_.Controllers
@@ -17,7 +19,7 @@ namespace ReadEase_C_.Controllers
 
         private readonly BookService _bookService;
 
-        public AdminController(IConfiguration configuration, UserService service, HashingService hashingService, PhotoService photoService, Mail mail, BookService bookService)
+        public AdminController(IConfiguration configuration, UserService service, BookService bookService)
         {
             _configuration = configuration;
             _userService = service;
@@ -38,5 +40,20 @@ namespace ReadEase_C_.Controllers
             _userService.DeleteUser(id);
             return Ok();
         }
+
+        [HttpGet("paginatedusers")]
+        public IEnumerable<FormModel> GePaginatedtUsers(int pageNumber = 1, int pageSize = 10) {
+            string str = _configuration.GetConnectionString("DefaultConnection");
+            var connection = new SqlConnection(str);
+            int startIndex = (pageNumber - 1) * pageSize;
+
+            string query = "SELECT * FROM USERS WHERE Role = 'User' ORDER BY Id OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY";
+
+            return connection.Query<FormModel>(query, new {startIndex,pageSize});
+
+
+        }
+
+
     }
 }
