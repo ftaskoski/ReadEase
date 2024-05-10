@@ -86,7 +86,7 @@
 import { ref, onMounted } from "vue";
 import { profilePictureUrl,getProfilePicture } from "@/store/picStore";
 import axios from "axios";
-import { url } from "@/store/authStore";
+import { AuthStatus, url } from "@/store/authStore";
 
 const newUsername = ref<string>("");
 const successMsg = ref<string>("");
@@ -108,6 +108,7 @@ function updateCredentials() {
     .then((response) => {
 
       successMsg.value = response.data;
+      AuthStatus();
     })
     .catch((error) => {
       console.error("Error updating username:", error);
