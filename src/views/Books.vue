@@ -112,17 +112,7 @@
         </div>
 
         <div v-if="books.length > 0" class="mt-20">
-          <div>
-            <select
-              v-model="booksPerPage"
-              @change="handleChange"
-              class="w-80 px-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300"
-            >
-              <option v-for="page in booksPerPageArr" :key="page" :value="page">
-                {{ page }}
-              </option>
-            </select>
-          </div>
+          <SelectPerPage :itemsPerPage="booksPerPage" :itemsPerPageArr="booksPerPageArr" @update:itemsPerPage="handleChange" />
 
           <BookTable
             :books="books"
@@ -197,6 +187,7 @@ import BookTable from "@/components/BookTable.vue";
 import EditModal from "@/components/EditModal.vue";
 import Pagination from "@/components/Pagination.vue";
 import { url } from "@/store/authStore";
+import SelectPerPage from "@/components/SelectPerPage.vue";
 
 const router = useRouter();
 let debounceTimer = 0;
@@ -501,7 +492,8 @@ const closeModal = () => {
 
 // Handle fucntions !!!!!!!!!!!!
 
-function handleChange() {
+function handleChange(newValue: number) {
+  booksPerPage.value = newValue;
   currPage.value = 1;
   sessionStorage.setItem("booksPerPage", String(booksPerPage.value));
   sessionStorage.setItem("page", String(currPage.value));

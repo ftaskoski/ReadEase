@@ -18,17 +18,12 @@
 
 
     <div class="mt-20">
-          <div>
-            <select
-              v-model="usersPerPage"
-              @change="changeUsersPerPage"
-              class="w-80 px-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300"
-            >
-              <option v-for="page in booksPerPageArr" :key="page" :value="page">
-                {{ page }}
-              </option>
-            </select>
-          </div>
+      <SelectPerPage
+        :itemsPerPage="usersPerPage"
+        :itemsPerPageArr="usersPerPageArr"
+        @update:itemsPerPage="changeUsersPerPage"
+      />
+
     </div>
     <div class="flex justify-center items-center">
 
@@ -76,12 +71,13 @@ import { onMounted, ref, watch, computed } from "vue";
 import { url } from "@/store/authStore";
 import Pagination from "@/components/Pagination.vue";
 import { useRouter } from "vue-router";
+import SelectPerPage from "@/components/SelectPerPage.vue";
 const router = useRouter();
 const users = ref<any[]>([]);
 const newCategory = ref<string>("");
 const currPage = ref<number>(1);
 const windowSize = ref<number>(3);
-const booksPerPageArr = ref<number[]>([2, 5, 10, 20, 30, 40, 50]);
+const usersPerPageArr = ref<number[]>([2, 5, 10, 20, 30, 40, 50]);
 const usersPerPage = ref<number>(10);
 const paginatedUsers = ref<any[]>([]);
 
@@ -166,24 +162,25 @@ function changePage(page: number) {
   getPaginatedUsers();
 }
 
-function changeUsersPerPage() {
+function changeUsersPerPage(newValue: number) {
+  usersPerPage.value = newValue;
   currPage.value = 1;
-  router.push({
-    query: { usersPerPage: String(usersPerPage.value), currPage: String(currPage.value) },
-
-  })
+  router.push({ query: { usersPerPage: String(usersPerPage.value), currPage: String(currPage.value) }});
   getPaginatedUsers();
 }
 
 onMounted(() => {
   getUser();
-  if (router.currentRoute.value.query.usersPerPage) {
+
+});
+
+if (router.currentRoute.value.query.usersPerPage) {
     usersPerPage.value = Number(router.currentRoute.value.query.usersPerPage);
   }
   if (router.currentRoute.value.query.currPage) {
     currPage.value = Number(router.currentRoute.value.query.currPage);
   }
-});
+
+
 </script>
 
-<style scoped></style>
