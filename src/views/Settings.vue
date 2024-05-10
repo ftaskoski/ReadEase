@@ -2,10 +2,7 @@
   <div
     class="order-1 sm:order-3 sm:ml-64 px-4 sm:px-8 py-8 sm:py-16 md:py-32 lg:py-52"
   >
-    <div class="font-semibold mb-4">
-      <p v-if="successMsg" class="text-green-500">{{ successMsg }}</p>
-      <p v-else class="text-red-500">{{ errorMsg }}</p>
-    </div>
+  
 
     <form @submit.prevent="updateCredentials()" class="space-y-4 ">
       <!-- Input fields for email and password -->
@@ -38,6 +35,14 @@
           Password
         </label>
       </div>
+
+      <!--Messages-->
+      <div class="font-semibold ">
+        <p v-if="successMsg" class="text-green-500">{{ successMsg }}</p>
+        <p v-else class="text-red-500">{{ errorMsg }}</p>
+      </div>
+
+
       <!-- Update button -->
       <button
         data-ripple-light="true"
