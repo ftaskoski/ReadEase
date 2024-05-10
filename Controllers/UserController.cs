@@ -14,6 +14,7 @@ using ReadEase_C_.Helpers;
 using ReadEase_C_.Models;
 using System.Reflection;
 using Books.Services;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace userController.Controllers
 {
@@ -43,10 +44,11 @@ namespace userController.Controllers
         [HttpGet("lookup")]
         [Authorize]
         public IActionResult Lookup()
-        {
+        {     
             var isAuthenticated = User?.Identity?.IsAuthenticated ?? false;
             var role = User?.FindFirstValue(ClaimTypes.Role);
-            var username = User?.FindFirstValue(ClaimTypes.Name);
+           
+            var username = _userService.getUsername(UserId);
 
             var response = new
             {
@@ -300,9 +302,8 @@ namespace userController.Controllers
             
             }
 
-            string emailQuery = "SELECT Username FROM USERS WHERE Id=@id";
 
-            string userEmail = connection.QueryFirstOrDefault<string>(emailQuery, new {Id=UserId});
+            string userEmail = _userService.getUsername(UserId);
 
             string salt = await _hashingService.GetSalt(userEmail, connection);
 

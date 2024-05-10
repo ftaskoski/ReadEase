@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ReadEase_C_.Interface;
 using System.Data.SqlClient;
 using WebApplication1.Models;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace ReadEase_C_.Services
 {
@@ -105,6 +106,14 @@ namespace ReadEase_C_.Services
             await connection.ExecuteAsync(updateQuery, parameters);
 
             return new OkResult();
+        }
+
+        public string getUsername (int id)
+        {
+            var connection = GetSqlConnection();
+            string emailQuery = "SELECT Username FROM USERS WHERE Id=@id";
+
+            return connection.QueryFirst<string>(emailQuery, new { Id = id });
         }
 
 
