@@ -3,6 +3,7 @@ import SettingsVue from "@/views/Settings.vue";
 import HomeVue from "@/views/Home.vue";
 import { isAuthenticated, role} from "@/store/authStore";
 import LoginVue from "@/views/Login.vue";
+import RegisterVue from "@/views/Register.vue";
 import BooksVue from "@/views/Books.vue";
 import AdminVue from "@/views/Admin.vue";
 import Recovery from "@/views/Recovery.vue";
@@ -40,7 +41,7 @@ const router = createRouter({
     {
       path: "/login",
       name: "login",
-      component: () => LoginVue,
+      component: LoginVue,
       meta: {
         title: "Login",
       },
@@ -48,7 +49,7 @@ const router = createRouter({
     {
       path: "/books",
       name: "books",
-      component: () => BooksVue,
+      component: BooksVue,
       meta: {
         requiresAuth: true,
         title: "Books",
@@ -60,7 +61,7 @@ const router = createRouter({
     {
       path: "/register",
       name: "register",
-      component: () => import("@/views/Register.vue"),
+      component: RegisterVue,
       meta: {
         title: "Register",
       },
@@ -68,7 +69,7 @@ const router = createRouter({
     {
       path: "/admin",
       name: "admin",
-      component: () => AdminVue,
+      component: AdminVue,
       meta: {
         requiresAuth: true,
         title: "Admin",
