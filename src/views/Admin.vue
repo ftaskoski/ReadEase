@@ -1,7 +1,8 @@
 <template>
   <div class="order-1 sm:order-2 sm:ml-64 p-4">
 
-    
+              <div class="flex flex-col lg:flex-row justify-between space-y-5 md:space-x-2">
+
     <div class="w-full max-w-md lg:max-w-xl">
   <Card>
     <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">Add New Category</p>
@@ -22,7 +23,26 @@
       <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4" type="submit">Add</button>
     </form>
   </Card>
+    </div>
+
+
+<div class="w-full max-w-md lg:max-w-xl">
+  <Card>
+    <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">Delete Category</p>
+    <div class="flex-wrap  flex items-center justify-center">
+      <div v-for="category in categories" :key="category.categoryId" class="mr-4 mb-2">
+        <div>
+          <label>
+            <input v-model="selectedCategories" :value="category.categoryId"  class="dark:border-white-400/20 dark:scale-100 transition-all duration-500 ease-in-out dark:hover:scale-110 dark:checked:scale-100 w-6 h-6" type="checkbox">{{ category.categoryName }}
+          </label>
+        </div>
+      </div>
+    </div>
+    <button @click="deleteCategories()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-2">Delete</button>
+  </Card>
 </div>
+
+</div>  
 
     <div class="mt-20">
       <SelectPerPage
@@ -88,7 +108,8 @@ const windowSize = ref<number>(3);
 const usersPerPageArr = ref<number[]>([2, 5, 10, 20, 30, 40, 50]);
 const usersPerPage = ref<number>(10);
 const paginatedUsers = ref<any[]>([]);
-
+const categories = ref<any[]>([]);
+const selectedCategories = ref<any[]>([]);
 const totalPages = computed(() => {
   let totalUsers;
 
@@ -159,6 +180,7 @@ const addCategory = () => {
     )
     .then((response) => {
       newCategory.value = "";
+      getAllCategories();
     });
 };
 
@@ -177,8 +199,32 @@ function changeUsersPerPage(newValue: number) {
   getPaginatedUsers();
 }
 
+const getAllCategories = () => {
+  axios
+    .get(`${url}api/categories`, { withCredentials: true })
+    .then((response) => {
+      categories.value = response.data;
+    });
+};
+function deleteCategories() {
+  console.log(`selectedCategories`, selectedCategories.value.join(","));
+  axios
+    .delete(
+      `${url}api/deletecategories`,
+      {
+        data: selectedCategories.value, 
+        withCredentials: true,
+      }
+    )
+    .then((response) => {
+      selectedCategories.value = [];
+      getAllCategories();
+    });
+}
+
 onMounted(() => {
   getUser();
+  getAllCategories();
 
 });
 
