@@ -124,6 +124,7 @@ namespace WebApplication1.Controllers
         [HttpGet("searchandcategoryall")]
         public IEnumerable<BookModel> GetSearchAndCategoryAll(string? search = null, string? searchTitle = null, [FromQuery] string? categories = null)
         {
+            // createing a list for categories because the query needs a list/arr, but we are sending the categorias via query string
             List<int>? categoriesList = null;
             if (!string.IsNullOrEmpty(categories))
             {

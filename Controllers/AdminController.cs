@@ -50,9 +50,22 @@ namespace ReadEase_C_.Controllers
             string query = "SELECT * FROM USERS WHERE Role = 'User' ORDER BY Id OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY";
 
             return connection.Query<FormModel>(query, new {startIndex,pageSize});
+        }
 
+        [HttpDelete("deletecategories")]
+        public void DeleteCategory(List<int> categories)
+        {
+            string str = _configuration.GetConnectionString("DefaultConnection") ?? "";
+            var connection = new SqlConnection(str);
+
+            string deleteQuery = "DELETE FROM CATEGORIES WHERE CategoryId IN @categories";
+
+            connection.Execute(deleteQuery,new {categories});
+            
 
         }
+
+
 
 
     }
