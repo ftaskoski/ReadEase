@@ -126,22 +126,21 @@ const users = ref<any[]>([]);
 const newCategory = ref<string>("");
 const currPage = ref<number>(1);
 const windowSize = ref<number>(3);
-const usersPerPageArr = ref<number[]>([2, 5, 10, 20, 30, 40, 50]);
+const usersPerPageArr = ref<number[]>([1,2, 5, 10, 20, 30, 40, 50]);
 const usersPerPage = ref<number>(10);
 const paginatedUsers = ref<any[]>([]);
 const categories = ref<any[]>([]);
 const selectedCategories = ref<any[]>([]);
 const searchQuery = ref<string>("");
+const totalFilteredusers = ref<any[]>([]);
 let debounceTimer = 0;
 
 const totalPages = computed(() => {
   if (searchQuery.value.trim() !== "") {
-    // If search query is not empty, perform filtering
-    const filteredUsers = users.value.filter(user => user.role !== 'Admin' && user.username.includes(searchQuery.value));
-    const totalUsers = filteredUsers.length;
-    return Math.ceil(totalUsers / usersPerPage.value);
+    const filteredUsers = totalFilteredusers.value.length;
+  
+    return Math.ceil(filteredUsers / usersPerPage.value);
   } else {
-    // If search query is empty, use the original user count
     const totalUsers = users.value.filter(user => user.role !== 'Admin').length;
     return Math.ceil(totalUsers / usersPerPage.value);
   }
@@ -188,6 +187,7 @@ const getPaginatedUsers = () => {
       console.error(error);
     });
 };
+
 const deleteUser = (id: number) => {
   axios
     .delete(`${url}api/delete/${id}`, {
@@ -219,14 +219,24 @@ function changePage(page: number) {
   router.push({
     query: { usersPerPage: String(usersPerPage.value), currPage: String(currPage.value) },
   })
-  getPaginatedUsers();
+  if(searchQuery.value.trim() !== "") {
+    searchUser();
+  }else{
+
+    getPaginatedUsers();
+  }
 }
 
 function changeUsersPerPage(newValue: number) {
   usersPerPage.value = newValue;
   currPage.value = 1;
   router.push({ query: { usersPerPage: String(usersPerPage.value), currPage: String(currPage.value) }});
-  getPaginatedUsers();
+  if(searchQuery.value.trim() !== "") {
+    searchUser();
+  }else{
+
+    getPaginatedUsers();
+  }
 }
 
 const getAllCategories = () => {
@@ -258,11 +268,26 @@ function searchUser() {
       withCredentials: true,
       params: {
         search: searchQuery.value,
+        pageNumber: currPage.value, 
+        pageSize: usersPerPage.value,
       },
     })
     .then((response) => {
       paginatedUsers.value = response.data;
-     
+     searchUsersAll();
+    });
+}
+
+function searchUsersAll() {
+  axios
+    .get(`${url}api/searchusersall`, {
+      withCredentials: true,
+      params: {
+        search: searchQuery.value,
+      },
+    })
+    .then((response) => {
+      totalFilteredusers.value = response.data;
     });
 }
 
