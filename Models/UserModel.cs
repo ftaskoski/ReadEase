@@ -2,7 +2,7 @@
 
 namespace WebApplication1.Models
 {
-    public class FormModel : IFormModel
+    public class UserModel : IUserModel
     {
         public int Id { get; set; }
         public string Username { get; set; }

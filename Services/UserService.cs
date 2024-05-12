@@ -21,11 +21,11 @@ namespace ReadEase_C_.Services
             return new SqlConnection(connectionString);
         }
 
-        private IEnumerable<FormModel> QueryUsers(string query, object parameters = null)
+        private IEnumerable<UserModel> QueryUsers(string query, object parameters = null)
         {
             using (var connection = GetSqlConnection())
             {
-                return connection.Query<FormModel>(query, parameters);
+                return connection.Query<UserModel>(query, parameters);
             }
         }
 
@@ -35,7 +35,7 @@ namespace ReadEase_C_.Services
             connection.Execute(query, parametars);
         }
 
-        public IEnumerable<FormModel> GetAllUsers()
+        public IEnumerable<UserModel> GetAllUsers()
         {
             string selectQuery = "SELECT * FROM Users";
             return QueryUsers(selectQuery);

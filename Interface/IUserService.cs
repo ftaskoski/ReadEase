@@ -7,7 +7,7 @@ namespace ReadEase_C_.Interface
     {
         Task<string> CheckIfUserIsAdminAsync(int userId);
         void DeleteUser(int id);
-        IEnumerable<FormModel> GetAllUsers();
+        IEnumerable<UserModel> GetAllUsers();
         Task<IActionResult> UpdateUserAsync(string newUser,string newPass, int id);
     }
 }

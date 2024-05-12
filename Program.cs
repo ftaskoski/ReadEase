@@ -1,4 +1,4 @@
- using Books.Services;
+using Books.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using ReadEase_C_.Helpers;
 using ReadEase_C_.Services;
@@ -13,6 +13,7 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<HashingService>();
 builder.Services.AddScoped<PhotoService>();
 builder.Services.AddScoped<Mail>();
+builder.Services.AddScoped<ConnectionService>();
 
 builder.Services.AddAuthentication(options =>
 {

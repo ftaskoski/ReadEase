@@ -6,15 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using ReadEase_C_.Services;
 using RestSharp;
 using System.Data.SqlClient;
-using System.Net.Mail;
-using System.Net;
 using System.Security.Claims;
 using WebApplication1.Models;
 using ReadEase_C_.Helpers;
 using ReadEase_C_.Models;
-using System.Reflection;
 using Books.Services;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace userController.Controllers
 {
@@ -78,7 +74,7 @@ namespace userController.Controllers
 
 
         [HttpPost("register")]
-        public async Task<IActionResult> PostUser([FromBody] FormModel model)
+        public async Task<IActionResult> PostUser([FromBody] UserModel model)
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
@@ -108,7 +104,7 @@ namespace userController.Controllers
                 string insertQuery = "INSERT INTO Users (Username, Password, Salt, Role) OUTPUT INSERTED.Id VALUES (@Username, @Password, @Salt, 'User')";
                 int userId = await connection.QueryFirstOrDefaultAsync<int>(insertQuery, new { Username = model.Username, Password = hashedPassword, Salt = salt });
 
-                // Set the generated Id in the FormModel
+                // Set the generated Id in the UserModel
                 model.Id = userId;
                 string role = await _userService.CheckIfUserIsAdminAsync(model.Id);
 
@@ -142,7 +138,7 @@ namespace userController.Controllers
 
 
         [HttpPost("login")]
-        public async Task<ActionResult> LoginUser([FromBody] FormModel model)
+        public async Task<ActionResult> LoginUser([FromBody] UserModel model)
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
@@ -161,7 +157,7 @@ namespace userController.Controllers
                 string hashedPassword = await _hashingService.GenerateSaltedHash(model.Password, salt);
 
                 string selectQuery = "SELECT * FROM Users WHERE Username = @Username AND Password = @Password";
-                var user = await connection.QueryFirstOrDefaultAsync<FormModel>(selectQuery, new { Username = model.Username, Password = hashedPassword });
+                var user = await connection.QueryFirstOrDefaultAsync<UserModel>(selectQuery, new { Username = model.Username, Password = hashedPassword });
 
               
 
