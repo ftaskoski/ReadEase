@@ -75,14 +75,24 @@ namespace ReadEase_C_.Controllers
 
 
         [HttpGet("searchusers")]
-        public IEnumerable<UserModel> SearchedUsers(string search)
+        public IEnumerable<UserModel> SearchedUsers(string search, int pageNumber = 1, int pageSize = 10)
         {
             var connection = _connectionService.GetConnection();
-            string searchQuery = "SELECT * FROM USERS WHERE Username LIKE @search AND Role='User'";
-           return connection.Query<UserModel>(searchQuery, new { search=$"{search}%" });
+            int startIndex = (pageNumber - 1) * pageSize;
+            string searchQuery = "SELECT * FROM USERS WHERE Username LIKE @search AND Role='User' ORDER BY Id OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY";
+           return connection.Query<UserModel>(searchQuery, new { search=$"{search}%",startIndex,pageSize });
 
         }
 
+
+        [HttpGet("searchusersall")]
+        public IEnumerable<UserModel> SearchedUsersall(string search)
+        {
+            var connection = _connectionService.GetConnection();
+            string searchQuery = "SELECT * FROM USERS WHERE Username LIKE @search AND Role='User'";
+            return connection.Query<UserModel>(searchQuery, new { search = $"{search}%",});
+
+        }
 
 
 
