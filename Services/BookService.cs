@@ -2,6 +2,7 @@
 using Dapper;
 using ReadEase_C_.Interface;
 using ReadEase_C_.Models;
+using ReadEase_C_.Services;
 using WebApplication1.Models;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
@@ -11,10 +12,11 @@ namespace Books.Services
     public class BookService : IBookService
     {
         private readonly IConfiguration _configuration;
-
-        public BookService(IConfiguration configuration)
+        private readonly ConnectionService _connectionService;
+        public BookService(IConfiguration configuration,ConnectionService CS)
         {
             _configuration = configuration;
+            _connectionService = CS;
         }
 
         private SqlConnection GetSqlConnection()
@@ -113,10 +115,13 @@ namespace Books.Services
 
 
 
-        public IEnumerable<BookModel> SearchAndCategory(int UserId, string? search, string? searchTitle = null, List<int>? categories = null, int pageNumber = 1, int pageSize = 10)
+        public (IEnumerable<BookModel>, int) SearchAndCategory(int UserId, string? search, string? searchTitle = null, List<int>? categories = null, int pageNumber = 1, int pageSize = 10)
         {
             int startIndex = (pageNumber - 1) * pageSize;
             var getQuery = "SELECT * FROM Books WHERE UserId=@Id ";
+            var countQuery = "SELECT COUNT(*) FROM Books WHERE UserId=@Id ";
+            var _connection = _connectionService.GetConnection();
+
             var parameters = new DynamicParameters();
             parameters.Add("@Id", UserId);
 
@@ -124,12 +129,14 @@ namespace Books.Services
             if (!string.IsNullOrEmpty(search))
             {
                 getQuery += "AND AUTHOR LIKE @search ";
+                countQuery += "AND AUTHOR LIKE @search ";
                 parameters.Add("@search", $"{search}%");
             }
 
             if (!string.IsNullOrEmpty(searchTitle))
             {
                 getQuery += "AND TITLE LIKE @searchTitle ";
+                countQuery += "AND TITLE LIKE @searchTitle ";
                 parameters.Add("@searchTitle", $"{searchTitle}%");
             }
 
@@ -137,17 +144,22 @@ namespace Books.Services
             if (categories != null && categories.Any())
             {
                 getQuery += "AND CategoryId IN @categories ";
+                countQuery += "AND CategoryId IN @categories ";
                 parameters.Add("@categories", categories);
             }
 
             getQuery += "ORDER BY CategoryId OFFSET @startIndex ROWS FETCH NEXT @pageSize ROWS ONLY ";
             parameters.Add("@startIndex", startIndex);
             parameters.Add("@pageSize", pageSize);
+            int totalCount = _connection.QueryFirstOrDefault<int>(countQuery, parameters);
 
-            return QueryBooks(getQuery, parameters);
+            var books = QueryBooks(getQuery, parameters);
+
+            return (books, totalCount); 
         }
 
-        
+
+
         public void UpdateBook(UpdateBook book)
         {
             var connection = GetSqlConnection();

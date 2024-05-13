@@ -11,7 +11,7 @@ namespace ReadEase_C_.Interface
         IEnumerable<BookModel> GetPaginatedBooks(int id, int pageNumber = 1, int pageSize = 10);
         IEnumerable<BookModel> GetPaginatedBooksFromSearch(int id, string search, int pageNumber = 1, int pageSize = 10);
         void InsertBook(BookModel book, int id);
-        IEnumerable<BookModel> SearchAndCategory(int UserId, string? search,  string searchTitle, List<int>? categories = null, int pageNumber = 1, int pageSize = 10);
+        public (IEnumerable<BookModel>, int) SearchAndCategory(int UserId, string? search, string? searchTitle = null, List<int>? categories = null, int pageNumber = 1, int pageSize = 10);
         public IEnumerable<BookModel> SearchAndCategoryAll(int UserId, string? search = null, string? searchTitle = null, List<int>? categories = null);
         void UpdateBook(UpdateBook book);
         void DeleteBooksByUser(int userId);

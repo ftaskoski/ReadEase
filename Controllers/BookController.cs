@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Data.SqlClient;
 using ReadEase_C_.Models;
 using System.Data;
+using ReadEase_C_.Services;
 
 namespace WebApplication1.Controllers
 {
@@ -19,10 +20,12 @@ namespace WebApplication1.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly BookService _bookService;
-        public BooksController(IConfiguration configuration, BookService bookService)
+        private readonly ConnectionService _connectionService;
+        public BooksController(IConfiguration configuration, BookService bookService, ConnectionService connectionService)
         {
             _configuration = configuration;
             _bookService = bookService;
+            _connectionService = connectionService;
         }
         private int UserId
         {
@@ -78,10 +81,20 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("getbooks")]
-        public IActionResult GetBooks( int pageNumber = 1, int pageSize = 10)
+        public IActionResult GetBooks(int pageNumber = 1, int pageSize = 10)
         {
-           var books =_bookService.GetPaginatedBooks(UserId,pageNumber,pageSize);
-           return Ok(books);
+            var books = _bookService.GetPaginatedBooks(UserId, pageNumber, pageSize);
+            var connection = _connectionService.GetConnection();
+            int offset = (pageNumber - 1) * pageSize;
+            string str = "SELECT COUNT(*) FROM BOOKS WHERE UserId=@id"; // Define the SQL query
+            int totalCount = connection.QueryFirstOrDefault<int>(str, new { id = UserId }); // Pass parameters separately
+            int startBookIndex = offset + 1;
+            int endBookIndex = Math.Min(offset + pageSize, totalCount);
+            return Ok(new
+            {
+                Books = books,
+                Range = $"Displaying books {startBookIndex}-{endBookIndex} out of {totalCount}"
+            });
         }
 
         [HttpGet("searchbooksall")]
@@ -134,15 +147,28 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("searchandcategory")]
-        public IEnumerable<BookModel> GetSearchAndCategory(string? search = null, string? searchTitle = null, [FromQuery] string? categories = null, int pageNumber = 1, int pageSize = 10)
+        public IActionResult GetSearchAndCategory(string? search = null, string? searchTitle = null, [FromQuery] string? categories = null, int pageNumber = 1, int pageSize = 10)
         {
             List<int>? categoriesList = null;
             if (!string.IsNullOrEmpty(categories))
             {
                 categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
             }
-            return _bookService.SearchAndCategory(UserId, search, searchTitle, categoriesList, pageNumber, pageSize);
+
+            var (books, totalCount) = _bookService.SearchAndCategory(UserId, search, searchTitle, categoriesList, pageNumber, pageSize);
+
+            int offset = (pageNumber - 1) * pageSize;
+            int startBookIndex = offset + 1;
+            int endBookIndex = Math.Min(offset + pageSize, totalCount);
+
+            return Ok(new
+            {
+                Books = books,
+                Range = $"Displaying books {startBookIndex}-{endBookIndex} out of {totalCount}"
+            });
         }
+
+
 
         [HttpPost("updatebook")]
         public IActionResult UpdateBook(UpdateBook book)
