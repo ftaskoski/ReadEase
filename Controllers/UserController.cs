@@ -231,16 +231,20 @@ namespace userController.Controllers
         [Authorize]
         public IActionResult Photo(IFormFile file)
         {
-
             if (file == null || file.Length == 0)
                 return BadRequest("No file is uploaded.");
+
+            // Check if the uploaded file is a valid image format
+            string[] allowedImageTypes = { "image/jpeg", "image/png" }; // JPEG and PNG only
+            if (!allowedImageTypes.Contains(file.ContentType))
+                return BadRequest("Invalid file format. Only JPEG and PNG formats are allowed.");
 
             using (var memoryStream = new MemoryStream())
             {
                 file.CopyTo(memoryStream);
                 var imageBytes = memoryStream.ToArray();
 
-                _photoService.InsertPhoto(UserId,imageBytes);
+                _photoService.InsertPhoto(UserId, imageBytes);
             }
 
             return Ok("Photo uploaded successfully.");
