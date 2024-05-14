@@ -35,10 +35,12 @@
   <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">Logged in as: {{ username }}</p>
 
   <!-- Profile picture container -->
-  <div class="relative w-10">
-    <div class="rounded-full overflow-hidden w-10 h-10">
+  <div class="mt-4">
+    <div class="rounded-full overflow-hidden w-10 h-10   ">
       <img
-        class="w-full h-full object-cover"
+      class="-mt-3 "
+        width="100%"
+        height="100%"
         :src="profilePictureUrl ? profilePictureUrl : ''"
         alt=""
       />
