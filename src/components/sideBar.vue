@@ -36,19 +36,13 @@
 
   <!-- Profile picture container -->
   <div class="mt-4">
-    <div class="rounded-full overflow-hidden w-10 h-10   ">
-      <img
-      class="-mt-3 "
-        width="100%"
-        height="100%"
-        :src="profilePictureUrl ? profilePictureUrl : ''"
-        alt=""
-      />
-    </div>
+  <div class="rounded-full overflow-hidden w-10 h-10 relative" 
+       :style="{backgroundImage: `url(${profilePictureUrl})`, backgroundSize: 'cover', backgroundPosition: 'center center'}">
   </div>
-
 </div>
 
+
+</div>
         <ul class="space-y-2 font-medium">
             <li v-for="link in navLinks" :key="link.to" @click="link.onClick ? link.onClick() : toggleSidebarOnPhone()">
               <RouterLink
