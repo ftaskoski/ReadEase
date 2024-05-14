@@ -11,6 +11,9 @@ using WebApplication1.Models;
 using ReadEase_C_.Helpers;
 using ReadEase_C_.Models;
 using Books.Services;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace userController.Controllers
 {
@@ -227,6 +230,7 @@ namespace userController.Controllers
 
 
 
+
         [HttpPost("photo")]
         [Authorize]
         public IActionResult Photo(IFormFile file)
@@ -242,9 +246,39 @@ namespace userController.Controllers
             using (var memoryStream = new MemoryStream())
             {
                 file.CopyTo(memoryStream);
-                var imageBytes = memoryStream.ToArray();
 
-                _photoService.InsertPhoto(UserId, imageBytes);
+                // Resize the image while maintaining aspect ratio
+                using (var image = SixLabors.ImageSharp.Image.Load(memoryStream.ToArray()))
+                {
+                    // Calculate resizing dimensions while maintaining aspect ratio
+                    int width = image.Width;
+                    int height = image.Height;
+                    int maxSize = 460;
+
+                    if (width > height)
+                    {
+                        height = (int)Math.Round((double)height / width * maxSize);
+                        width = maxSize;
+                    }
+                    else
+                    {
+                        width = (int)Math.Round((double)width / height * maxSize);
+                        height = maxSize;
+                    }
+
+                    // Resize the image
+                    image.Mutate(x => x.Resize(width, height));
+
+                    // Save the resized image with appropriate compression settings
+                    using (var resizedMemoryStream = new MemoryStream())
+                    {
+                        image.SaveAsJpeg(resizedMemoryStream, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder
+                        {
+                            Quality = 90 // Adjust quality as needed (0-100)
+                        });
+                        _photoService.InsertPhoto(UserId, resizedMemoryStream.ToArray());
+                    }
+                }
             }
 
             return Ok("Photo uploaded successfully.");

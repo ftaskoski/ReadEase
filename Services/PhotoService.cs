@@ -34,10 +34,9 @@ namespace ReadEase_C_.Services
         public void InsertPhoto(int UserId, byte[] photo)
         {
             var connection = GetSqlConnection();
-            string insertQuery = "UPDATE Users SET photo = @Photo WHERE Id = @UserId";
+            string insertQuery = "UPDATE Users SET photo = @Photo WHERE Id = @UserId"; // Update column name to ProfilePicture
 
             connection.Execute(insertQuery, new { Photo = photo, UserId });
-
         }
     }
 }
