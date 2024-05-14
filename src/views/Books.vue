@@ -69,7 +69,7 @@
           class="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:flex-shrink before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900"
           :class="{ 'placeholder-shown': !title }"
         >
-         By Author
+          Author
         </label>
       </div>
       <div class="relative w-full h-10 mt-2">
@@ -83,7 +83,7 @@
           class="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:flex-shrink before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900"
           :class="{ 'placeholder-shown': !title }"
         >
-         By Title
+         Title
         </label>
       </div>
   </Card>
@@ -157,7 +157,7 @@
             @update:newTitle="newTitle = $event"
             @update:newCategoryId="newCategoryId = $event"
           />
-
+          <p class=" font-semibold text-gray-900 mt-2 ">{{ paginationDetails }}</p>
           <Pagination
             :currPage="currPage"
             :totalPages="totalPages"
@@ -193,13 +193,8 @@ const router = useRouter();
 let debounceTimer = 0;
 const author = ref<string>("");
 const title = ref<string>("");
-const selectedCategory = ref<
-  | {
-      categoryName: string;
-      categoryId: number;
-    }
-  | ""
->("");
+const selectedCategory = ref<{ categoryName: string; categoryId: number; } | "">("");
+
 const categories = ref<any[]>([]);
 const bookCollection = ref<any[]>([]);
 const bookPaginated = ref<any[]>([]);
@@ -222,6 +217,7 @@ const currCategoryId = ref<number | undefined>(0);
 // Pagination !!!!!!!!!!!!
 const currPage = ref<number>(1);
 const searchTitle = ref<string>("");
+const paginationDetails = ref<string>("");
 
 const totalPages = computed(() => {
   let totalBooks;
@@ -275,8 +271,9 @@ const getBooks = () => {
       withCredentials: true,
     })
     .then((response) => {
-      bookPaginated.value = response.data;
-      books.value = response.data;
+      bookPaginated.value = response.data.books;
+      books.value = response.data.books;
+      paginationDetails.value = response.data.range;
     })
     .catch((error) => {
       console.error(error);
@@ -306,6 +303,7 @@ const filterBooksAll = () => {
 };
 
 const filterBooksPaginated = () => {
+  paginationDetails.value = "";
   const searchParams = {
     search: searchQuery.value,
     searchTitle: searchTitle.value,
@@ -319,7 +317,8 @@ const filterBooksPaginated = () => {
       withCredentials: true,
     })
     .then((response) => {
-      books.value = response.data;      
+      books.value = response.data.books; 
+      paginationDetails.value = response.data.range;     
       sessionStorage.setItem("search", searchQuery.value);
       sessionStorage.setItem("categories", String(checkedCategories.value));
       sessionStorage.setItem("page", String(currPage.value));
