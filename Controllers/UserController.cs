@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadEase_C_.Services;
 using RestSharp;
-using System.Data.SqlClient;
 using System.Security.Claims;
 using WebApplication1.Models;
 using ReadEase_C_.Helpers;
@@ -13,7 +12,6 @@ using ReadEase_C_.Models;
 using Books.Services;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace userController.Controllers
 {
@@ -27,8 +25,9 @@ namespace userController.Controllers
         private readonly PhotoService _photoService;
         private readonly Mail _mail;
         private readonly BookService _bookService;
+        private readonly ConnectionService _connectionService;
 
-        public UsersController(IConfiguration configuration,UserService service, HashingService hashingService, PhotoService photoService, Mail mail,BookService bookService)
+        public UsersController(IConfiguration configuration, UserService service, HashingService hashingService, PhotoService photoService, Mail mail, BookService bookService, ConnectionService CS)
         {
             _configuration = configuration;
             _userService = service;
@@ -36,24 +35,25 @@ namespace userController.Controllers
             _photoService = photoService;
             _mail = mail;
             _bookService = bookService;
+            _connectionService = CS;
         }
 
- 
+
 
         [HttpGet("lookup")]
         [Authorize]
         public IActionResult Lookup()
-        {     
+        {
             var isAuthenticated = User?.Identity?.IsAuthenticated ?? false;
             var role = User?.FindFirstValue(ClaimTypes.Role);
-           
+
             var username = _userService.getUsername(UserId);
 
             var response = new
             {
                 IsAuthenticated = isAuthenticated,
                 Role = role,
-                Username = username 
+                Username = username
             };
 
             return Ok(response);
@@ -66,59 +66,114 @@ namespace userController.Controllers
             Response.Cookies.Delete(".AspNetCore.Cookies", new CookieOptions
             {
                 Path = "/",
-                Secure = true, 
+                Secure = true,
                 HttpOnly = true,
-               SameSite = SameSiteMode.None
+                SameSite = SameSiteMode.None
             });
 
 
-            return Ok( "Logout successful" );
+            return Ok("Logout successful");
         }
 
 
         [HttpPost("register")]
         public async Task<IActionResult> PostUser([FromBody] UserModel model)
         {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            var connection = _connectionService.GetConnection();
 
-            using (var connection = new SqlConnection(connectionString))
+
+            if (model.Password.Length < 3)
             {
-                if (model.Password.Length < 3)
-                {
-                    return Conflict("Password is too short!");
-                }
-                // Retrieve salt asynchronously
-                string salt = await _hashingService.GenerateSaltAsync();
+                return Conflict("Password is too short!");
+            }
+            // Retrieve salt asynchronously
+            string salt = await _hashingService.GenerateSaltAsync();
 
-                // Hash the password with retrieved salt
-                string hashedPassword = await _hashingService.GenerateSaltedHash(model.Password, salt);
+            // Hash the password with retrieved salt
+            string hashedPassword = await _hashingService.GenerateSaltedHash(model.Password, salt);
 
-                // Check if the user with the same username already exists
-                string checkUserQuery = "SELECT COUNT(*) FROM Users WHERE Username = @Username";
-                int existingUser = await connection.QueryFirstOrDefaultAsync<int>(checkUserQuery, new { Username = model.Username });
+            // Check if the user with the same username already exists
+            string checkUserQuery = "SELECT COUNT(*) FROM Users WHERE Username = @Username";
+            int existingUser = await connection.QueryFirstOrDefaultAsync<int>(checkUserQuery, new { Username = model.Username });
 
-                if (existingUser > 0)
-                {
-                    // User with the same username already exists, handle accordingly
-                    return Conflict("Username already exists!");
-                }
+            if (existingUser > 0)
+            {
+                // User with the same username already exists, handle accordingly
+                return Conflict("Username already exists!");
+            }
 
-                // Insert the data into the Users table and retrieve the generated Id using Dapper
-                string insertQuery = "INSERT INTO Users (Username, Password, Salt, Role) OUTPUT INSERTED.Id VALUES (@Username, @Password, @Salt, 'User')";
-                int userId = await connection.QueryFirstOrDefaultAsync<int>(insertQuery, new { Username = model.Username, Password = hashedPassword, Salt = salt });
+            // Insert the data into the Users table and retrieve the generated Id using Dapper
+            string insertQuery = "INSERT INTO Users (Username, Password, Salt, Role) OUTPUT INSERTED.Id VALUES (@Username, @Password, @Salt, 'User')";
+            int userId = await connection.QueryFirstOrDefaultAsync<int>(insertQuery, new { Username = model.Username, Password = hashedPassword, Salt = salt });
 
-                // Set the generated Id in the UserModel
-                model.Id = userId;
-                string role = await _userService.CheckIfUserIsAdminAsync(model.Id);
+            // Set the generated Id in the UserModel
+            model.Id = userId;
+            string role = await _userService.CheckIfUserIsAdminAsync(model.Id);
 
-                // Create claims for the registered user
-                var claims = new List<Claim>
-        {
+            // Create claims for the registered user
+            List<Claim> claims = [
             new Claim(ClaimTypes.NameIdentifier, model.Id.ToString()),
             new Claim(ClaimTypes.Name, model.Username),
-            new Claim(ClaimTypes.Role, role ?? "User")
+            new Claim(ClaimTypes.Role, role ?? "User")];
             // Add additional claims as needed
-        };
+
+            var authProperties = new AuthenticationProperties
+            {
+                // Persist the cookie even after the browser is closed
+                IsPersistent = true
+            };
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var principal = new ClaimsPrincipal(identity);
+
+            // Sign in the user after successful registration
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
+            model.Role = role ?? "User";
+
+            // Send the registration success email
+            _mail.SendEmail(model.Username);
+            // Return the user's role after successful registration
+            return Ok(model.Role);
+
+        }
+
+
+        [HttpPost("login")]
+        public async Task<ActionResult> LoginUser([FromBody] UserModel model)
+        {
+
+            var connection = _connectionService.GetConnection();
+
+            // Retrieve the salt for the user
+            string salt = await _hashingService.GetSalt(model.Username, connection);
+
+            if (salt == null)
+            {
+                // User not found, return 401 Unauthorized
+                return Conflict("User does not exist!");
+            }
+
+            // Hash the password with retrieved salt
+            string hashedPassword = await _hashingService.GenerateSaltedHash(model.Password, salt);
+
+            string selectQuery = "SELECT * FROM Users WHERE Username = @Username AND Password = @Password";
+            var user = await connection.QueryFirstOrDefaultAsync<UserModel>(selectQuery, new { Username = model.Username, Password = hashedPassword });
+
+
+
+
+            if (user != null)
+            {
+                // Retrieve the role from the database
+                string role = await _userService.CheckIfUserIsAdminAsync(user.Id);
+
+                // Create claims for the authenticated user
+                List<Claim> claims =
+                [
+                new (ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new (ClaimTypes.Name, user.Username),
+                new (ClaimTypes.Role, role ?? "User")];
+
                 var authProperties = new AuthenticationProperties
                 {
                     // Persist the cookie even after the browser is closed
@@ -128,78 +183,18 @@ namespace userController.Controllers
 
                 var principal = new ClaimsPrincipal(identity);
 
-                // Sign in the user after successful registration
+                // Sign in the user
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
-                model.Role = role ?? "User";
 
-                // Send the registration success email
-                _mail.SendEmail(model.Username);
-                // Return the user's role after successful registration
-                return Ok(model.Role);
+                user.Role = role ?? "User";
+                return Ok(user.Role);
             }
-        }
-
-
-        [HttpPost("login")]
-        public async Task<ActionResult> LoginUser([FromBody] UserModel model)
-        {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            using (var connection = new SqlConnection(connectionString))
+            else
             {
-                // Retrieve the salt for the user
-                string salt = await _hashingService.GetSalt(model.Username, connection);
-
-                if (salt == null)
-                {
-                    // User not found, return 401 Unauthorized
-                    return Conflict("User does not exist!");
-                }
-
-                // Hash the password with retrieved salt
-                string hashedPassword = await _hashingService.GenerateSaltedHash(model.Password, salt);
-
-                string selectQuery = "SELECT * FROM Users WHERE Username = @Username AND Password = @Password";
-                var user = await connection.QueryFirstOrDefaultAsync<UserModel>(selectQuery, new { Username = model.Username, Password = hashedPassword });
-
-              
-
-
-                if (user != null)
-                {
-                    // Retrieve the role from the database
-                    string role = await _userService.CheckIfUserIsAdminAsync(user.Id);
-
-                    // Create claims for the authenticated user
-                   List<Claim> claims =
-                   [
-                new (ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new (ClaimTypes.Name, user.Username),
-                new (ClaimTypes.Role, role ?? "User") // Default to "User" if role is null
-                                                           // Add additional claims as needed
-                    ];
-
-                    var authProperties = new AuthenticationProperties
-                    {
-                        // Persist the cookie even after the browser is closed
-                        IsPersistent = true
-                    };
-                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                    var principal = new ClaimsPrincipal(identity);
-
-                    // Sign in the user
-                   await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
-
-                    user.Role = role ?? "User";                    
-                    return Ok(user.Role);
-                }
-                else
-                {
-                    // Return 401 Unauthorized
-                    return Conflict("Incorrect password!");
-                }
+                // Return 401 Unauthorized
+                return Conflict("Incorrect password!");
             }
+
         }
 
 
@@ -207,8 +202,8 @@ namespace userController.Controllers
         [HttpPost("recover")]
         public async Task<ActionResult> PasswordRecovery([FromBody] RecoveryMail mail)
         {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            using var connection = new SqlConnection(connectionString);
+            var connection = _connectionService.GetConnection();
+
 
             string countQuery = "SELECT COUNT(*) FROM USERS WHERE Username=@Username ";
             int user = connection.QueryFirstOrDefault<int>(countQuery, new { Username = mail.email });
@@ -222,8 +217,8 @@ namespace userController.Controllers
             string randowPass = _hashingService.GenerateRandomPassword(6);
             string hashedPass = await _hashingService.GenerateSaltedHash(randowPass, salt);
             string insertQuery = "UPDATE USERS SET Password=@Value1 WHERE Username=@Username ";
-            connection.Execute(insertQuery,new {Username=mail.email,Value1=hashedPass});
-            
+            connection.Execute(insertQuery, new { Username = mail.email, Value1 = hashedPass });
+
             _mail.RecoverEmail(mail.email, randowPass);
             return Ok("Your new password is sent to your e-mail!");
         }
@@ -248,37 +243,33 @@ namespace userController.Controllers
                 file.CopyTo(memoryStream);
 
                 // Resize the image while maintaining aspect ratio
-                using (var image = SixLabors.ImageSharp.Image.Load(memoryStream.ToArray()))
+                using var image = SixLabors.ImageSharp.Image.Load(memoryStream.ToArray());
+                // Calculate resizing dimensions while maintaining aspect ratio
+                int width = image.Width;
+                int height = image.Height;
+                int maxSize = 460;
+
+                if (width > height)
                 {
-                    // Calculate resizing dimensions while maintaining aspect ratio
-                    int width = image.Width;
-                    int height = image.Height;
-                    int maxSize = 460;
-
-                    if (width > height)
-                    {
-                        height = (int)Math.Round((double)height / width * maxSize);
-                        width = maxSize;
-                    }
-                    else
-                    {
-                        width = (int)Math.Round((double)width / height * maxSize);
-                        height = maxSize;
-                    }
-
-                    // Resize the image
-                    image.Mutate(x => x.Resize(width, height));
-
-                    // Save the resized image with appropriate compression settings
-                    using (var resizedMemoryStream = new MemoryStream())
-                    {
-                        image.SaveAsJpeg(resizedMemoryStream, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder
-                        {
-                            Quality = 90 // Adjust quality as needed (0-100)
-                        });
-                        _photoService.InsertPhoto(UserId, resizedMemoryStream.ToArray());
-                    }
+                    height = (int)Math.Round((double)height / width * maxSize);
+                    width = maxSize;
                 }
+                else
+                {
+                    width = (int)Math.Round((double)width / height * maxSize);
+                    height = maxSize;
+                }
+
+                // Resize the image
+                image.Mutate(x => x.Resize(width, height));
+
+                // Save the resized image with appropriate compression settings
+                using var resizedMemoryStream = new MemoryStream();
+                image.SaveAsJpeg(resizedMemoryStream, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder
+                {
+                    Quality = 90 // Adjust quality as needed (0-100)
+                });
+                _photoService.InsertPhoto(UserId, resizedMemoryStream.ToArray());
             }
 
             return Ok("Photo uploaded successfully.");
@@ -325,15 +316,16 @@ namespace userController.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateUser([FromBody] updateCredentialsModal user)
         {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            using var connection = new SqlConnection(connectionString);
+            var connection = _connectionService.GetConnection();
+
 
             string countUsers = "SELECT COUNT(*) FROM USERS WHERE Username=@Username";
             int count = connection.QueryFirst<int>(countUsers, new { Username = user.UpdatedUsername });
 
-            if(count > 0) {
+            if (count > 0)
+            {
                 return Conflict("Email alredy in use!");
-            
+
             }
 
 
