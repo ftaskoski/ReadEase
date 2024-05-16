@@ -1,10 +1,8 @@
-﻿using Books.Services;
-using Dapper;
+﻿using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadEase_C_.Interface;
 using ReadEase_C_.Models;
-using ReadEase_C_.Services;
 using WebApplication1.Models;
 
 namespace ReadEase_C_.Controllers
@@ -14,14 +12,12 @@ namespace ReadEase_C_.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
         private readonly IBookService _bookService;
         private readonly IConnectionService _connectionService;
 
-        public AdminController(IConfiguration configuration, IUserService service, IBookService bookService, IConnectionService connectionService)
+        public AdminController(IUserService service, IBookService bookService, IConnectionService connectionService)
         {
-            _configuration = configuration;
             _userService = service;
             _bookService = bookService;
             _connectionService = connectionService;

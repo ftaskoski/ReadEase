@@ -22,24 +22,21 @@ namespace WebApplication1.Controllers
         private readonly IConfiguration _configuration;
         private readonly IBookService _bookService;
         private readonly IConnectionService _connectionService;
-        public BooksController(IConfiguration configuration, IBookService bookService, IConnectionService connectionService)
+        private readonly IUserManager _userManager;
+        public BooksController(IConfiguration configuration, IBookService bookService, IConnectionService connectionService, IUserManager userManager)
         {
             _configuration = configuration;
             _bookService = bookService;
             _connectionService = connectionService;
+            _userManager = userManager;
+
         }
-        private int UserId
-        {
-            get
-            {
-                return Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            }
-        }
+
         [HttpGet("downloadbooks")]
         public IActionResult DownloadBooks()
         {
             
-            var books = _bookService.GetAllBooksForUser(UserId);
+            var books = _bookService.GetAllBooksForUser(_userManager.GetUserId(User));
 
             if (books?.AsList().Count > 0)
             {
@@ -84,11 +81,11 @@ namespace WebApplication1.Controllers
         [HttpGet("getbooks")]
         public IActionResult GetBooks(int pageNumber = 1, int pageSize = 10)
         {
-            var books = _bookService.GetPaginatedBooks(UserId, pageNumber, pageSize);
+            var books = _bookService.GetPaginatedBooks(_userManager.GetUserId(User), pageNumber, pageSize);
             var connection = _connectionService.GetConnection();
             int offset = (pageNumber - 1) * pageSize;
             string str = "SELECT COUNT(*) FROM BOOKS WHERE UserId=@id"; // Define the SQL query
-            int totalCount = connection.QueryFirstOrDefault<int>(str, new { id = UserId }); // Pass parameters separately
+            int totalCount = connection.QueryFirstOrDefault<int>(str, new { id = _userManager.GetUserId(User) }); // Pass parameters separately
             int startBookIndex = offset + 1;
             int endBookIndex = Math.Min(offset + pageSize, totalCount);
             return Ok(new
@@ -101,28 +98,28 @@ namespace WebApplication1.Controllers
         [HttpGet("searchbooksall")]
         public IActionResult SearchBooksAll( string search)
         {
-          var searchedBooks = _bookService.GetAllBooksFromSearch(UserId,search);
+          var searchedBooks = _bookService.GetAllBooksFromSearch(_userManager.GetUserId(User),search);
           return Ok(searchedBooks);
         }
 
         [HttpGet("searchbooks")]
         public IActionResult SearchBooks( string search,int pageNumber,int pageSize=10)
         {
-            var book = _bookService.GetPaginatedBooksFromSearch(UserId,search,pageNumber,pageSize);
+            var book = _bookService.GetPaginatedBooksFromSearch(_userManager.GetUserId(User),search,pageNumber,pageSize);
             return Ok(book);
         }
 
         [HttpPost("insertbook")]
         public IActionResult InsertBook([FromBody] BookModel model)
         {
-            _bookService.InsertBook(model,UserId);
+            _bookService.InsertBook(model,_userManager.GetUserId(User));
             return Ok("Book has been added");
         }
 
         [HttpGet("getallbooks")]
         public IEnumerable<BookModel> GetAllBooks()
         {
-            return _bookService.GetAllBooksForUser(UserId);
+            return _bookService.GetAllBooksForUser(_userManager.GetUserId(User));
 
         }
 
@@ -144,7 +141,7 @@ namespace WebApplication1.Controllers
             {
                 categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
             }
-            return _bookService.SearchAndCategoryAll(UserId, search, searchTitle, categoriesList);
+            return _bookService.SearchAndCategoryAll(_userManager.GetUserId(User), search, searchTitle, categoriesList);
         }
 
         [HttpGet("searchandcategory")]
@@ -156,7 +153,7 @@ namespace WebApplication1.Controllers
                 categoriesList = categories.Split(',').Select(Int32.Parse).ToList();
             }
 
-            var (books, totalCount) = _bookService.SearchAndCategory(UserId, search, searchTitle, categoriesList, pageNumber, pageSize);
+            var (books, totalCount) = _bookService.SearchAndCategory(_userManager.GetUserId(User), search, searchTitle, categoriesList, pageNumber, pageSize);
 
             int offset = (pageNumber - 1) * pageSize;
             int startBookIndex = offset + 1;
