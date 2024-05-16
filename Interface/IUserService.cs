@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ReadEase_C_.Models;
 using WebApplication1.Models;
 
 namespace ReadEase_C_.Interface
@@ -7,7 +8,7 @@ namespace ReadEase_C_.Interface
     {
         Task<string> CheckIfUserIsAdminAsync(int userId);
         void DeleteUser(int id);
-        IEnumerable<UserModel> GetAllUsers();
+        public IEnumerable<protectedUserModel> GetAllUsers();
         Task<IActionResult> UpdateUserAsync(string newUser,string newPass, int id);
         public string getUsername(int id);
 

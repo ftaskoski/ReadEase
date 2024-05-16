@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using ReadEase_C_.Interface;
+using ReadEase_C_.Models;
 using System.Data.SqlClient;
 using WebApplication1.Models;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
@@ -21,11 +22,11 @@ namespace ReadEase_C_.Services
             return new SqlConnection(connectionString);
         }
 
-        private IEnumerable<UserModel> QueryUsers(string query, object parameters = null)
+        private IEnumerable<protectedUserModel> QueryUsers(string query, object parameters = null)
         {
             using (var connection = GetSqlConnection())
             {
-                return connection.Query<UserModel>(query, parameters);
+                return connection.Query<protectedUserModel>(query, parameters);
             }
         }
 
@@ -35,7 +36,7 @@ namespace ReadEase_C_.Services
             connection.Execute(query, parametars);
         }
 
-        public IEnumerable<UserModel> GetAllUsers()
+        public IEnumerable<protectedUserModel> GetAllUsers()
         {
             string selectQuery = "SELECT * FROM Users";
             return QueryUsers(selectQuery);
