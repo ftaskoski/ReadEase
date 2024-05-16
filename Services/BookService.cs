@@ -12,11 +12,11 @@ namespace Books.Services
     public class BookService : IBookService
     {
         private readonly IConfiguration _configuration;
-        private readonly ConnectionService _connectionService;
-        public BookService(IConfiguration configuration,ConnectionService CS)
+        private readonly IConnectionService _connectionService;
+        public BookService(IConfiguration configuration, IConnectionService connectionService)
         {
             _configuration = configuration;
-            _connectionService = CS;
+            _connectionService = connectionService;
         }
 
         private SqlConnection GetSqlConnection()

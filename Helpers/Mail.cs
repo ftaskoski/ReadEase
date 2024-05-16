@@ -1,9 +1,10 @@
 ﻿using System.Net.Mail;
 using System.Net;
+using ReadEase_C_.Interface;
 
 namespace ReadEase_C_.Helpers
 {
-    public class Mail
+    public class Mail : IMail
     {
         private readonly IConfiguration _configuration;
 
@@ -17,8 +18,8 @@ namespace ReadEase_C_.Helpers
         {
             try
             {
-                string senderEmail = _configuration["Mail:e-mail"]; 
-                string senderPassword = _configuration["Mail:pass"]; 
+                string senderEmail = _configuration["Mail:e-mail"];
+                string senderPassword = _configuration["Mail:pass"];
 
                 MailMessage mail = new(senderEmail, recipientEmail);
                 SmtpClient client = new()
@@ -43,7 +44,7 @@ namespace ReadEase_C_.Helpers
             }
         }
 
-        public void RecoverEmail(string recipientEmail,string pass)
+        public void RecoverEmail(string recipientEmail, string pass)
         {
             try
             {

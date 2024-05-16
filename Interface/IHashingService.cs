@@ -7,5 +7,7 @@ namespace ReadEase_C_.Interface
         Task<string> GenerateSaltAsync();
         Task<string> GenerateSaltedHash(string password, string salt);
         Task<string> GetSalt(string username, SqlConnection connection);
+        public string GenerateRandomPassword(int length);
+
     }
 }

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using ReadEase_C_.Models;
 using System.Data.SqlClient;
 using System.Security.Claims;
-using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {

@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using ReadEase_C_.Models;
 using System.Data;
 using ReadEase_C_.Services;
+using ReadEase_C_.Interface;
 
 namespace WebApplication1.Controllers
 {
@@ -19,9 +20,9 @@ namespace WebApplication1.Controllers
     public class BooksController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly BookService _bookService;
-        private readonly ConnectionService _connectionService;
-        public BooksController(IConfiguration configuration, BookService bookService, ConnectionService connectionService)
+        private readonly IBookService _bookService;
+        private readonly IConnectionService _connectionService;
+        public BooksController(IConfiguration configuration, IBookService bookService, IConnectionService connectionService)
         {
             _configuration = configuration;
             _bookService = bookService;

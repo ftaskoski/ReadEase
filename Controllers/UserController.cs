@@ -12,6 +12,7 @@ using ReadEase_C_.Models;
 using Books.Services;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using ReadEase_C_.Interface;
 
 namespace userController.Controllers
 {
@@ -20,22 +21,25 @@ namespace userController.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly UserService _userService;
-        private readonly HashingService _hashingService;
-        private readonly PhotoService _photoService;
-        private readonly Mail _mail;
-        private readonly BookService _bookService;
-        private readonly ConnectionService _connectionService;
+        private readonly IUserService _userService;
+        private readonly IHashingService _hashingService;
+        private readonly IPhotoService _photoService;
+        private readonly IMail _mail;
+        private readonly IBookService _bookService;
+        private readonly IConnectionService _connectionService;
+        private readonly IUserManager _userManager;
 
-        public UsersController(IConfiguration configuration, UserService service, HashingService hashingService, PhotoService photoService, Mail mail, BookService bookService, ConnectionService CS)
+
+        public UsersController(IConfiguration configuration, IUserManager userManager, IUserService userService, IHashingService hashingService, IPhotoService photoService, IMail mail, IBookService bookService, IConnectionService connectionService)
         {
             _configuration = configuration;
-            _userService = service;
+            _userService = userService;
             _hashingService = hashingService;
             _photoService = photoService;
             _mail = mail;
             _bookService = bookService;
-            _connectionService = CS;
+            _connectionService = connectionService;
+            _userManager = userManager;
         }
 
 
@@ -47,7 +51,7 @@ namespace userController.Controllers
             var isAuthenticated = User?.Identity?.IsAuthenticated ?? false;
             var role = User?.FindFirstValue(ClaimTypes.Role);
 
-            var username = _userService.getUsername(UserId);
+            var username = _userService.getUsername(_userManager.GetUserId(User));
 
             var response = new
             {
@@ -269,7 +273,7 @@ namespace userController.Controllers
                 {
                     Quality = 90 // Adjust quality as needed (0-100)
                 });
-                _photoService.InsertPhoto(UserId, resizedMemoryStream.ToArray());
+                _photoService.InsertPhoto(_userManager.GetUserId(User), resizedMemoryStream.ToArray());
             }
 
             return Ok("Photo uploaded successfully.");
@@ -280,8 +284,8 @@ namespace userController.Controllers
         public IActionResult GetPhoto()
         {
 
-
-            byte[] photoBytes = _photoService.GetPhoto(UserId);
+            int id = _userManager.GetUserId(User);
+            byte[] photoBytes = _photoService.GetPhoto(id);
 
             if (photoBytes == null)
                 return NotFound("No photo found for this user.");
@@ -293,19 +297,13 @@ namespace userController.Controllers
 
 
 
-        public int UserId
-        {
-            get
-            {
-                return Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            }
-        }
+ 
 
         [HttpGet("role")]
         [Authorize]
         public async Task<ActionResult> GetRole()
         {
-            string role = await _userService.CheckIfUserIsAdminAsync(UserId);
+            string role = await _userService.CheckIfUserIsAdminAsync(_userManager.GetUserId(User));
 
             return Ok(role);
         }
@@ -329,18 +327,18 @@ namespace userController.Controllers
             }
 
 
-            string userEmail = _userService.getUsername(UserId);
+            string userEmail = _userService.getUsername(_userManager.GetUserId(User));
 
             string salt = await _hashingService.GetSalt(userEmail, connection);
 
             if (!string.IsNullOrEmpty(user.UpdatedPassword))
             {
                 string hashedPass = await _hashingService.GenerateSaltedHash(user.UpdatedPassword, salt);
-                await _userService.UpdateUserAsync(user.UpdatedUsername, hashedPass, UserId);
+                await _userService.UpdateUserAsync(user.UpdatedUsername, hashedPass, _userManager.GetUserId(User));
             }
             else
             {
-                await _userService.UpdateUserAsync(user.UpdatedUsername, null, UserId);
+                await _userService.UpdateUserAsync(user.UpdatedUsername, null, _userManager.GetUserId(User));
             }
             return Ok("Username and/or password updated successfully");
         }

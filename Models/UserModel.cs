@@ -1,8 +1,7 @@
-﻿using ReadEase_C_.Interface;
-
+﻿
 namespace WebApplication1.Models
 {
-    public class UserModel : IUserModel
+    public class UserModel 
     {
         public int Id { get; set; }
         public string Username { get; set; }
