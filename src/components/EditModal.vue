@@ -24,7 +24,7 @@
             <label class="text-gray-700 text-sm font-bold mb-2">Category</label>
             <select :value="categoryId" @change="$emit('update:newCategoryId', ($event.target as HTMLInputElement).value)"  class="mb-4 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
               <option value="0" disabled selected hidden>Select a Category</option>
-              <option value="0">Select category</option>
+              <option value="0" disabled>Select category</option>
               <option  v-for="category in categories" :key="category.categoryId" :value="category.categoryId">{{ category.categoryName }}</option>
             </select>
           <div class="pointer-events-none absolute text-sm inset-y-0 right-6 top-[165px] flex items-center px-2 text-gray-700">
