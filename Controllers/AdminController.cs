@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadEase_C_.Interface;
 using ReadEase_C_.Models;
-using WebApplication1.Models;
 
 namespace ReadEase_C_.Controllers
 {

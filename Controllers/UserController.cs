@@ -3,16 +3,13 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ReadEase_C_.Services;
-using RestSharp;
-using System.Security.Claims;
-using WebApplication1.Models;
-using ReadEase_C_.Helpers;
+using ReadEase_C_.Interface;
 using ReadEase_C_.Models;
-using Books.Services;
+using RestSharp;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-using ReadEase_C_.Interface;
+using System.Security.Claims;
+using WebApplication1.Models;
 
 namespace userController.Controllers
 {
@@ -20,24 +17,20 @@ namespace userController.Controllers
     [Route("api")]
     public class UsersController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
         private readonly IHashingService _hashingService;
         private readonly IPhotoService _photoService;
         private readonly IMail _mail;
-        private readonly IBookService _bookService;
         private readonly IConnectionService _connectionService;
         private readonly IUserManager _userManager;
 
 
-        public UsersController(IConfiguration configuration, IUserManager userManager, IUserService userService, IHashingService hashingService, IPhotoService photoService, IMail mail, IBookService bookService, IConnectionService connectionService)
+        public UsersController( IUserManager userManager, IUserService userService, IHashingService hashingService, IPhotoService photoService, IMail mail, IConnectionService connectionService)
         {
-            _configuration = configuration;
             _userService = userService;
             _hashingService = hashingService;
             _photoService = photoService;
             _mail = mail;
-            _bookService = bookService;
             _connectionService = connectionService;
             _userManager = userManager;
         }
