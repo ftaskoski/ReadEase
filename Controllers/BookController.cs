@@ -3,12 +3,8 @@ using Dapper;
 using WebApplication1.Models;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
-using Books.Services;
-using System.Security.Claims;
-using System.Data.SqlClient;
 using ReadEase_C_.Models;
 using System.Data;
-using ReadEase_C_.Services;
 using ReadEase_C_.Interface;
 
 namespace WebApplication1.Controllers

@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using ReadEase_C_.Interface;
 using ReadEase_C_.Models;
 using System.Data.SqlClient;
-using WebApplication1.Models;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace ReadEase_C_.Services
 {

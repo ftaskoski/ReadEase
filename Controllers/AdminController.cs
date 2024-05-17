@@ -14,7 +14,7 @@ namespace ReadEase_C_.Controllers
         private readonly IUserService _userService;
         private readonly IBookService _bookService;
         private readonly IConnectionService _connectionService;
-
+        
         public AdminController(IUserService service, IBookService bookService, IConnectionService connectionService)
         {
             _userService = service;

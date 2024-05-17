@@ -2,9 +2,7 @@
 using Dapper;
 using ReadEase_C_.Interface;
 using ReadEase_C_.Models;
-using ReadEase_C_.Services;
 using WebApplication1.Models;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace Books.Services
 
