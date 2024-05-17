@@ -18,13 +18,13 @@
           <!-- Body -->
           <div class="relative p-6 flex-auto">
             <p class="my-4 text-blueGray-500 text-lg leading-relaxed">
-              Are you sure you want to delete this book?
+              {{bodyText}}
             </p>
           </div>
           <!-- Footer -->
           <div class="flex items-center justify-end p-6 border-t border-solid rounded-b border-blueGray-200">
             <button
-            @click="deleteBook()"
+            @click="confirmDelete()"
               class="text-red-500 rounded-full hover:bg-gray-200 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
               type="button"
             >
@@ -56,11 +56,15 @@
     required: true
 
   },
-  deleteBook: {
+  confirmDelete: {
     type: Function,
     required: true
-    
+  },
+  bodyText:{
+    type: String,
+    required: true
   }
+    
 })
 
 </script>

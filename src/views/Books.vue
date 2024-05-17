@@ -139,7 +139,8 @@
           <DeleteModal
             :showModal="showModal"
             :closeModal="closeModal"
-            :deleteBook="deleteBook"
+            :confirmDelete="deleteBook"
+            :bodyText="`Are you sure you want to delete this book?`"
           />
 
           <EditModal

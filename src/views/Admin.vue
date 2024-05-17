@@ -89,7 +89,7 @@
             <td class="border px-4 py-2 text-center">{{ user.username }}</td>
             <td class="border px-4 py-2 text-center">
               <button
-                @click="deleteUser(user.id)"
+                @click="openModal(user.id)"
                 class="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
               >
                 Delete User
@@ -98,6 +98,7 @@
           </tr>
         </tbody>
       </table>
+      <DeleteModal :showModal="showModal" :closeModal="closeModal" :confirmDelete="deleteUser" :bodyText="`Are you sure you want to delete this user?`" />
     </div>
 
 
@@ -121,6 +122,7 @@ import Pagination from "@/components/Pagination.vue";
 import { useRouter } from "vue-router";
 import SelectPerPage from "@/components/SelectPerPage.vue";
 import Card from "@/components/Card.vue";
+import DeleteModal from "@/components/DeleteModal.vue";
 const router = useRouter();
 const users = ref<any[]>([]);
 const newCategory = ref<string>("");
@@ -133,6 +135,8 @@ const categories = ref<any[]>([]);
 const selectedCategories = ref<any[]>([]);
 const searchQuery = ref<string>("");
 const totalFilteredusers = ref<any[]>([]);
+const showModal = ref<boolean>(false);
+const userIdToDelete = ref<number | null>(null);
 let debounceTimer = 0;
 
 const totalPages = computed(() => {
@@ -146,7 +150,10 @@ const totalPages = computed(() => {
   }
 });
 
-
+const closeModal = () => {
+  document.body.style.overflow = "auto";
+  showModal.value = false;
+};
 
 const visiblePages = computed(() => {
   let start = currPage.value - Math.floor(windowSize.value / 2);
@@ -188,13 +195,14 @@ const getPaginatedUsers = () => {
     });
 };
 
-const deleteUser = (id: number) => {
+const deleteUser = () => {
   axios
-    .delete(`${url}api/delete/${id}`, {
+    .delete(`${url}api/delete/${userIdToDelete.value}`, {
       withCredentials: true,
     })
     .then(() => {
       getUser();
+      closeModal();
     });
 };
 const addCategory = () => {
@@ -304,6 +312,13 @@ function handleInput() {
     getPaginatedUsers();
   }
 }
+
+
+function openModal (userId: number)  {
+  document.body.style.overflow = "hidden";
+  showModal.value = !showModal.value;
+  userIdToDelete.value = userId;
+};
 
 
 onMounted(() => {
