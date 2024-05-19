@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div
     class="order-1 sm:order-3 sm:ml-64 px-4 sm:px-8 py-8 sm:py-16 md:py-32 lg:py-52"
   >
@@ -85,7 +86,7 @@
     </div>
     
   </div>
-
+</div>
 </template>
 
 <script setup lang="ts">

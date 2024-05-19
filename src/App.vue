@@ -4,7 +4,7 @@ import sideBar from "./components/sideBar.vue";
 </script>
 
 <template>
-  <div>
+  <div class="bg-gray-100 min-h-screen  ">
   <sideBar />
   <RouterView />
 </div>
