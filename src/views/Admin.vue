@@ -1,115 +1,78 @@
 <template>
   <div class="order-1 sm:order-2 sm:ml-64 p-4">
 
-              <div class="flex flex-col lg:flex-row justify-between space-y-5 md:space-x-2">
-
-    <div class="w-full max-w-md lg:max-w-xl">
-  <Card>
-    <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">Add New Category</p>
-      <form @submit.prevent="addCategory">
-      <div class="relative w-full h-10 mt-2">
-        <input
-          v-model="newCategory"
-          required
-          class="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-gray-900"
-          placeholder=""
-        />
-        <label
-          class="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:flex-shrink before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900"
-        >
-          Add New Category
-        </label>
-      </div>
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4" type="submit">Add</button>
-    </form>
-  </Card>
-    </div>
-
-    <div class="w-full max-w-md lg:max-w-xl">
-  <Card>
-    <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">Search For User</p>
-     
-      <div class="relative w-full h-10 mt-2">
-        <input
-          required
-          v-model="searchQuery"
-          @input="handleInput"
-          class="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-gray-900"
-          placeholder=""
-        />
-        <label
-          class="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:flex-shrink before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900"
-        >
-         Username
-        </label>
-      </div>
-      
-  </Card>
-</div>
-
-<div class="w-full max-w-md lg:max-w-xl">
-  <Card>
-    <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">Delete Category</p>
-    <div class="flex-wrap  flex items-center justify-center">
-      <div v-for="category in categories" :key="category.categoryId" class="mr-4 mb-2">
-        <div>
-          <label>
-            <input v-model="selectedCategories" :value="category.categoryId"  class="dark:border-white-400/20 dark:scale-100 transition-all duration-500 ease-in-out dark:hover:scale-110 dark:checked:scale-100 w-6 h-6" type="checkbox">{{ category.categoryName }}
-          </label>
+    <div class="container mx-auto">
+      <div class="grid lg:grid-cols-3 md:grid-cols-1 gap-4">
+            <!-- Add New Category -->
+            <Card>
+                <h2 class="text-lg font-semibold mb-4">Add New Category</h2>
+                <form @submit.prevent="addCategory()">
+                <input v-model="newCategory" type="text" placeholder="Add New Category" class="w-full px-4 py-2 border rounded-md">
+                <button  class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md w-full">Add</button>
+              </form>
+            </Card>
+            
+            <!-- Search for User -->
+            <Card>
+                <h2 class="text-lg font-semibold mb-4">Search For User</h2>
+                <input v-model="searchQuery" @input="handleInput()" type="text" placeholder="Username" class="w-full px-4 py-2 border rounded-md">
+            </Card>
+            
+            <!-- Delete Category -->
+            <Card>
+                <h2 class="text-lg font-semibold mb-4">Delete Category</h2>
+                <div class="flex flex-wrap gap-2" v-for="category in categories" :key="category.categoryId">
+                    <label class="flex items-center">
+                        <input v-model="selectedCategories" :value="category.categoryId" type="checkbox" class="mr-2"> {{ category.categoryName }}
+                    </label>
+                   
+                </div>
+                <button @click="deleteCategories()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-md w-full">Delete</button>
+              </Card>
         </div>
-      </div>
-    </div>
-    <button @click="deleteCategories()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-2">Delete</button>
-  </Card>
-</div>
-
-</div>  
-
-    <div class="mt-20">
-      <SelectPerPage
+        
+        <!-- User List -->
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center">
+                 <SelectPerPage
         :itemsPerPage="usersPerPage"
         :itemsPerPageArr="usersPerPageArr"
         @update:itemsPerPage="changeUsersPerPage"
       />
+                </div>
 
-    </div>
-    <div class="flex justify-center items-center">
-
-
-      
-      <table class="table-auto w-full">
-        <thead>
-          <tr>
-            <th class="px-4 py-2">Username</th>
-            <th class="px-4 py-2">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in paginatedUsers">
-            <td class="border px-4 py-2 text-center">{{ user.username }}</td>
-            <td class="border px-4 py-2 text-center">
-              <button
-                @click="openModal(user.id)"
-                class="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2"
-              >
-                Delete User
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <DeleteModal :showModal="showModal" :closeModal="closeModal" :confirmDelete="deleteUser" :bodyText="`Are you sure you want to delete this user?`" />
-    </div>
-
-
-
-    <div class="">
+            </div>
+            <div class="overflow-x-auto mt-4">
+            <table class="min-w-full divide-y divide-gray-200 ">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr v-for="user in paginatedUsers" :key="user.username">
+                        <td class="px-6 py-4">{{ user.username }}</td>
+                        <td class="px-6 py-4">
+                            <button @click="openModal(user.id)" class="bg-red-500 text-white px-4 py-2 rounded-md">Delete User</button>
+                        </td>
+                    </tr>
+                 
+                </tbody>
+            </table>
+            <DeleteModal :showModal="showModal" :closeModal="closeModal" :confirmDelete="deleteUser" :bodyText="`Are you sure you want to delete this user?`" />
+          </div>
+            <!-- Pagination -->
+            <div class="">
       <Pagination
         @page-changed="changePage"
         :currPage="currPage"
         :totalPages="totalPages"
         :visiblePages="visiblePages"
       />
+    </div>
+        </div>
     </div>
   </div>
 </template>

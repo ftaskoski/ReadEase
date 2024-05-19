@@ -6,7 +6,6 @@
           <div class="grid lg:grid-cols-3 md:grid-cols-1 gap-4">
 
 <!-- First Section -->
-<div class="w-full max-w-md lg:max-w-xl">
   <Card>
     <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">INSERT BOOKS</p>
     <form @submit.prevent="addBook">
@@ -49,10 +48,8 @@
       <button type="submit" class="w-full mt-4 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition duration-200">Submit</button>
     </form>
   </Card>
-</div>
 
 <!-- Second Section -->
-<div class="w-full max-w-md lg:max-w-xl">
   <Card>
     <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">SEARCH FOR BOOKS</p>
      
@@ -86,12 +83,10 @@
         </label>
       </div>
   </Card>
-</div>
 
 
 
 <!-- Third Section -->
-<div class="w-full max-w-md lg:max-w-xl">
   <Card>
     <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">SEARCH BY CATEGORY</p>
     <div class="">
@@ -104,7 +99,6 @@
       </div>
     </div>
   </Card>
-</div>
 
 </div>
 
