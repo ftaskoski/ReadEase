@@ -342,8 +342,10 @@ function checkFilter() {
   if(checkedCategories.value.length > 0 && !searchQuery.value && !searchTitle.value){
         filterBooksAll();
       } else if (checkedCategories.value.length === 0 && searchQuery.value || searchTitle.value) {
+        books.value = [];
+        bookCollection.value = [];
         handleInput();
-      }else{
+      }else if (checkedCategories.value.length === 0 && !searchQuery.value && !searchTitle.value) {
         getBooks();
         getAllBooks();
       }
