@@ -32,7 +32,7 @@
         </div>
         
         <!-- User List -->
-        <div class="bg-white shadow-md rounded-lg p-6">
+        <div class="bg-white shadow-md rounded-lg p-6 mt-20">
             <div class="flex justify-between items-center mb-4">
                 <div class="flex items-center">
                  <SelectPerPage
