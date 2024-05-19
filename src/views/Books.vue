@@ -3,7 +3,7 @@
     <div class="order-1 sm:order-2 sm:ml-64 p-4">
       <div>
         <div>
-          <div class="flex flex-col lg:flex-row justify-between space-y-5 md:space-x-2">
+          <div class="grid lg:grid-cols-3 md:grid-cols-1 gap-4">
 
 <!-- First Section -->
 <div class="w-full max-w-md lg:max-w-xl">
@@ -19,7 +19,6 @@
         />
         <label
           class="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:flex-shrink before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900"
-          :class="{ 'placeholder-shown': !author }"
         >
           Author
         </label>
@@ -47,7 +46,7 @@
           <span class="flex items-center">&#9660;</span>
         </div>
       </div>
-      <button class="text-white flex justify-center items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-2" type="submit">Submit</button>
+      <button type="submit" class="w-full mt-4 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition duration-200">Submit</button>
     </form>
   </Card>
 </div>
@@ -55,7 +54,7 @@
 <!-- Second Section -->
 <div class="w-full max-w-md lg:max-w-xl">
   <Card>
-    <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">Search For Books</p>
+    <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">SEARCH FOR BOOKS</p>
      
       <div class="relative w-full h-10 mt-2">
         <input
@@ -95,11 +94,11 @@
 <div class="w-full max-w-md lg:max-w-xl">
   <Card>
     <p class="text-3xl font-semibold text-gray-900 flex justify-center pb-2">SEARCH BY CATEGORY</p>
-    <div class="flex-wrap mt-2 flex items-center justify-center">
+    <div class="">
       <div v-for="category in categories" :key="category.categoryId" class="mr-4 mb-2">
         <div>
-          <label>
-            <input v-model="checkedCategories" :value="category.categoryId" @change="filterBooksAll" class="dark:border-white-400/20 dark:scale-100 transition-all duration-500 ease-in-out dark:hover:scale-110 dark:checked:scale-100 w-6 h-6" type="checkbox">{{ category.categoryName }}
+          <label class="inline-flex items-center">
+            <input v-model="checkedCategories" :value="category.categoryId" @change="filterBooksAll" class="form-checkbox text-blue-500" type="checkbox">{{ category.categoryName }}
           </label>
         </div>
       </div>
@@ -112,7 +111,9 @@
         </div>
 
         <div v-if="books.length > 0" class="mt-20">
-          <SelectPerPage :itemsPerPage="booksPerPage" :itemsPerPageArr="booksPerPageArr" @update:itemsPerPage="handleChange" />
+
+          <Card>
+            <SelectPerPage :itemsPerPage="booksPerPage" :itemsPerPageArr="booksPerPageArr" @update:itemsPerPage="handleChange" />
 
           <BookTable
             :books="books"
@@ -131,11 +132,19 @@
             :openEditModal="openEditModal"
             :showEditModal="showEditModal"
             :closeEditModal="closeEditModal"
+            :paginationDetails="paginationDetails"
             @update:newAuthor="(value) => (newAuthor = value)"
             @update:newTitle="(value) => (newTitle = value)"
             @update:newCategoryId="(value) => (newCategoryId = value)"
+            
           />
-
+          <Pagination
+            :currPage="currPage"
+            :totalPages="totalPages"
+            :visiblePages="visiblePages"
+            @page-changed="changePage"
+          />
+        </Card>
           <DeleteModal
             :showModal="showModal"
             :closeModal="closeModal"
@@ -158,13 +167,7 @@
             @update:newTitle="newTitle = $event"
             @update:newCategoryId="newCategoryId = $event"
           />
-          <p class=" font-semibold text-gray-900 mt-2 ">{{ paginationDetails }}</p>
-          <Pagination
-            :currPage="currPage"
-            :totalPages="totalPages"
-            :visiblePages="visiblePages"
-            @page-changed="changePage"
-          />
+ 
         </div>
         <div v-else>
           <p

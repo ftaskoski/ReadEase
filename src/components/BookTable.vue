@@ -1,25 +1,26 @@
 <template>
-  <div class="overflow-none mt-2">
-    <table class="w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
+    <div class="overflow-x-auto mt-4">
+
+      <table class="min-w-full bg-white">
+        <thead class="bg-gray-200 text-gray-600">
         <tr>
           <th
-            class="px-2 text-left py-2 sm:px-3 sm:py-3 text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider"
+            class="py-2 px-4 text-left"
           >
             Author
           </th>
           <th
-            class="px-2 text-left py-2 sm:px-3 sm:py-3 text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider"
+            class="py-2 px-4 text-left"
           >
             Title
           </th>
           <th
-            class="px-2 text-left py-2 sm:px-3 sm:py-3 text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider"
+            class="py-2 px-4 text-left"
           >
             Category
           </th>
           <th
-            class="px-2 text-center py-2 sm:px-3 sm:py-3 text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider"
+            class="py-2 px-4 text-center"
           >
             Actions
           </th>
@@ -91,9 +92,10 @@
               Download
             </button>
           </td>
-        </tr>
-      </tbody>
+        </tr>  
+      </tbody>      
     </table>
+    <p class=" font-semibold text-gray-900 mt-8 ">{{ paginationDetails }}</p>      
   </div>
 </template>
 
@@ -116,6 +118,7 @@ defineProps([
   "newAuthor",
   "newCategoryId",
   "books",
+  "paginationDetails",
 ]);
 
 function download(id: number) {
@@ -134,4 +137,7 @@ function download(id: number) {
       link.click();
     });
 }
+
+
+
 </script>

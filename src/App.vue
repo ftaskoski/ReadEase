@@ -14,10 +14,12 @@ import sideBar from "./components/sideBar.vue";
 
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
   background-color: #f1f1f1;
+  
 }
 
 ::-webkit-scrollbar-thumb {
