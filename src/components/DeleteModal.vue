@@ -19,7 +19,7 @@
       </button>
       <button
       @click="confirmDelete()"
-        class="px-4 py-2 bg-gradient-to-r from-red-500 via-red-600 to-red-700 hover:bg-gradient-to-br text-white rounded  focus:outline-none focus:ring-2 focus:ring-red-500"
+        class="px-4 py-2 bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br text-white rounded  focus:outline-none focus:ring-2 focus:ring-red-500"
       >
         Delete
       </button>

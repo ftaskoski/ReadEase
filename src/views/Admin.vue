@@ -8,7 +8,7 @@
                 <h2 class="text-lg font-semibold mb-4">Add New Category</h2>
                 <form @submit.prevent="addCategory()">
                 <input v-model="newCategory" type="text" placeholder="Add New Category" class="w-full px-4 py-2 border rounded-md">
-                <button  class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md w-full">Add</button>
+                <button  class="mt-4 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br text-white px-4 py-2 rounded-md w-full">Add</button>
               </form>
             </Card>
             
@@ -27,7 +27,7 @@
                     </label>
                    
                 </div>
-                <button @click="deleteCategories()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-md w-full">Delete</button>
+                <button @click="deleteCategories()" class="mt-4 bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br text-white px-4 py-2 rounded-md w-full">Delete</button>
               </Card>
         </div>
         
@@ -55,7 +55,7 @@
                     <tr v-for="user in paginatedUsers" :key="user.username">
                         <td class="px-6 py-4">{{ user.username }}</td>
                         <td class="px-6 py-4">
-                            <button @click="openModal(user.id)" class="bg-red-500 text-white px-4 py-2 rounded-md">Delete User</button>
+                            <button @click="openModal(user.id)" class="bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br text-white px-4 py-2 rounded-md">Delete User</button>
                         </td>
                     </tr>
                  
