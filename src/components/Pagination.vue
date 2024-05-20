@@ -1,13 +1,13 @@
 <template>
-  <div class="pagination flex justify-center items-center mt-4 text-sm text-gray-700">
-    <button @click="changePage(1)" :disabled="currPage === 1" class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 border border-black rounded-l" :class="{ 'cursor-not-allowed': currPage === 1, 'opacity-50': currPage === 1 }">
+  <div class="pagination flex justify-center items-center mt-4 text-sm text-gray-500">
+    <button @click="changePage(1)" :disabled="currPage === 1" class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 border border-gray-400 rounded-l" :class="{ 'cursor-not-allowed': currPage === 1, 'opacity-50': currPage === 1 }">
       <i class="fa-solid fa-angle-double-left"></i>
       </button>
     <button
       @click="changePage(currPage - 1)"
       :disabled="currPage === 1"
       :class="{ 'cursor-not-allowed': currPage === 1, 'opacity-50': currPage === 1 }"
-      class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4  border border-black"
+      class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4  border border-gray-400"
     >
     <i class="fa-solid fa-angle-left"></i>
     </button>
@@ -18,8 +18,8 @@
         :key="page"
         @click="changePage(page)"
         :disabled="currPage === page"
-        :class="{ 'cursor-not-allowed': currPage === page, 'bg-sky-200': currPage === page }"
-        class="bg-gray-50 hover:bg-sky-200 font-semibold py-2 px-4 border border-black"
+        :class="{ 'cursor-not-allowed': currPage === page, 'bg-blue-100': currPage === page }"
+        class="bg-gray-50 hover:bg-blue-100 font-semibold py-2 px-4 border border-gray-400"
       >
         {{ page }}
       </button>
@@ -28,11 +28,11 @@
       @click="changePage(currPage + 1)"
       :disabled="currPage === totalPages"
       :class="{ 'cursor-not-allowed': currPage === totalPages, 'opacity-50': currPage === totalPages }"
-      class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4  border border-black"
+      class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4  border border-gray-400"
     >
     <i class="fa-solid fa-angle-right"></i>
     </button>
-    <button @click="changePage(totalPages)" class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 border border-black rounded-r" :disabled="currPage === totalPages" :class="{ 'cursor-not-allowed': currPage === totalPages, 'opacity-50': currPage === totalPages }">
+    <button @click="changePage(totalPages)" class="bg-gray-50 hover:bg-gray-200 font-semibold py-2 px-4 border border-gray-400 rounded-r" :disabled="currPage === totalPages" :class="{ 'cursor-not-allowed': currPage === totalPages, 'opacity-50': currPage === totalPages }">
       <i class="fa-solid fa-angle-double-right"></i>
     </button>
   </div>

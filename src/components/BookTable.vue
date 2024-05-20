@@ -95,7 +95,7 @@
         </tr>  
       </tbody>      
     </table>
-    <p class=" font-semibold text-gray-900 mt-8 ">{{ paginationDetails }}</p>      
+    <p class=" text-sm text-gray-700 mt-8 ">{{ paginationDetails }}</p>      
   </div>
 </template>
 
