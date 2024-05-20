@@ -107,38 +107,47 @@
         <div v-if="books.length > 0" class="mt-20">
 
           <Card>
-            <SelectPerPage :itemsPerPage="booksPerPage" :itemsPerPageArr="booksPerPageArr" @update:itemsPerPage="handleChange" />
+            <div class="flex flex-wrap justify-between items-center mb-4">
+  <SelectPerPage :itemsPerPage="booksPerPage" :itemsPerPageArr="booksPerPageArr" @update:itemsPerPage="handleChange" />
+  
+  <button @click="downloadBooks" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 w-full sm:w-auto">
+    Download Collection
+    <i class="fa-solid fa-download flex-shrink-0 w-5 mt-1 h-5 transition duration-75 group-hover:text-gray-900"></i>
+  </button>
+</div>
 
-          <BookTable
-            :books="books"
-            :getCategoryName="getCategoryName"
-            :openModal="openModal"
-            :showModal="showModal"
-            :deleteBook="deleteBook"
-            :closeModal="closeModal"
-            :categories="categories"
-            :currPage="currPage"
-            :totalPages="totalPages"
-            :newAuthor="newAuthor"
-            :newTitle="newTitle"
-            :newCategoryId="newCategoryId"
-            :updateBook="updateBook"
-            :openEditModal="openEditModal"
-            :showEditModal="showEditModal"
-            :closeEditModal="closeEditModal"
-            :paginationDetails="paginationDetails"
-            @update:newAuthor="(value) => (newAuthor = value)"
-            @update:newTitle="(value) => (newTitle = value)"
-            @update:newCategoryId="(value) => (newCategoryId = value)"
-            
-          />
-          <Pagination
-            :currPage="currPage"
-            :totalPages="totalPages"
-            :visiblePages="visiblePages"
-            @page-changed="changePage"
-          />
-        </Card>
+
+  <BookTable
+    :books="books"
+    :getCategoryName="getCategoryName"
+    :openModal="openModal"
+    :showModal="showModal"
+    :deleteBook="deleteBook"
+    :closeModal="closeModal"
+    :categories="categories"
+    :currPage="currPage"
+    :totalPages="totalPages"
+    :newAuthor="newAuthor"
+    :newTitle="newTitle"
+    :newCategoryId="newCategoryId"
+    :updateBook="updateBook"
+    :openEditModal="openEditModal"
+    :showEditModal="showEditModal"
+    :closeEditModal="closeEditModal"
+    :paginationDetails="paginationDetails"
+    @update:newAuthor="(value) => (newAuthor = value)"
+    @update:newTitle="(value) => (newTitle = value)"
+    @update:newCategoryId="(value) => (newCategoryId = value)"
+  />
+
+  <Pagination
+    :currPage="currPage"
+    :totalPages="totalPages"
+    :visiblePages="visiblePages"
+    @page-changed="changePage"
+  />
+</Card>
+
           <DeleteModal
             :showModal="showModal"
             :closeModal="closeModal"
@@ -621,4 +630,20 @@ onMounted(() => {
   }
   getAllCategories();
 });
+const downloadBooks = () => {
+  axios
+    .get(`${url}api/downloadbooks`, { responseType: "arraybuffer", withCredentials: true })
+    .then((response) => {
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "books.txt";
+      link.click();
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
 </script>

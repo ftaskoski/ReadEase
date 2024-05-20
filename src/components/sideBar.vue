@@ -104,9 +104,7 @@ function getProfilePicture() {
 
 const navLinks = ref([
   { to: "/", label: "NY Times Best Sellers", iconClasses: "fa-solid fa-medal " },
-  { to: "/books", label: "Collection", iconClasses: "fa-solid fa-book " },
-  {to: "", label: "Download Collection", iconClasses: "fa-solid fa-download" , onClick: () => downloadBooks()},
-  { to: "/settings", label: "Settings", iconClasses: "fa-solid fa-gear " },
+  { to: "/books", label: "Collection", iconClasses: "fa-solid fa-book " },  { to: "/settings", label: "Settings", iconClasses: "fa-solid fa-gear " },
   {
     to: "/login",
     label: "Sign Out",
