@@ -45,7 +45,7 @@
           <span class="flex items-center">&#9660;</span>
         </div>
       </div>
-      <button type="submit" class="w-full mt-4 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition duration-200">Submit</button>
+      <button type="submit" class="w-full mt-4  text-white py-2 px-4 rounded-md shadow-sm bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br transition duration-200">Submit</button>
     </form>
   </Card>
 
@@ -110,7 +110,7 @@
             <div class="flex flex-wrap justify-between items-center mb-4">
   <SelectPerPage :itemsPerPage="booksPerPage" :itemsPerPageArr="booksPerPageArr" @update:itemsPerPage="handleChange" />
   
-  <button @click="downloadBooks" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 w-full sm:w-auto">
+  <button @click="downloadBooks" class="mt-2 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br text-white py-2 px-4 rounded-md shadow-sm  w-full sm:w-auto">
     Download Collection
     <i class="fa-solid fa-download flex-shrink-0 w-5 mt-1 h-5 transition duration-75 group-hover:text-gray-900"></i>
   </button>

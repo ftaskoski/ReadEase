@@ -39,7 +39,7 @@
           >
             <button
               @click="openModal(book.bookId)"
-              class="inline-flex items-center px-4 mt-2 mr-2 py-2 bg-red-500 transition ease-in-out delay-75 hover:bg-red-600 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-2"
+              class="inline-flex items-center px-4 mt-2 mr-2 py-2  transition ease-in-out delay-75 bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-2"
             >
               <svg
                 stroke="currentColor"
@@ -59,7 +59,7 @@
             </button>
             <button
               @click="openEditModal(book)"
-              class="inline-flex items-center px-4 mt-2 mr-2 py-2 bg-blue-500 transition ease-in-out delay-75 hover:bg-blue-600 text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-2"
+              class="inline-flex items-center px-4 mt-2 mr-2 py-2  transition ease-in-out delay-75 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br text-white text-sm font-medium rounded-md hover:-translate-y-1 hover:scale-2"
             >
               <svg
                 fill="#ffffff"
@@ -86,7 +86,7 @@
             </button>
             <button
               @click="download(book.bookId)"
-              class="inline-flex items-center px-4 mt-2 mr-2 py-2 bg-yellow-500 transition ease-in-out delay-75 hover:bg-yellow-600 text-white md:text-sm sm:text-xs font-medium rounded-md hover:-translate-y-1 hover:scale-2"
+              class="inline-flex items-center px-4 mt-2 mr-2 py-2 transition ease-in-out delay-75 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:bg-gradient-to-br text-white md:text-sm sm:text-xs font-medium rounded-md hover:-translate-y-1 hover:scale-2"
             >
               <i class="fa-solid fa-download mr-1"></i>
               Download
