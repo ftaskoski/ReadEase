@@ -1,7 +1,7 @@
 <template>
   <div>
   <div
-    class="order-1 sm:order-3 sm:ml-64 px-4 sm:px-8 py-8 sm:py-16 md:py-32 lg:py-52"
+    class="order-1 sm:order-3 sm:ml-64 px-4 sm:px-8 py-8 sm:py-16 md:py-32 lg:py-42"
   >
   <div class="flex justify-center items-center">
   <div class="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center w-full max-w-xl">
