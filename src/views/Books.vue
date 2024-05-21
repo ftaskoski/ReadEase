@@ -93,7 +93,7 @@
       <div v-for="category in categories" :key="category.categoryId" class="mr-4 mb-2">
         <div>
           <label class="inline-flex items-center">
-            <input v-model="checkedCategories" :value="category.categoryId" @change="filterBooksAll" class="form-checkbox text-blue-500" type="checkbox">{{ category.categoryName }}
+            <input v-model="checkedCategories" :value="category.categoryId" @change="checkFilter" class="form-checkbox text-blue-500" type="checkbox">{{ category.categoryName }}
           </label>
         </div>
       </div>
@@ -355,6 +355,7 @@ function checkFilter() {
         getBooks();
         getAllBooks();
       }
+      sessionStorage.setItem("categories", String(checkedCategories.value));
 }
 
 function applyBookFilter() {
