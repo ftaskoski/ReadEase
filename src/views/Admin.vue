@@ -218,7 +218,6 @@ const getAllCategories = () => {
     });
 };
 function deleteCategories() {
-  console.log(`selectedCategories`, selectedCategories.value.join(","));
   axios
     .delete(
       `${url}api/deletecategories`,
