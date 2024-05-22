@@ -351,7 +351,10 @@ function checkFilter() {
         books.value = [];
         bookCollection.value = [];
         handleInput();
-      }else if (checkedCategories.value.length === 0 && !searchQuery.value && !searchTitle.value) {
+      }else if (checkedCategories.value.length > 0 && searchQuery.value || searchTitle.value) {
+        handleInput();
+      }
+      else {
         getBooks();
         getAllBooks();
       }
@@ -512,7 +515,7 @@ function handleChange(newValue: number) {
 }
 
 const handleInput = () => {
-  currPage.value = 1;
+  //currPage.value = 1;
 
   clearTimeout(debounceTimer);
   books.value = [];
@@ -536,7 +539,7 @@ const getCategoryName = (categoryId: number) => {
 };
 
 // Watchers !!!!!!!!!!!!!!!!!!!!
-watch([checkedCategories, searchQuery], () => {
+watch([checkedCategories, searchQuery, searchTitle], () => {
   // Check if the page is being reloaded
   const isReload = sessionStorage.getItem("isReload");
 
