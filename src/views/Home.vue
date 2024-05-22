@@ -1,6 +1,6 @@
 <template>
  <div class="order-1 sm:order-2 sm:ml-64 p-4 m">
-<div class="bg-gray-100 p-8">
+<div class="bg-white rounded-lg p-8">
   <h2 class="text-3xl text-center mb-6 text-gray-800">This Week's Best Sellers - New York Times</h2>
   <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
 

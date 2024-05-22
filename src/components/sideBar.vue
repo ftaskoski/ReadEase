@@ -36,7 +36,7 @@
 
   <!-- Profile picture container -->
   <div class="mt-4">
-  <div class="rounded-full overflow-hidden w-10 h-10 relative" 
+  <div class="rounded-full overflow-hidden w-10 h-10 relative border-2 border-gray-300" 
        :style="{backgroundImage: `url(${profilePictureUrl})`, backgroundSize: 'cover', backgroundPosition: 'center center'}">
   </div>
 </div>
