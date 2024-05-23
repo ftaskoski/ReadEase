@@ -104,81 +104,86 @@
 
         </div>
 
-        <div v-if="books.length > 0" class="mt-20">
+        <div v-if="loading" class="flex flex-col justify-center items-center mt-40">
+          <p class="text-3xl font-bold text-gray-900">Your collection is loading...</p>
+          <img class="w-60 " src="../assets/loading.gif"/>
+      </div>
+<div v-else>
+  <div v-if="books.length > 0" class="mt-20">
+    <Card>
+      <div class="flex flex-wrap justify-between items-center mb-4">
+        <SelectPerPage :itemsPerPage="booksPerPage" :itemsPerPageArr="booksPerPageArr" @update:itemsPerPage="handleChange" />
+        
+        <button @click="downloadBooks" class="mt-2 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br text-white py-2 px-4 rounded-md shadow-sm  w-full sm:w-auto">
+          Download Collection
+          <i class="fa-solid fa-download flex-shrink-0 w-5 mt-1 h-5 transition duration-75 group-hover:text-gray-900"></i>
+        </button>
+      </div>
 
-          <Card>
-            <div class="flex flex-wrap justify-between items-center mb-4">
-  <SelectPerPage :itemsPerPage="booksPerPage" :itemsPerPageArr="booksPerPageArr" @update:itemsPerPage="handleChange" />
-  
-  <button @click="downloadBooks" class="mt-2 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br text-white py-2 px-4 rounded-md shadow-sm  w-full sm:w-auto">
-    Download Collection
-    <i class="fa-solid fa-download flex-shrink-0 w-5 mt-1 h-5 transition duration-75 group-hover:text-gray-900"></i>
-  </button>
+      <BookTable
+        :books="books"
+        :getCategoryName="getCategoryName"
+        :openModal="openModal"
+        :showModal="showModal"
+        :deleteBook="deleteBook"
+        :closeModal="closeModal"
+        :categories="categories"
+        :currPage="currPage"
+        :totalPages="totalPages"
+        :newAuthor="newAuthor"
+        :newTitle="newTitle"
+        :newCategoryId="newCategoryId"
+        :updateBook="updateBook"
+        :openEditModal="openEditModal"
+        :showEditModal="showEditModal"
+        :closeEditModal="closeEditModal"
+        :paginationDetails="paginationDetails"
+        @update:newAuthor="(value) => (newAuthor = value)"
+        @update:newTitle="(value) => (newTitle = value)"
+        @update:newCategoryId="(value) => (newCategoryId = value)"
+      />
+
+      <Pagination
+        :currPage="currPage"
+        :totalPages="totalPages"
+        :visiblePages="visiblePages"
+        @page-changed="changePage"
+      />
+    </Card>
+
+    <DeleteModal
+      :showModal="showModal"
+      :closeModal="closeModal"
+      :confirmDelete="deleteBook"
+      :bodyText="`Are you sure you want to delete this book?`"
+    />
+
+    <EditModal
+      :showEditModal="showEditModal"
+      :closeEditModal="closeEditModal"
+      :updateBook="updateBook"
+      :categories="categories"
+      :newTitle="newTitle"
+      :newAuthor="newAuthor"
+      :newCategoryId="newCategoryId"
+      :title="currTitle"
+      :author="currAuthor"
+      :categoryId="currCategoryId"
+      @update:newAuthor="newAuthor = $event"
+      @update:newTitle="newTitle = $event"
+      @update:newCategoryId="newCategoryId = $event"
+    />
+  </div>
+
+  <div v-else>
+    <p class="text-3xl font-bold text-gray-900 flex justify-center pb-2 mt-40">
+      No books found. Start adding books
+    </p>
+      
+  </div>
 </div>
 
-
-  <BookTable
-    :books="books"
-    :getCategoryName="getCategoryName"
-    :openModal="openModal"
-    :showModal="showModal"
-    :deleteBook="deleteBook"
-    :closeModal="closeModal"
-    :categories="categories"
-    :currPage="currPage"
-    :totalPages="totalPages"
-    :newAuthor="newAuthor"
-    :newTitle="newTitle"
-    :newCategoryId="newCategoryId"
-    :updateBook="updateBook"
-    :openEditModal="openEditModal"
-    :showEditModal="showEditModal"
-    :closeEditModal="closeEditModal"
-    :paginationDetails="paginationDetails"
-    @update:newAuthor="(value) => (newAuthor = value)"
-    @update:newTitle="(value) => (newTitle = value)"
-    @update:newCategoryId="(value) => (newCategoryId = value)"
-  />
-
-  <Pagination
-    :currPage="currPage"
-    :totalPages="totalPages"
-    :visiblePages="visiblePages"
-    @page-changed="changePage"
-  />
-</Card>
-
-          <DeleteModal
-            :showModal="showModal"
-            :closeModal="closeModal"
-            :confirmDelete="deleteBook"
-            :bodyText="`Are you sure you want to delete this book?`"
-          />
-
-          <EditModal
-            :showEditModal="showEditModal"
-            :closeEditModal="closeEditModal"
-            :updateBook="updateBook"
-            :categories="categories"
-            :newTitle="newTitle"
-            :newAuthor="newAuthor"
-            :newCategoryId="newCategoryId"
-            :title="currTitle"
-            :author="currAuthor"
-            :categoryId="currCategoryId"
-            @update:newAuthor="newAuthor = $event"
-            @update:newTitle="newTitle = $event"
-            @update:newCategoryId="newCategoryId = $event"
-          />
- 
-        </div>
-        <div v-else>
-          <p
-            class="text-3xl font-semibold text-gray-900 flex justify-center pb-2 mt-40"
-          >
-            No books found. Start adding books
-          </p>
-        </div>
+     
       </div>
     </div>
   </div>
@@ -201,7 +206,7 @@ let debounceTimer = 0;
 const author = ref<string>("");
 const title = ref<string>("");
 const selectedCategory = ref<{ categoryName: string; categoryId: number; } | "">("");
-
+const loading = ref<boolean>(true);
 const categories = ref<any[]>([]);
 const bookCollection = ref<any[]>([]);
 const bookPaginated = ref<any[]>([]);
@@ -249,6 +254,7 @@ const visiblePages = computed(() => {
 });
 
 const changePage = (page: number) => {
+  loading.value = true;
   sessionStorage.setItem("booksPerPage", String(booksPerPage.value));
   if (page >= 1 && page <= totalPages.value) {
     currPage.value = page;
@@ -288,8 +294,8 @@ const getBooks = () => {
 };
 
 const filterBooksAll = () => {
-  books.value = [];
-  bookPaginated.value = [];
+   books.value = [];
+   bookPaginated.value = [];
   const searchParams = {
     search: searchQuery.value,
     searchTitle: searchTitle.value,
@@ -306,10 +312,11 @@ const filterBooksAll = () => {
     })
     .catch((error) => {
       console.error(error);
-    });
+    })
 };
 
 const filterBooksPaginated = () => {
+  loading.value = true;
   paginationDetails.value = "";
   const searchParams = {
     search: searchQuery.value,
@@ -341,15 +348,19 @@ const filterBooksPaginated = () => {
     })
     .catch((error) => {
       console.error(error);
-    });
+    }).finally(()=>{
+      loading.value = false;
+    })
 };
 
 function checkFilter() {
+  books.value = [];
+  bookCollection.value = [];
+  loading.value=true;
   if(checkedCategories.value.length > 0 && !searchQuery.value && !searchTitle.value){
         filterBooksAll();
       } else if (checkedCategories.value.length === 0 && searchQuery.value || searchTitle.value) {
-        books.value = [];
-        bookCollection.value = [];
+         
         handleInput();
       }else if (checkedCategories.value.length > 0 && searchQuery.value || searchTitle.value) {
         handleInput();
@@ -371,6 +382,7 @@ function applyBookFilter() {
 }
 
 const getAllBooks = () => {
+  loading.value = true;
   axios
     .get(`${url}api/getallbooks`, {
       withCredentials: true,
@@ -380,7 +392,9 @@ const getAllBooks = () => {
     })
     .catch((error) => {
       console.error(error);
-    });
+    }).finally(()=>{
+      loading.value = false;
+    })
 };
 
 const getAllCategories = () => {
@@ -392,6 +406,7 @@ const getAllCategories = () => {
 };
 
 const addBook = () => {
+  loading.value=true;
   const categoryIdToAdd = selectedCategory.value
     ? selectedCategory.value.categoryId
     : null;
@@ -420,6 +435,7 @@ const addBook = () => {
 };
 
 const deleteBook = () => {
+  loading.value=true;
   showModal.value = false;
   document.body.style.overflow = "auto";
   axios
@@ -505,6 +521,7 @@ const closeModal = () => {
 // Handle fucntions !!!!!!!!!!!!
 
 function handleChange(newValue: number) {
+  loading.value = true;
   booksPerPage.value = newValue;
   currPage.value = 1;
   sessionStorage.setItem("booksPerPage", String(booksPerPage.value));
@@ -516,14 +533,15 @@ function handleChange(newValue: number) {
 
 const handleInput = () => {
   //currPage.value = 1;
-
+  loading.value = true;
+ // books.value=[];
   clearTimeout(debounceTimer);
-  books.value = [];
   sessionStorage.removeItem("search");
   sessionStorage.removeItem("title");
   if (searchQuery.value.trim() !== "" || searchTitle.value.trim() !== "") {
     debounceTimer = setTimeout(() => {
       filterBooksAll();
+      //loading.value = false;
     }, 1000);
   }else{
     // getBooks();
@@ -582,11 +600,13 @@ watch(
 );
 
 watch(totalPages, () => {
+  loading.value=true;
   if (currPage.value > totalPages.value) {
     currPage.value = Math.max(totalPages.value, 1);
     sessionStorage.setItem("page", String(currPage.value));
-    books.value = [];
-    bookPaginated.value = [];
+  //   books.value = [];
+  //  bookPaginated.value = [];
+   loading.value=true;
     checkFilter();
     router.push({
       query: {
