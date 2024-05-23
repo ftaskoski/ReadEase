@@ -45,12 +45,15 @@
     </label>
   </div>
   <button
-    data-ripple-light="true"
-    type="submit"
-    class="block w-full select-none rounded-lg bg-gradient-to-tr from-cyan-600 to-cyan-400 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-cyan-500/20 transition-all hover:shadow-lg hover:shadow-cyan-500/40 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-  >
-    Sign IN
-  </button>
+            data-ripple-light="true"
+            type="submit"
+            :disabled="loading"
+            :class="{ 'cursor-not-allowed': loading, 'opacity-50': loading }"
+            class="relative flex items-center justify-center w-full select-none rounded-lg bg-gradient-to-tr from-cyan-600 to-cyan-400 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-cyan-500/20 transition-all hover:shadow-lg hover:shadow-cyan-500/40 active:opacity-[0.85]"
+          >
+            <span v-if="loading"><img class="mr-2 h-5 w-5 inline-block" src="../assets/spinner.svg"/></span>
+            SIGN IN
+          </button>
 </form>
 
 
@@ -61,7 +64,7 @@
           <p class="text-red-500 justify-center items-center flex mb-2">{{ errorMsg }}</p>
         </div>
         <p
-          class="mt-6 flex justify-center font-sans text-sm font-light leading-normal text-inherit antialiased"
+          class="mt-2 flex justify-center font-sans text-sm font-light leading-normal text-inherit antialiased"
         >
           Don't have an account?
           <RouterLink
@@ -99,9 +102,10 @@ const router = useRouter();
 
 const loginUsername = ref<string>("");
 const loginPassword = ref<string>("");
-const Incorrect = ref<boolean>(false);
-  const errorMsg=ref<string>("")
+const errorMsg=ref<string>("")
+const loading = ref<boolean>(false);
 const login = async () => {
+  loading.value = true;
   axios
     .post(
       `${url}api/login`,
@@ -122,16 +126,17 @@ const login = async () => {
       }
     })
     .catch((error) => {
-        Incorrect.value = true;
         errorMsg.value=error.response.data
         setTimeout(() => {
-          Incorrect.value = false;
           errorMsg.value="";
         }, 2000);
       
-    });
+    }).finally(()=>{
+      loading.value=false
+      });
 
   loginUsername.value = "";
   loginPassword.value = "";
 };
 </script>
+
