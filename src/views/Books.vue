@@ -206,7 +206,7 @@ let debounceTimer = 0;
 const author = ref<string>("");
 const title = ref<string>("");
 const selectedCategory = ref<{ categoryName: string; categoryId: number; } | "">("");
-const loading = ref<boolean>(true);
+const loading = ref<boolean>(false);
 const categories = ref<any[]>([]);
 const bookCollection = ref<any[]>([]);
 const bookPaginated = ref<any[]>([]);
@@ -233,7 +233,7 @@ const paginationDetails = ref<string>("");
 
 const totalPages = computed(() => {
   let totalBooks;
-
+  loading.value = true;
   if (checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value) {
     totalBooks = totalFilteredBooks.value.length;
   } else {
@@ -274,7 +274,8 @@ const changePage = (page: number) => {
 
 // CRUD FUNCTIONS !!!!!!!!!!!
 
-const getBooks = () => {
+const getBooks = async () => {
+  loading.value = true;
   axios
     .get(`${url}api/getbooks`, {
       params: {
@@ -293,29 +294,32 @@ const getBooks = () => {
     });
 };
 
-const filterBooksAll = () => {
-   books.value = [];
-   bookPaginated.value = [];
+const filterBooksAll = async () => {
+  //  books.value = [];
+  //  bookPaginated.value = [];
+  loading.value = true;
   const searchParams = {
     search: searchQuery.value,
     searchTitle: searchTitle.value,
     categories: checkedCategories.value.join(","),
   };
-  axios
+ await axios
     .get(`${url}api/searchandcategoryall`, {
       params: searchParams,
       withCredentials: true,
     })
     .then((response) => {
       totalFilteredBooks.value = response.data;
-      filterBooksPaginated();
     })
     .catch((error) => {
       console.error(error);
+    }).finally(()=>{
+      //loading.value = false;
+      filterBooksPaginated();
     })
 };
 
-const filterBooksPaginated = () => {
+const filterBooksPaginated = async () => {
   loading.value = true;
   paginationDetails.value = "";
   const searchParams = {
@@ -325,7 +329,7 @@ const filterBooksPaginated = () => {
     pageNumber: currPage.value,
     pageSize: booksPerPage.value,
   };
-  axios
+ await axios
     .get(`${url}api/searchandcategory`, {
       params: searchParams,
       withCredentials: true,
@@ -353,35 +357,35 @@ const filterBooksPaginated = () => {
     })
 };
 
-function checkFilter() {
-  books.value = [];
-  bookCollection.value = [];
+async function checkFilter() {
+  // books.value = [];
+  // bookCollection.value = [];
   loading.value=true;
   if(checkedCategories.value.length > 0 && !searchQuery.value && !searchTitle.value){
-        filterBooksAll();
+       await filterBooksAll();
       } else if (checkedCategories.value.length === 0 && searchQuery.value || searchTitle.value) {
          
-        handleInput();
+       await handleInput();
       }else if (checkedCategories.value.length > 0 && searchQuery.value || searchTitle.value) {
-        handleInput();
+      await  handleInput();
       }
       else {
-        getBooks();
-        getAllBooks();
+        await getBooks();
+        await getAllBooks();
       }
       sessionStorage.setItem("categories", String(checkedCategories.value));
 }
 
-function applyBookFilter() {
+async function applyBookFilter() {
   if (checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value) {
-      filterBooksAll();
+     await filterBooksAll();
     } else {
-      getBooks();
-      getAllBooks();
+     await getBooks();
+    await  getAllBooks();
     }
 }
 
-const getAllBooks = () => {
+const getAllBooks = async () => {
   loading.value = true;
   axios
     .get(`${url}api/getallbooks`, {
@@ -434,11 +438,11 @@ const addBook = () => {
     });
 };
 
-const deleteBook = () => {
+const deleteBook = async () => {
   loading.value=true;
   showModal.value = false;
   document.body.style.overflow = "auto";
-  axios
+ await axios
     .delete(`${url}api/deletebook/${bookIdToDelete.value}`, {
       withCredentials: true,
     })
@@ -449,8 +453,8 @@ const deleteBook = () => {
         // If the current page becomes empty after deletion, move to the previous page
         currPage.value - 1;
       }
-
       applyBookFilter();
+
 
 
     })
@@ -531,7 +535,7 @@ function handleChange(newValue: number) {
   applyBookFilter();
 }
 
-const handleInput = () => {
+const handleInput = async () => {
   //currPage.value = 1;
   loading.value = true;
  // books.value=[];
@@ -544,8 +548,8 @@ const handleInput = () => {
       //loading.value = false;
     }, 1000);
   }else{
-    // getBooks();
-    // getAllBooks();
+    await getBooks();
+   await getAllBooks();
   }
 };
 
@@ -599,15 +603,28 @@ watch(
   }
 );
 
-watch(totalPages, () => {
+watch(totalPages, async () => {
   loading.value=true;
   if (currPage.value > totalPages.value) {
     currPage.value = Math.max(totalPages.value, 1);
     sessionStorage.setItem("page", String(currPage.value));
   //   books.value = [];
   //  bookPaginated.value = [];
-   loading.value=true;
-    checkFilter();
+ if(!checkedCategories.value.length && !searchQuery.value && !searchTitle.value){
+   await getBooks();
+   await getAllBooks();
+  }
+   
+  if(checkedCategories.value.length > 0 && !searchQuery.value && !searchTitle.value){
+    await filterBooksAll();
+  }else if (checkedCategories.value.length === 0 && searchQuery.value || searchTitle.value) {
+
+    await handleInput();
+  }
+
+  
+
+  loading.value=true;
     router.push({
       query: {
         page: currPage.value,
