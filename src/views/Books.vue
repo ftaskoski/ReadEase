@@ -105,9 +105,12 @@
         </div>
 
         <div v-if="loading" class="flex flex-col justify-center items-center mt-40">
-          <p class="text-3xl font-bold text-gray-900">Your collection is loading...</p>
-          <img class="w-60 " src="../assets/loading.gif"/>
-      </div>
+          <img class="" src="../assets/loading.gif" alt="Loading animation"/>         
+  <p class="text-3xl font-bold text-gray-900 flex justify-center">Your Collection Is Loading...</p>
+  <p class="text-lg text-gray-600 text-center">Please wait while we retrieve your books.</p>
+</div>
+
+
 <div v-else>
   <div v-if="books.length > 0" class="mt-20">
     <Card>
@@ -175,12 +178,18 @@
     />
   </div>
 
-  <div v-else>
-    <p class="text-3xl font-bold text-gray-900 flex justify-center pb-2 mt-40">
-      No books found. Start adding books
+<div v-else>
+  <div class="flex flex-col items-center justify-center mt-40">
+    <img class="" src="../assets/empty.gif" />
+    <p class="text-3xl font-bold text-gray-900 flex justify-center pb-2">
+      Oops! No books found.
     </p>
-      
+    <p class="text-lg text-gray-600 text-center">
+      It seems your collection is empty. Start adding books to build your library!
+    </p>
   </div>
+</div>
+
 </div>
 
      
@@ -544,6 +553,7 @@ const handleInput = async () => {
   sessionStorage.removeItem("title");
   if (searchQuery.value.trim() !== "" || searchTitle.value.trim() !== "") {
     debounceTimer = setTimeout(() => {
+      loading.value = true;
       filterBooksAll();
       //loading.value = false;
     }, 1000);
@@ -613,14 +623,11 @@ watch(totalPages, async () => {
  if(!checkedCategories.value.length && !searchQuery.value && !searchTitle.value){
    await getBooks();
    await getAllBooks();
+  }else{
+    await filterBooksAll();
   }
    
-  if(checkedCategories.value.length > 0 && !searchQuery.value && !searchTitle.value){
-    await filterBooksAll();
-  }else if (checkedCategories.value.length === 0 && searchQuery.value || searchTitle.value) {
 
-    await handleInput();
-  }
 
   
 
