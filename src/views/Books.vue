@@ -410,8 +410,8 @@ const getAllBooks = async () => {
     })
 };
 
-const getAllCategories = () => {
-  axios
+const getAllCategories = async () => {
+ await axios
     .get(`${url}api/categories`, { withCredentials: true })
     .then((response) => {
       categories.value = response.data;
@@ -643,7 +643,8 @@ watch(totalPages, async () => {
 });
 
 // Lifecycle Hook
-onMounted(() => {
+onMounted(async()  => {
+  await getAllCategories();
   const categoriesFromStorage = sessionStorage.getItem("categories");
   const searchFromStorage = sessionStorage.getItem("search");
   const pageFromStorage = sessionStorage.getItem("page");
@@ -658,25 +659,19 @@ onMounted(() => {
     currPage.value = parseInt(pageFromStorage, 10);
   }
 
-  if (categoriesFromStorage) {
-    checkedCategories.value = categoriesFromStorage.split(",").map(Number);
+  if (categoriesFromStorage || searchFromStorage || pageFromStorage) {
+     checkedCategories.value = categoriesFromStorage ? categoriesFromStorage.split(",").map(Number) : [];
+     searchQuery.value= searchFromStorage ? searchFromStorage : "";
+
+      searchTitle.value= bookTitleFromStorage ? bookTitleFromStorage : "";
     //checkFilter();
    // filterBooksAll();
-    applyBookFilter();
+   await checkFilter();
   }
-
-  if (bookTitleFromStorage) {
-    searchTitle.value = bookTitleFromStorage;
-    applyBookFilter();
+else {
+   await getBooks();
+    await getAllBooks();
   }
-  if (searchFromStorage) {
-    searchQuery.value = searchFromStorage;
-    applyBookFilter();
-  } else {
-    getBooks();
-    getAllBooks();
-  }
-  getAllCategories();
 });
 const downloadBooks = () => {
   axios
