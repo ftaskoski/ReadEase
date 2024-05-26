@@ -91,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import axios from "axios";
 import { RouterLink, useRouter } from "vue-router";
 import { AuthStatus, isAuthenticated } from "@/store/authStore";
