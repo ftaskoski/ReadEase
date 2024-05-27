@@ -98,7 +98,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title as string;
+  document.title =`${to.meta.title} | ReadEase`
   if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated.value) {
     next("/login");
   } else if ((to.name === "login" || to.name === "register") && isAuthenticated.value) {
