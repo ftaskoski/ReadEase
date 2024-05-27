@@ -37,7 +37,7 @@
         </label>
       </div>
       <div class="relative inline-block w-full mt-2 text-gray-500">
-        <select v-model="selectedCategory" required class="peer block appearance-none w-full border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500">
+        <select v-model="selectedCategory" required class="peer block appearance-none w-full border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded  leading-tight focus:outline-none focus:border-blue-500">
           <option value="" disabled selected hidden>Select a Category</option>
           <option v-for="category in categories" :key="category" :value="category">{{ category.categoryName }}</option>
         </select>
@@ -105,9 +105,12 @@
         </div>
 
         <div v-if="loading" class="flex flex-col justify-center items-center mt-40">
-          <p class="text-3xl font-bold text-gray-900">Your collection is loading...</p>
-          <img class="w-60 " src="../assets/loading.gif"/>
-      </div>
+          <img class="" src="../assets/loading.gif" alt="Loading animation"/>         
+  <p class="text-3xl font-bold text-gray-900 flex justify-center">Your Collection Is Loading...</p>
+  <p class="text-lg text-gray-600 text-center">Please wait while we retrieve your books.</p>
+</div>
+
+
 <div v-else>
   <div v-if="books.length > 0" class="mt-20">
     <Card>
@@ -175,12 +178,18 @@
     />
   </div>
 
-  <div v-else>
-    <p class="text-3xl font-bold text-gray-900 flex justify-center pb-2 mt-40">
-      No books found. Start adding books
+<div v-else>
+  <div class="flex flex-col items-center justify-center mt-40">
+    <img class="" src="../assets/empty.gif" />
+    <p class="text-3xl font-bold text-gray-900 flex justify-center pb-2">
+      Oops! No books found.
     </p>
-      
+    <p class="text-lg text-gray-600 text-center">
+      It seems your collection is empty. Start adding books to build your library!
+    </p>
   </div>
+</div>
+
 </div>
 
      
@@ -206,7 +215,7 @@ let debounceTimer = 0;
 const author = ref<string>("");
 const title = ref<string>("");
 const selectedCategory = ref<{ categoryName: string; categoryId: number; } | "">("");
-const loading = ref<boolean>(true);
+const loading = ref<boolean>(false);
 const categories = ref<any[]>([]);
 const bookCollection = ref<any[]>([]);
 const bookPaginated = ref<any[]>([]);
@@ -233,7 +242,7 @@ const paginationDetails = ref<string>("");
 
 const totalPages = computed(() => {
   let totalBooks;
-
+  loading.value = true;
   if (checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value) {
     totalBooks = totalFilteredBooks.value.length;
   } else {
@@ -274,7 +283,8 @@ const changePage = (page: number) => {
 
 // CRUD FUNCTIONS !!!!!!!!!!!
 
-const getBooks = () => {
+const getBooks = async () => {
+  loading.value = true;
   axios
     .get(`${url}api/getbooks`, {
       params: {
@@ -293,29 +303,32 @@ const getBooks = () => {
     });
 };
 
-const filterBooksAll = () => {
-   books.value = [];
-   bookPaginated.value = [];
+const filterBooksAll = async () => {
+  //  books.value = [];
+  //  bookPaginated.value = [];
+  loading.value = true;
   const searchParams = {
     search: searchQuery.value,
     searchTitle: searchTitle.value,
     categories: checkedCategories.value.join(","),
   };
-  axios
+ await axios
     .get(`${url}api/searchandcategoryall`, {
       params: searchParams,
       withCredentials: true,
     })
     .then((response) => {
       totalFilteredBooks.value = response.data;
-      filterBooksPaginated();
     })
     .catch((error) => {
       console.error(error);
+    }).finally(()=>{
+      //loading.value = false;
+      filterBooksPaginated();
     })
 };
 
-const filterBooksPaginated = () => {
+const filterBooksPaginated = async () => {
   loading.value = true;
   paginationDetails.value = "";
   const searchParams = {
@@ -325,7 +338,7 @@ const filterBooksPaginated = () => {
     pageNumber: currPage.value,
     pageSize: booksPerPage.value,
   };
-  axios
+ await axios
     .get(`${url}api/searchandcategory`, {
       params: searchParams,
       withCredentials: true,
@@ -353,35 +366,35 @@ const filterBooksPaginated = () => {
     })
 };
 
-function checkFilter() {
-  books.value = [];
-  bookCollection.value = [];
+async function checkFilter() {
+  // books.value = [];
+  // bookCollection.value = [];
   loading.value=true;
   if(checkedCategories.value.length > 0 && !searchQuery.value && !searchTitle.value){
-        filterBooksAll();
+       await filterBooksAll();
       } else if (checkedCategories.value.length === 0 && searchQuery.value || searchTitle.value) {
          
-        handleInput();
+       await handleInput();
       }else if (checkedCategories.value.length > 0 && searchQuery.value || searchTitle.value) {
-        handleInput();
+      await  handleInput();
       }
       else {
-        getBooks();
-        getAllBooks();
+        await getBooks();
+        await getAllBooks();
       }
       sessionStorage.setItem("categories", String(checkedCategories.value));
 }
 
-function applyBookFilter() {
+async function applyBookFilter() {
   if (checkedCategories.value.length > 0 || searchQuery.value || searchTitle.value) {
-      filterBooksAll();
+     await filterBooksAll();
     } else {
-      getBooks();
-      getAllBooks();
+     await getBooks();
+    await  getAllBooks();
     }
 }
 
-const getAllBooks = () => {
+const getAllBooks = async () => {
   loading.value = true;
   axios
     .get(`${url}api/getallbooks`, {
@@ -397,8 +410,8 @@ const getAllBooks = () => {
     })
 };
 
-const getAllCategories = () => {
-  axios
+const getAllCategories = async () => {
+ await axios
     .get(`${url}api/categories`, { withCredentials: true })
     .then((response) => {
       categories.value = response.data;
@@ -434,11 +447,11 @@ const addBook = () => {
     });
 };
 
-const deleteBook = () => {
+const deleteBook = async () => {
   loading.value=true;
   showModal.value = false;
   document.body.style.overflow = "auto";
-  axios
+ await axios
     .delete(`${url}api/deletebook/${bookIdToDelete.value}`, {
       withCredentials: true,
     })
@@ -449,8 +462,8 @@ const deleteBook = () => {
         // If the current page becomes empty after deletion, move to the previous page
         currPage.value - 1;
       }
-
       applyBookFilter();
+
 
 
     })
@@ -531,7 +544,7 @@ function handleChange(newValue: number) {
   applyBookFilter();
 }
 
-const handleInput = () => {
+const handleInput = async () => {
   //currPage.value = 1;
   loading.value = true;
  // books.value=[];
@@ -540,12 +553,13 @@ const handleInput = () => {
   sessionStorage.removeItem("title");
   if (searchQuery.value.trim() !== "" || searchTitle.value.trim() !== "") {
     debounceTimer = setTimeout(() => {
+      loading.value = true;
       filterBooksAll();
       //loading.value = false;
     }, 1000);
   }else{
-    // getBooks();
-    // getAllBooks();
+    await getBooks();
+   await getAllBooks();
   }
 };
 
@@ -599,15 +613,25 @@ watch(
   }
 );
 
-watch(totalPages, () => {
+watch(totalPages, async () => {
   loading.value=true;
   if (currPage.value > totalPages.value) {
     currPage.value = Math.max(totalPages.value, 1);
     sessionStorage.setItem("page", String(currPage.value));
   //   books.value = [];
   //  bookPaginated.value = [];
-   loading.value=true;
-    checkFilter();
+ if(!checkedCategories.value.length && !searchQuery.value && !searchTitle.value){
+   await getBooks();
+   await getAllBooks();
+  }else{
+    await filterBooksAll();
+  }
+   
+
+
+  
+
+  loading.value=true;
     router.push({
       query: {
         page: currPage.value,
@@ -619,7 +643,8 @@ watch(totalPages, () => {
 });
 
 // Lifecycle Hook
-onMounted(() => {
+onMounted(async()  => {
+  await getAllCategories();
   const categoriesFromStorage = sessionStorage.getItem("categories");
   const searchFromStorage = sessionStorage.getItem("search");
   const pageFromStorage = sessionStorage.getItem("page");
@@ -634,25 +659,19 @@ onMounted(() => {
     currPage.value = parseInt(pageFromStorage, 10);
   }
 
-  if (categoriesFromStorage) {
-    checkedCategories.value = categoriesFromStorage.split(",").map(Number);
+  if (categoriesFromStorage || searchFromStorage || pageFromStorage) {
+     checkedCategories.value = categoriesFromStorage ? categoriesFromStorage.split(",").map(Number) : [];
+     searchQuery.value= searchFromStorage ? searchFromStorage : "";
+
+      searchTitle.value= bookTitleFromStorage ? bookTitleFromStorage : "";
     //checkFilter();
    // filterBooksAll();
-    applyBookFilter();
+   await checkFilter();
   }
-
-  if (bookTitleFromStorage) {
-    searchTitle.value = bookTitleFromStorage;
-    applyBookFilter();
+else {
+   await getBooks();
+    await getAllBooks();
   }
-  if (searchFromStorage) {
-    searchQuery.value = searchFromStorage;
-    applyBookFilter();
-  } else {
-    getBooks();
-    getAllBooks();
-  }
-  getAllCategories();
 });
 const downloadBooks = () => {
   axios
