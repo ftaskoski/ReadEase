@@ -39,7 +39,7 @@ var app = builder.Build();
 
 app.UseCors(builder =>
 {
-    builder.WithOrigins("http://localhost:5173") // frontend origin
+    builder.WithOrigins("http://localhost:5173", "https://readease.netlify.app")
            .AllowAnyHeader()
            .AllowAnyMethod()
            .AllowCredentials();
