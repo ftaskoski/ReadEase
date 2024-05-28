@@ -7,7 +7,6 @@ import RegisterVue from "@/views/Register.vue";
 import BooksVue from "@/views/Books.vue";
 import AdminVue from "@/views/Admin.vue";
 import Recovery from "@/views/Recovery.vue";
-const url="https://localhost:7284/"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
