@@ -1,5 +1,7 @@
 using Books.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.Extensions.FileProviders;
 using ReadEase_C_.Helpers;
 using ReadEase_C_.Interface;
 using ReadEase_C_.Services;
@@ -24,7 +26,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddCookie(options =>
 {
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite = SameSiteMode.Strict;
     options.ExpireTimeSpan = TimeSpan.FromDays(1);
     options.Events.OnRedirectToLogin = context =>
     {
@@ -37,17 +39,28 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.UseCors(builder =>
-{
-    builder.WithOrigins("http://localhost:5173", "https://readease.netlify.app")
-           .AllowAnyHeader()
-           .AllowAnyMethod()
-           .AllowCredentials();
-});
-app.UseRouting();
 
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
+app.UseEndpoints(endpoints => endpoints.MapControllers());
+//app.MapControllers();
+//app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "ClientApp", "dist")),
+    RequestPath = "/dist"
+});
+app.UseSpa(spa =>
+{
+    spa.Options.SourcePath = "ClientApp";
+
+    if (app.Environment.IsDevelopment())
+    {
+        spa.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
+    }
+});
+
 
 app.Run();

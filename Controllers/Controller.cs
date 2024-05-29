@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApplication1.Controllers
 {
     [ApiController]
-    [Route("/")]
+    [Route("api")]
     public class HelloWorldController : ControllerBase
     {
         [HttpGet]

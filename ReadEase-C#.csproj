@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -11,9 +11,28 @@
     <PackageReference Include="Dapper" Version="2.1.24" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.6" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
+
+	<Target Name="BuildVueClient" BeforeTargets="Build" >
+		<Message Importance="high" Text="Building Vue.js client application..." />
+		<Exec Command="npm install" WorkingDirectory="ClientApp" />
+		<Exec Command="npm run build" WorkingDirectory="ClientApp" />
+	</Target>
+
+	<Target Name="PublishVueClient" AfterTargets="Publish">
+		<Message Importance="high" Text="Publishing Vue.js client application..." />
+		<Exec Command="npm install" WorkingDirectory="ClientApp" />
+		<Exec Command="npm run build" WorkingDirectory="ClientApp" />
+		<!-- Define an ItemGroup to include all files in the ClientApp/dist directory -->
+		<ItemGroup>
+			<ClientAppDistFiles Include="ClientApp/dist/**" />
+		</ItemGroup>
+		<!-- Copy the files to the destination folder -->
+		<Copy SourceFiles="@(ClientAppDistFiles)" DestinationFolder="$(PublishDir)ClientApp/dist\" />
+	</Target>
 
 </Project>

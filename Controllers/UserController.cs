@@ -65,7 +65,7 @@ namespace userController.Controllers
                 Path = "/",
                 Secure = true,
                 HttpOnly = true,
-                SameSite = SameSiteMode.None
+                SameSite = SameSiteMode.Strict
             });
 
 
