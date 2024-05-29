@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
 const props = defineProps(['itemsPerPage', 'itemsPerPageArr']);
@@ -20,8 +20,9 @@ const emits = defineEmits(['update:itemsPerPage']);
 
 const selectedValue = ref(props.itemsPerPage);
 
-function handleChange(event) {
-  selectedValue.value = event.target.value;
+function handleChange(event: Event | InputEvent) {
+  const target = event.target as HTMLInputElement; // assert the type of event.target
+  selectedValue.value = target.value;
   emits('update:itemsPerPage', selectedValue.value);
 }
 </script>

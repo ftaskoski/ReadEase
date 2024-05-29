@@ -38,7 +38,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 
 defineProps(["currPage", "totalPages", "visiblePages"]);
@@ -47,9 +47,10 @@ defineProps(["currPage", "totalPages", "visiblePages"]);
 const emits = defineEmits(["page-changed","to-end"]);
 
 
-const changePage = (page ) => {
+const changePage = (page: number) => {
     emits("page-changed", page);
 };
 
 </script>
+
 
