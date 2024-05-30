@@ -45,13 +45,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints(endpoints => endpoints.MapControllers());
 //app.MapControllers();
-//app.UseStaticFiles();
-app.UseStaticFiles(new StaticFileOptions
+app.UseStaticFiles();
+/*app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
         Path.Combine(Directory.GetCurrentDirectory(), "ClientApp", "dist")),
     RequestPath = "/dist"
-});
+});*/
 app.UseSpa(spa =>
 {
     spa.Options.SourcePath = "ClientApp";
