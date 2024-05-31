@@ -315,9 +315,9 @@ const filterBooksAll = async () => {
     })
     .catch((error) => {
       console.error(error);
-    }).finally(()=>{
+    }).finally(async()=>{
       //loading.value = false;
-      filterBooksPaginated();
+    await  filterBooksPaginated();
     })
 };
 
@@ -355,7 +355,7 @@ const filterBooksPaginated = async () => {
 async function checkFilter() {
   // books.value = [];
   // bookCollection.value = [];
-  loading.value=true;
+  //loading.value=true;
   if(checkedCategories.value.length > 0 && !searchQuery.value && !searchTitle.value){
        await filterBooksAll();
       } else if (checkedCategories.value.length === 0 && searchQuery.value || searchTitle.value) {
