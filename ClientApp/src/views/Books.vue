@@ -270,14 +270,7 @@ const changePage = (page: number) => {
     sessionStorage.setItem("page", String(currPage.value));
     
     applyBookFilter();
-    router.push({
-      query: {
-        page: currPage.value,
-        search: searchQuery.value,
-        categories: checkedCategories.value.join(","),
-        booksPerPage: booksPerPage.value,
-      },
-    });
+
   }
 };
 
@@ -350,14 +343,7 @@ const filterBooksPaginated = async () => {
       sessionStorage.setItem("categories", String(checkedCategories.value));
       sessionStorage.setItem("page", String(currPage.value));
       sessionStorage.setItem("title", searchTitle.value);
-      router.push({
-        query: {
-          page: currPage.value,
-          search: searchQuery.value,
-          categories: checkedCategories.value.join(","),
-          booksPerPage: booksPerPage.value,
-        },
-      });
+
     })
     .catch((error) => {
       console.error(error);
@@ -539,7 +525,6 @@ function handleChange(newValue: number) {
   currPage.value = 1;
   sessionStorage.setItem("booksPerPage", String(booksPerPage.value));
   sessionStorage.setItem("page", String(currPage.value));
-  router.push({ query: { booksPerPage: String(booksPerPage.value) } });
 
   applyBookFilter();
 }
@@ -624,7 +609,7 @@ watch(totalPages, async () => {
    await getBooks();
    await getAllBooks();
   }else{
-    await filterBooksAll();
+    await checkFilter();
   }
    
 
@@ -632,13 +617,6 @@ watch(totalPages, async () => {
   
 
   loading.value=true;
-    router.push({
-      query: {
-        page: currPage.value,
-        search: searchQuery.value,
-        categories: checkedCategories.value.join(","),
-      },
-    });
   }
 });
 
