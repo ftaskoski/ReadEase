@@ -290,13 +290,10 @@ const getBooks = async () => {
       bookPaginated.value = response.data.books;
       books.value = response.data.books;
       paginationDetails.value = response.data.range;
-      //loading.value = false;
     })
     .catch((error) => {
       console.error(error);
-    }).finally(()=>{
-      loading.value = false;
-    })
+    });
 };
 
 const filterBooksAll = async () => {
@@ -315,19 +312,17 @@ const filterBooksAll = async () => {
     })
     .then((response) => {
       totalFilteredBooks.value = response.data;
-      loading.value = false;
-
     })
     .catch((error) => {
       console.error(error);
     }).finally(async()=>{
-      loading.value = false;
+      //loading.value = false;
     await  filterBooksPaginated();
     })
 };
 
 const filterBooksPaginated = async () => {
-  loading.value = true;
+  //loading.value = true;
   paginationDetails.value = "";
   const searchParams = {
     search: searchQuery.value,
@@ -348,7 +343,6 @@ const filterBooksPaginated = async () => {
       sessionStorage.setItem("categories", String(checkedCategories.value));
       sessionStorage.setItem("page", String(currPage.value));
       sessionStorage.setItem("title", searchTitle.value);
-      loading.value = false;
 
     })
     .catch((error) => {
@@ -394,7 +388,6 @@ const getAllBooks = async () => {
     })
     .then((response) => {
       bookCollection.value = response.data;
-      loading.value = false;
     })
     .catch((error) => {
       console.error(error);
@@ -538,15 +531,15 @@ function handleChange(newValue: number) {
 
 const handleInput = async () => {
   //currPage.value = 1;
-  loading.value = true;
+ // loading.value = true;
  // books.value=[];
   clearTimeout(debounceTimer);
   sessionStorage.removeItem("search");
   sessionStorage.removeItem("title");
   if (searchQuery.value.trim() !== "" || searchTitle.value.trim() !== "") {
-    debounceTimer = setTimeout(() => {
-      //loading.value = true;
-      filterBooksAll();
+    debounceTimer = setTimeout(async () => {
+     // loading.value = true;
+     await filterBooksAll();
       //loading.value = false;
     }, 1000);
   }else{
@@ -605,23 +598,27 @@ watch(
   }
 );
 
-watch(currPage, async (newPage, oldPage) => {
-  if (newPage !== oldPage) {
-    loading.value = true;
-    if (newPage > totalPages.value) {
-      currPage.value = Math.max(totalPages.value, 1);
-      sessionStorage.setItem("page", String(currPage.value));
-    }
-    if (!checkedCategories.value.length && !searchQuery.value && !searchTitle.value) {
-      await getBooks();
-      await getAllBooks();
-    } else {
-      await checkFilter();
-    }
+watch(totalPages, async () => {
+  loading.value=true;
+  if (currPage.value > totalPages.value) {
+    currPage.value = Math.max(totalPages.value, 1);
+    sessionStorage.setItem("page", String(currPage.value));
+  //   books.value = [];
+  //  bookPaginated.value = [];
+ if(!checkedCategories.value.length && !searchQuery.value && !searchTitle.value){
+   await getBooks();
+   await getAllBooks();
+  }else{
+    await checkFilter();
   }
-  loading.value = false; // Set loading to false after the computation is complete
-});
+   
 
+
+  
+
+  loading.value=true;
+  }
+});
 
 // Lifecycle Hook
 onMounted(async()  => {
