@@ -43,7 +43,6 @@ import { ref, onMounted } from "vue";
 import { profilePictureUrl,getProfilePicture } from "@/store/picStore";
 import axios from "axios";
 import { AuthStatus, url } from "@/store/authStore";
-import Card from "@/components/Card.vue";
 
 const newUsername = ref<string>("");
 const successMsg = ref<string>("");
@@ -108,11 +107,9 @@ function changeProfilePicture() {
       withCredentials: true,
     })
     .then((response) => {
-      // Handle success
       getProfilePicture();
     })
     .catch((error) => {
-      // Handle error
       console.error("Error uploading photo:", error);
     });
 }
