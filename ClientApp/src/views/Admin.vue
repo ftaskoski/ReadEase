@@ -79,7 +79,7 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { onMounted, ref, watch, computed } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { url } from "@/store/authStore";
 import Pagination from "@/components/Pagination.vue";
 import { useRouter } from "vue-router";
