@@ -201,7 +201,6 @@
 <script setup lang="ts">
 import axios from "axios";
 import { ref, onMounted, computed, watch } from "vue";
-import { useRouter } from "vue-router";
 import Card from "@/components/Card.vue";
 import DeleteModal from "@/components/DeleteModal.vue";
 import BookTable from "@/components/BookTable.vue";
@@ -210,7 +209,6 @@ import Pagination from "@/components/Pagination.vue";
 import { url } from "@/store/authStore";
 import SelectPerPage from "@/components/SelectPerPage.vue";
 
-const router = useRouter();
 let debounceTimer = 0;
 const author = ref<string>("");
 const title = ref<string>("");
@@ -297,8 +295,7 @@ const getBooks = async () => {
 };
 
 const filterBooksAll = async () => {
-  //  books.value = [];
-  //  bookPaginated.value = [];
+
   loading.value = true;
   const searchParams = {
     search: searchQuery.value,
@@ -353,8 +350,6 @@ const filterBooksPaginated = async () => {
 };
 
 async function checkFilter() {
-  // books.value = [];
-  // bookCollection.value = [];
   //loading.value=true;
   if(checkedCategories.value.length > 0 && !searchQuery.value && !searchTitle.value){
        await filterBooksAll();
@@ -445,7 +440,6 @@ const deleteBook = async () => {
       const totalBooks = totalFilteredBooks.value.length;
       const totalPagesToDelete = Math.ceil(totalBooks / booksPerPage.value);
       if (totalPagesToDelete < currPage.value) {
-        // If the current page becomes empty after deletion, move to the previous page
         currPage.value - 1;
       }
       applyBookFilter();
@@ -557,19 +551,15 @@ const getCategoryName = (categoryId: number) => {
 
 // Watchers !!!!!!!!!!!!!!!!!!!!
 watch([checkedCategories, searchQuery, searchTitle], () => {
-  // Check if the page is being reloaded
   const isReload = sessionStorage.getItem("isReload");
 
-  // If the page is being reloaded, remove the sessionStorage item and return
   if (isReload) {
     sessionStorage.removeItem("isReload");
     return;
   }
 
-  // Reset the current page to 1 whenever filters change
   currPage.value = 1;
 
-  // Call your filter function or any other necessary actions
   checkFilter();
 });
 
@@ -598,7 +588,7 @@ watch(
   }
 );
 
-watch(totalPages, async () => {
+watch([totalPages, currPage], async () => {
   loading.value=true;
   if (currPage.value > totalPages.value) {
     currPage.value = Math.max(totalPages.value, 1);
@@ -642,8 +632,7 @@ onMounted(async()  => {
      searchQuery.value= searchFromStorage ? searchFromStorage : "";
 
       searchTitle.value= bookTitleFromStorage ? bookTitleFromStorage : "";
-    //checkFilter();
-   // filterBooksAll();
+ 
    await checkFilter();
   }
 else {
