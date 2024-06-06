@@ -100,7 +100,7 @@ namespace ReadEase_C_.Services
             return new OkResult();
         }
 
-        public string getUsername (int id)
+        public string getUsername(int id)
         {
             var connection = _connectionService.GetConnection();
             string emailQuery = "SELECT Username FROM USERS WHERE Id=@id";
