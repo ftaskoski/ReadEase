@@ -1,5 +1,4 @@
-﻿using System.Data.SqlClient;
-using Dapper;
+﻿using Dapper;
 using ReadEase_C_.Interface;
 using ReadEase_C_.Models;
 using WebApplication1.Models;
@@ -9,31 +8,22 @@ namespace Books.Services
 {
     public class BookService : IBookService
     {
-        private readonly IConfiguration _configuration;
         private readonly IConnectionService _connectionService;
-        public BookService(IConfiguration configuration, IConnectionService connectionService)
+        public BookService(IConnectionService connectionService)
         {
-            _configuration = configuration;
             _connectionService = connectionService;
         }
 
-        private SqlConnection GetSqlConnection()
-        {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            return new SqlConnection(connectionString);
-        }
 
         private IEnumerable<BookModel> QueryBooks(string query, object? parameters = null)
         {
-            using (var connection = GetSqlConnection())
-            {
-                return connection.Query<BookModel>(query, parameters);
-            }
+            using var connection = _connectionService.GetConnection();
+            return connection.Query<BookModel>(query, parameters);
         }
 
         private void Execute(string query, object? parameters = null)
         {
-            using var connection = GetSqlConnection();
+            using var connection = _connectionService.GetConnection();
             connection.Execute(query, parameters);
         }
 
@@ -160,7 +150,7 @@ namespace Books.Services
 
         public void UpdateBook(UpdateBook book)
         {
-            var connection = GetSqlConnection();
+            var connection = _connectionService.GetConnection();
             string sql = "UPDATE Books SET ";
             var parameters = new DynamicParameters();
 
@@ -194,7 +184,7 @@ namespace Books.Services
 
         public void DeleteBooksByUser(int id)
         {
-            var connection = GetSqlConnection();
+            var connection = _connectionService.GetConnection();
             string deleteBooks = "DELETE FROM BOOKS WHERE UserId = @id";
             connection.Execute(deleteBooks, new { id });
 
