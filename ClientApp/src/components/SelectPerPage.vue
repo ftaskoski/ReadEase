@@ -21,7 +21,7 @@ const emits = defineEmits(['update:itemsPerPage']);
 const selectedValue = ref(props.itemsPerPage);
 
 function handleChange(event: Event | InputEvent) {
-  const target = event.target as HTMLInputElement; // assert the type of event.target
+  const target = event.target as HTMLInputElement; 
   selectedValue.value = target.value;
   emits('update:itemsPerPage', selectedValue.value);
 }
