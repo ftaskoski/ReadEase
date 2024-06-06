@@ -1,29 +1,24 @@
 ﻿using Dapper;
 using ReadEase_C_.Interface;
-using System.Data.SqlClient;
 
 namespace ReadEase_C_.Services
 {
     public class PhotoService : IPhotoService
     {
 
-        private readonly IConfiguration _configuration;
+        private readonly IConnectionService _connectionService;
 
-        public PhotoService(IConfiguration configuration)
+        public PhotoService(IConnectionService connectionService)
         {
-            _configuration = configuration;
+            _connectionService = connectionService;
         }
 
-        private SqlConnection GetSqlConnection()
-        {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            return new SqlConnection(connectionString);
-        }
+
 
 
         public byte[] GetPhoto(int UserId)
         {
-            var connection = GetSqlConnection();
+            var connection = _connectionService.GetConnection();
             string selectQuery = "SELECT photo FROM Users WHERE Id = @UserId";
 
             return connection.QuerySingleOrDefault<byte[]>(selectQuery, new { UserId });
@@ -33,7 +28,7 @@ namespace ReadEase_C_.Services
 
         public void InsertPhoto(int UserId, byte[] photo)
         {
-            var connection = GetSqlConnection();
+            var connection = _connectionService.GetConnection();
             string insertQuery = "UPDATE Users SET photo = @Photo WHERE Id = @UserId"; // Update column name to ProfilePicture
 
             connection.Execute(insertQuery, new { Photo = photo, UserId });
