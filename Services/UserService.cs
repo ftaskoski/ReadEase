@@ -2,35 +2,28 @@
 using Microsoft.AspNetCore.Mvc;
 using ReadEase_C_.Interface;
 using ReadEase_C_.Models;
-using System.Data.SqlClient;
 
 namespace ReadEase_C_.Services
 {
     public class UserService : IUserService
     {
-        private readonly IConfiguration _configuration;
-        public UserService(IConfiguration configuration)
+        private readonly IConnectionService _connectionService;
+        public UserService(IConnectionService connService)
         {
-            _configuration = configuration;
+            _connectionService = connService;
         }
 
-        private SqlConnection GetSqlConnection()
-        {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            return new SqlConnection(connectionString);
-        }
+
 
         private IEnumerable<protectedUserModel> QueryUsers(string query, object parameters = null)
         {
-            using (var connection = GetSqlConnection())
-            {
-                return connection.Query<protectedUserModel>(query, parameters);
-            }
+            using var connection = _connectionService.GetConnection();
+            return connection.Query<protectedUserModel>(query, parameters);
         }
 
         private void Execute(string query, object parametars = null)
         {
-            var connection = GetSqlConnection();
+            var connection = _connectionService.GetConnection();
             connection.Execute(query, parametars);
         }
 
@@ -49,7 +42,7 @@ namespace ReadEase_C_.Services
 
         public async Task<string> CheckIfUserIsAdminAsync(int userId)
         {
-            var connection = GetSqlConnection();
+            var connection = _connectionService.GetConnection();
             string checkAdminQuery = "SELECT Role FROM Users WHERE Id = @Id";
             string role = await connection.QueryFirstOrDefaultAsync<string>(checkAdminQuery, new { Id = userId });
 
@@ -58,7 +51,7 @@ namespace ReadEase_C_.Services
 
         public async Task<IActionResult> UpdateUserAsync(string newUsername, string newPassword, int id)
         {
-            var connection = GetSqlConnection();
+            var connection = _connectionService.GetConnection();
 
             string checkUserQuery = "SELECT COUNT(*) FROM Users WHERE Id = @Id";
             var userCount = await connection.QueryFirstOrDefaultAsync<int>(checkUserQuery, new { Id = id });
@@ -70,7 +63,7 @@ namespace ReadEase_C_.Services
 
             // Construct the update query based on the provided parameters
             string updateQuery = "UPDATE Users SET ";
-            List<string> updateParams = new List<string>();
+            List<string> updateParams = [];
             if (!string.IsNullOrEmpty(newUsername))
             {
                 updateParams.Add("Username = @Username");
@@ -109,7 +102,7 @@ namespace ReadEase_C_.Services
 
         public string getUsername (int id)
         {
-            var connection = GetSqlConnection();
+            var connection = _connectionService.GetConnection();
             string emailQuery = "SELECT Username FROM USERS WHERE Id=@id";
 
             return connection.QueryFirst<string>(emailQuery, new { Id = id });
