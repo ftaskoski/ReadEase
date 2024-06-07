@@ -123,7 +123,7 @@
         </button>
       </div>
 
-      <BookTable
+      <Table
         :books="books"
         :getCategoryName="getCategoryName"
         :openModal="openModal"
@@ -144,6 +144,7 @@
         @update:newAuthor="(value) => (newAuthor = value)"
         @update:newTitle="(value) => (newTitle = value)"
         @update:newCategoryId="(value) => (newCategoryId = value)"
+        :headers="['Author', 'Title', 'Category', 'Actions']"
       />
 
       <Pagination
@@ -203,7 +204,7 @@ import axios from "axios";
 import { ref, onMounted, computed, watch } from "vue";
 import Card from "@/components/Card.vue";
 import DeleteModal from "@/components/DeleteModal.vue";
-import BookTable from "@/components/BookTable.vue";
+import Table from "@/components/Table.vue";
 import EditModal from "@/components/EditModal.vue";
 import Pagination from "@/components/Pagination.vue";
 import { url } from "@/store/authStore";
@@ -525,7 +526,7 @@ function handleChange(newValue: number) {
 
 const handleInput = async () => {
   //currPage.value = 1;
- // loading.value = true;
+  loading.value = true;
  // books.value=[];
   clearTimeout(debounceTimer);
   sessionStorage.removeItem("search");
