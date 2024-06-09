@@ -112,7 +112,6 @@ namespace userController.Controllers
             new Claim(ClaimTypes.NameIdentifier, model.Id.ToString()),
             new Claim(ClaimTypes.Name, model.Username),
             new Claim(ClaimTypes.Role, role ?? "User")];
-            // Add additional claims as needed
 
             var authProperties = new AuthenticationProperties
             {
