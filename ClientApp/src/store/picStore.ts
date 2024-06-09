@@ -8,7 +8,7 @@ export function getProfilePicture() {
     axios
       .get(`${url}api/getphoto`, {
         withCredentials: true,
-        responseType: "blob", // Ensure response is treated as a blob
+        responseType: "blob", 
       })
       .then((response) => {
         // Convert blob to URL
