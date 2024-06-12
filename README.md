@@ -4,3 +4,4 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
 
 ## Features
 - **Create Your Account:**  Sign up and create your personal account. You will receive an email notification upon successful registration.
+- **Password Reset:**  Easily reset your password if you forget it.
