@@ -7,4 +7,6 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
 - **Password Reset:**  Easily reset your password if you forget it.
 - **New York Times Best Sellers:**  Stay updated with real-time updates on the New York Times' best seller books.
 - **Manage Your Collection:** 
-
+  - **Insert Books:** Add books to your collection.
+  - **Search:** Find books by title, category, author, or any combination thereof, with pagination.
+  - **Download:** Download your entire collection or individual books.
