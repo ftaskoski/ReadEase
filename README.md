@@ -16,3 +16,4 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
 - **Settings:**
   - **Update Email**: Update your email address (if it is not already in use).
   - **Update Password**: Change your password.
+  - **Profile Picture**: Upload a new profile picture.
