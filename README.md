@@ -14,3 +14,4 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
   - **Edit Books:** Change the title, author, and category of any book.
   - **Delete Books:** Remove books from your collection.
 - **Settings:**
+  - **Update Email**: Update your email address (if it is not already in use).
