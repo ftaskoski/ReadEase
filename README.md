@@ -18,3 +18,4 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
   - **Update Password**: Change your password.
   - **Profile Picture**: Upload a new profile picture.
 - **Admin Panel:**  Access an exclusive Admin panel (for Admin users only, which must be manually set).
+  - **Manage Categories:** Insert new categories and delete existing categories.
