@@ -23,3 +23,10 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
 
 ## Technologies
 ### Backend
+- **Programming Language:** C#
+- **Framework:** .NET 8
+- **Database:** MSSQL with T-SQL
+- **Authentication:** Cookie Authentication
+- **ORM:** Dapper
+- **API:** REST APIs
+- **Architecture:** MVC (Models, Views, Controllers)
