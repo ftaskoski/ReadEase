@@ -22,3 +22,4 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
   - **Manage Users:** View all users with pagination, search for users, and delete users.
 
 ## Technologies
+### Backend
