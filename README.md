@@ -32,4 +32,5 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
 - **Architecture:** MVC (Models, Views, Controllers)
 ### Frontend
 - **Programming Language:** JavaScript, TypeScript
+- **Framework/Library:** Vue.js
 
