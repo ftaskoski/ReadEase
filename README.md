@@ -33,4 +33,6 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
 ### Frontend
 - **Programming Language:** JavaScript, TypeScript
 - **Framework/Library:** Vue.js
-
+- **Styling:** Tailwind CSS
+- **HTTP Client:** Axios
+- **Build Tools:** Vite
