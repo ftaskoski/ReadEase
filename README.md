@@ -30,3 +30,5 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
 - **ORM:** Dapper
 - **API:** REST APIs
 - **Architecture:** MVC (Models, Views, Controllers)
+### Frontend
+
