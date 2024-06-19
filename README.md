@@ -36,3 +36,6 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
 - **Styling:** Tailwind CSS
 - **HTTP Client:** Axios
 - **Build Tools:** Vite
+
+## Project Repository
+Explore the project's frontend code on GitHub: [ClientApp](https://github.com/ftaskoski123/ReadEase-Server/tree/master/ClientApp)
