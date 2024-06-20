@@ -38,4 +38,4 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
 - **Build Tools:** Vite
 
 ## Project Repository
-Explore the project's frontend code on GitHub: [ClientApp](https://github.com/ftaskoski123/ReadEase-Server/tree/master/ClientApp)
+Check out the frontend code here: [ClientApp](https://github.com/ftaskoski123/ReadEase-Server/tree/master/ClientApp)
