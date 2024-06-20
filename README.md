@@ -37,5 +37,5 @@ Read Ease is your ideal book companion, crafted for avid readers like you. Its s
 - **HTTP Client:** Axios
 - **Build Tools:** Vite
 
-## Project Repository
+## Explore the Code
 Check out the frontend code here: [ClientApp](https://github.com/ftaskoski123/ReadEase-Server/tree/master/ClientApp)
