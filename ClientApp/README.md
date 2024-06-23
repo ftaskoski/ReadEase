@@ -7,3 +7,5 @@
 
 ### User Register
 ![image](https://github.com/ftaskoski123/ReadEase-Server/assets/93309577/35e3c329-bc1d-4328-8336-14caee345382)
+
+### Password Recovery
