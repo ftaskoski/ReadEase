@@ -12,3 +12,4 @@
 ![image](https://github.com/ftaskoski123/ReadEase-Server/assets/93309577/059c460c-803e-4a3a-9b2a-876cf7b5bd4d)
 
 ### Dashboard: NY Times Best Sellers
+![image](https://github.com/ftaskoski123/ReadEase-Server/assets/93309577/452de3d3-aec2-4f93-9f21-fa31f7eea421)
