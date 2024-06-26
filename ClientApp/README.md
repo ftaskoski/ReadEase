@@ -15,4 +15,9 @@
 ![image](https://github.com/ftaskoski123/ReadEase-Server/assets/93309577/452de3d3-aec2-4f93-9f21-fa31f7eea421)
 
 ### User Book Collection
+![image](https://github.com/ftaskoski123/ReadEase-Server/assets/93309577/890ba636-f966-40d2-84b7-72f96631f67a)
 *The user book collection page allows users to manage their personal library by adding, searching, editing, deleting, and downloading books.*
+
+### Settings
+*Users can update their email, change their password, and upload a new profile picture to personalize their account settings.*
+![image](https://github.com/ftaskoski123/ReadEase-Server/assets/93309577/edc52653-b6ac-44f1-bed8-4a59ab3bfeac)
