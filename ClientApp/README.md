@@ -21,3 +21,7 @@
 ### Settings
 *Users can update their email, change their password, and upload a new profile picture to personalize their account settings.*
 ![image](https://github.com/ftaskoski123/ReadEase-Server/assets/93309577/edc52653-b6ac-44f1-bed8-4a59ab3bfeac)
+
+### Admin Panel
+*Admin users have access to manage categories and users, including inserting new categories, deleting existing ones, viewing all users with pagination, searching for users, and deleting users.*
+![image](https://github.com/ftaskoski123/ReadEase/assets/93309577/f9a2284c-9d15-4046-8c26-475b81b9235f)
