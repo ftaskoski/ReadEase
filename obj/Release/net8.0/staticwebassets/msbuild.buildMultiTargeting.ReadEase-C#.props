@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\ReadEase-C#.props" />
+</Project>

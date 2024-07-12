@@ -1,0 +1,13 @@
+{
+  "name": "readease",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "dotnet bin/Debug/net6.0/ReadEase-C#.dll"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "gulp": "^4.0.2",
+    "gulp-cli": "^2.3.0",
+    "gulp-dotnet-cli": "^1.1.0"
+  }
+}
